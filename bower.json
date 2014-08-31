@@ -1,0 +1,7 @@
+{
+  "name": "at-core-form",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#master"
+  }
+}
