@@ -1,0 +1,100 @@
+﻿
+
+<link rel="import" href="../paper-input/paper-input.html" />
+<link rel="import" href="../paper-checkbox/paper-checkbox.html" />
+
+<polymer-element name="at-core-form" attributes="schema data">
+    <template>
+        <div id="insertPoint" class="form-horizontal" role="form">
+            <div class="form-group">
+                <h3>This is at-core-form demo</h3>
+            </div>
+        </div>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer('at-core-form', {
+            schema: {
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for a product",
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "city": {
+                        "type": "string",
+                        //"required": true
+                    },
+                    "active": {
+                        "type": "boolean"
+                    }
+                },
+                "required": ["city"]
+            },
+            data: {
+                "id": 0,
+                "name": "test",
+                "city": "Boston",
+                "active": true
+            },
+            label: '',
+            ready: function () {
+                var properties = this.schema.properties;
+                for (property in properties) {
+                    var propertyDefinition = properties[property];
+
+                    var description = propertyDefinition.description;
+                    var type = propertyDefinition.type;
+                    var required = propertyDefinition.required || (this.schema.required && this.schema.required.indexOf(property) !== -1);
+                    var value = this.data[property];
+
+                    var paperElement = undefined;
+                    var divElem = document.createElement('div');
+                    divElem.classList.add('form-group');
+
+                    if (notNullUndefinedOrEmpty(type)) {
+                        switch (type) {
+                            case "string":
+                            case "number":
+                                // create paper-input
+                                paperElement = document.createElement('paper-input');
+                                paperElement.required = required;
+                                this.label = property;
+                                paperElement.bind('label', new PathObserver({ label: property }, 'label'));
+                                paperElement.bind('value', new PathObserver({ value: value.toString() }, 'value'));
+                                divElem.appendChild(paperElement);
+                                // d.bind('echo', this, 'foo');
+                                //d.bind('echo', new PathObserver(this, 'data.foo'));
+                                //this.shadowRoot.appendChild(paperElement);
+                                this.$.insertPoint.appendChild(divElem);
+                                break;
+                            case "boolean":
+                                // create paper-checkbox
+                                paperElement = document.createElement('paper-checkbox');
+                                paperElement.bind('label', new PathObserver({ label: property }, 'label'));
+                                paperElement.bind('checked', new PathObserver({ value: value }, 'value'));
+                                divElem.appendChild(paperElement);
+                                break;
+                        }
+                        this.$.insertPoint.appendChild(divElem);
+                    } else {
+                        console.log("Property " + property + " doens't have defined type. Skipping ...");
+                    }
+                    //debugger;
+                }
+            }
+        });
+
+        function notNullOrUndefined(param) {
+            return (param !== null) && (param !== undefined)
+        }
+
+        function notNullUndefinedOrEmpty(param) {
+            return notNullOrUndefined(param) && (param !== '');
+        }
+    </script>
+</polymer-element>
