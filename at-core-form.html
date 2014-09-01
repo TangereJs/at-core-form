@@ -5,8 +5,8 @@
 
 <polymer-element name="at-core-form" attributes="schema data">
     <template>
-        <div id="insertPoint" class="form-horizontal" role="form">
-            <div class="form-group">
+        <div id="insertPoint">
+            <div>
                 <h3>This is at-core-form demo</h3>
             </div>
         </div>
@@ -54,7 +54,6 @@
 
                     var paperElement = undefined;
                     var divElem = document.createElement('div');
-                    divElem.classList.add('form-group');
 
                     if (notNullUndefinedOrEmpty(type)) {
                         switch (type) {
@@ -67,9 +66,6 @@
                                 paperElement.bind('label', new PathObserver({ label: property }, 'label'));
                                 paperElement.bind('value', new PathObserver({ value: value.toString() }, 'value'));
                                 divElem.appendChild(paperElement);
-                                // d.bind('echo', this, 'foo');
-                                //d.bind('echo', new PathObserver(this, 'data.foo'));
-                                //this.shadowRoot.appendChild(paperElement);
                                 this.$.insertPoint.appendChild(divElem);
                                 break;
                             case "boolean":
@@ -84,7 +80,6 @@
                     } else {
                         console.log("Property " + property + " doens't have defined type. Skipping ...");
                     }
-                    //debugger;
                 }
             }
         });

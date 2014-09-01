@@ -5,15 +5,55 @@
     <meta name="viewport" content="width=device-width" />
     <title>At-Core-Form demo</title>
 
-    <link rel="stylesheet" href="bootstrap.min.css" />
-    <link rel="stylesheet" href="bootstrap-theme.min.css" />
+    <script src="../platform/platform.js"></script>
     <link rel="import" href="../polymer/polymer.html" />
     <link rel="import" href="at-core-form.html" />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Open Sans", Calibri, Candara, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 1.42857143;
+            color: #333;
+            background-color: #fff;
+        }
+
+        .row {
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .container {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                width: 750px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                width: 970px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                width: 1170px;
+            }
+        }
+    </style>
 </head>
 <body unresolved>
     <div class="container">
         <div class="row">
-            <div class="col-sm-12 col-md-12">
+            <div>
                 <at-core-form></at-core-form>
             </div>
         </div>
