@@ -15,32 +15,34 @@
 
     <script>
         Polymer('at-core-form', {
-            schema: {
-                "properties": {
-                    "id": {
-                        "description": "The unique identifier for a product",
-                        "type": "number"
-                    },
-                    "name": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "city": {
-                        "type": "string",
-                        //"required": true
-                    },
-                    "active": {
-                        "type": "boolean"
-                    }
-                },
-                "required": ["city"]
-            },
-            data: {
-                "id": 0,
-                "name": "test",
-                "city": "Boston",
-                "active": true
-            },
+            //schema: {
+            //    "properties": {
+            //        "id": {
+            //            "description": "The unique identifier for a product",
+            //            "type": "number"
+            //        },
+            //        "name": {
+            //            "type": "string",
+            //            "required": true
+            //        },
+            //        "city": {
+            //            "type": "string",
+            //            //"required": true
+            //        },
+            //        "active": {
+            //            "type": "boolean"
+            //        }
+            //    },
+            //    "required": ["city"]
+            //},
+            //data: {
+            //    "id": 0,
+            //    "name": "test",
+            //    "city": "Boston",
+            //    "active": true
+            //},
+            schema: {},
+            data: {},
             label: '',
             ready: function () {
                 var properties = this.schema.properties;
