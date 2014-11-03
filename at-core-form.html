@@ -4,94 +4,101 @@
 <link rel="import" href="../paper-checkbox/paper-checkbox.html" />
 
 <polymer-element name="at-core-form" attributes="schema data">
-    <template>
-        <div id="insertPoint">
-            <div>
-                <h3>This is at-core-form demo</h3>
-            </div>
-        </div>
-        <content></content>
-    </template>
+  <template>
+    <div id="insertPoint">
+      <div>
+        <h3>This is at-core-form demo</h3>
+      </div>
+    </div>
+    <content></content>
+  </template>
 
-    <script>
-        Polymer('at-core-form', {
-            //schema: {
-            //    "properties": {
-            //        "id": {
-            //            "description": "The unique identifier for a product",
-            //            "type": "number"
-            //        },
-            //        "name": {
-            //            "type": "string",
-            //            "required": true
-            //        },
-            //        "city": {
-            //            "type": "string",
-            //            //"required": true
-            //        },
-            //        "active": {
-            //            "type": "boolean"
-            //        }
-            //    },
-            //    "required": ["city"]
-            //},
-            //data: {
-            //    "id": 0,
-            //    "name": "test",
-            //    "city": "Boston",
-            //    "active": true
-            //},
-            schema: {},
-            data: {},
-            label: '',
-            ready: function () {
-                var properties = this.schema.properties;
-                for (property in properties) {
-                    var propertyDefinition = properties[property];
+  <script>
+    Polymer('at-core-form', {
+      publish: {
+        schema: {},
+        data: {},
+      },
+      ready: function () { },
+      schemaChanged: function (oldValue, newValue) {
+        this.schema = newValue;
+        var properties = this.schema.properties;
+        for (property in properties) {
+          var propertyDefinition = properties[property];
 
-                    var description = propertyDefinition.description;
-                    var type = propertyDefinition.type;
-                    var required = propertyDefinition.required || (this.schema.required && this.schema.required.indexOf(property) !== -1);
-                    var value = this.data[property];
+          var description = notNullOrUndefined(propertyDefinition.description) ? propertyDefinition.description : property;
+          var type = propertyDefinition.type;
+          var required = propertyDefinition.required || (this.schema.required && this.schema.required.indexOf(property) !== -1);
+          // get the default value and regular value
+          var defaultValue = propertyDefinition.default;
+          var value = this.data[property];
+          // if default value is not null or undefined and regular value is null or undefined
+          if (notNullOrUndefined(defaultValue) && !notNullOrUndefined(value)) {
+            // make the default value regular value 
+            this.data[property] = defaultValue;
+          }
 
-                    var paperElement = undefined;
-                    var divElem = document.createElement('div');
+          var paperElement = undefined;
+          var divElem = document.createElement('div');
 
-                    if (notNullUndefinedOrEmpty(type)) {
-                        switch (type) {
-                            case "string":
-                            case "number":
-                                // create paper-input
-                                paperElement = document.createElement('paper-input');
-                                paperElement.required = required;
-                                this.label = property;
-                                paperElement.bind('label', new PathObserver({ label: property }, 'label'));
-                                paperElement.bind('value', new PathObserver({ value: value.toString() }, 'value'));
-                                divElem.appendChild(paperElement);
-                                this.$.insertPoint.appendChild(divElem);
-                                break;
-                            case "boolean":
-                                // create paper-checkbox
-                                paperElement = document.createElement('paper-checkbox');
-                                paperElement.bind('label', new PathObserver({ label: property }, 'label'));
-                                paperElement.bind('checked', new PathObserver({ value: value }, 'value'));
-                                divElem.appendChild(paperElement);
-                                break;
-                        }
-                        this.$.insertPoint.appendChild(divElem);
-                    } else {
-                        console.log("Property " + property + " doens't have defined type. Skipping ...");
-                    }
+          if (notNullUndefinedOrEmpty(type)) {
+            switch (type) {
+              case "string":
+              case "number":
+                // create paper-input
+                paperElement = document.createElement('paper-input');
+                if (required) {
+                  var requiredAttr = document.createAttribute('required');
+                  paperElement.attributes.setNamedItem(requiredAttr);
+                  var errorAttr = document.createAttribute('error');
+                  errorAttr.value = 'This input requires a value!';
+                  paperElement.attributes.setNamedItem(errorAttr);
                 }
+
+                paperElement.id = property;
+                paperElement.name = property;
+                paperElement.bind('label', new PathObserver({ label: description }, 'label'));
+                paperElement.floatingLabel = true;
+                if (value != undefined) { // if value exists set it as default; if it doesn't do nothing
+                  paperElement.bind('value', new PathObserver({ value: value.toString() }, 'value'));
+                }
+                divElem.appendChild(paperElement);
+                this.$.insertPoint.appendChild(divElem);
+                break;
+              case "boolean":
+                // create paper-checkbox
+                paperElement = document.createElement('paper-checkbox');
+                paperElement.id = property;
+                paperElement.name = property;
+                paperElement.bind('label', new PathObserver({ label: description }, 'label'));
+                paperElement.bind('checked', new PathObserver({ value: value }, 'value'));
+                divElem.appendChild(paperElement);
+                break;
             }
-        });
-
-        function notNullOrUndefined(param) {
-            return (param !== null) && (param !== undefined)
+            this.$.insertPoint.appendChild(divElem);
+          } else {
+            console.log("Property " + property + " doens't have defined type. Skipping ...");
+          }
         }
-
-        function notNullUndefinedOrEmpty(param) {
-            return notNullOrUndefined(param) && (param !== '');
+      },
+      dataChanged: function (oldValue, newValue) {
+        this.data = newValue;
+        for (dataEntry in this.data) {
+          var element = this.shadowRoot.querySelector('*[id=\'' + dataEntry + '\']');
+          var value = this.data[dataEntry];
+          if (notNullOrUndefined(value)) {
+            element.bind('value', new PathObserver({ value: value.toString() }, 'value'));
+          }
         }
-    </script>
+      }
+    });
+
+    function notNullOrUndefined(param) {
+      return (param !== null) && (param !== undefined)
+    }
+
+    function notNullUndefinedOrEmpty(param) {
+      return notNullOrUndefined(param) && (param !== '');
+    }
+  </script>
 </polymer-element>
