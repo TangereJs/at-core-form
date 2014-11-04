@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>at-core-form</title>
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
 
-  <script src="../platform/platform.js"></script>
+  <script src="../webcomponentsjs/webcomponents.js"></script>
   <link rel="import" href="../polymer/polymer.html" />
   <link rel="import" href="at-core-form.html" />
 
@@ -63,6 +63,10 @@
   <div class="container">
     <div class="row">
       <div>
+        <!-- test fields for required, all failing right now  -->
+        <paper-input label="Type something" required error="This input requires a value!"></paper-input>
+        <paper-input label="Type something..." willvalidate required id="paper_input1" ></paper-input>
+        <paper-input label="Type something..." willvalidate validationmessage="Please fill out this field." required invalid id="paper_input" class="invalid"></paper-input>
         <at-core-form id="coreFormDemo"></at-core-form>
       </div>
     </div>
