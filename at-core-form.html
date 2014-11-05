@@ -34,7 +34,7 @@
           var value = this.data[property];
           // if default value is not null or undefined and regular value is null or undefined
           if (notNullOrUndefined(defaultValue) && !notNullOrUndefined(value)) {
-            // make the default value regular value 
+            // make the default value regular value
             this.data[property] = defaultValue;
           }
 
@@ -46,13 +46,17 @@
               case "string":
               case "number":
                 // create paper-input
-                paperElement = document.createElement('paper-input');
+                paperElement = document.createElement('paper-input-decorator');
+                var coreInput = document.createElement('input');
+                coreInput.setAttribute('is', 'core-input');
                 if (required) {
-                  var requiredAttr = document.createAttribute('required');
-                  paperElement.attributes.setNamedItem(requiredAttr);
-                  var errorAttr = document.createAttribute('error');
-                  errorAttr.value = 'This input requires a value!';
-                  paperElement.attributes.setNamedItem(errorAttr);
+                  coreInput.setAttribute('required', '');
+                  paperElement.setAttribute('error', 'This input requires a value!');
+                }
+                paperElement.appendChild(coreInput);
+
+                coreInput.oninput = function (e) {
+                  e.target.parentElement.isInvalid = !e.target.checkValidity();
                 }
 
                 paperElement.id = property;
@@ -60,7 +64,7 @@
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
                 paperElement.floatingLabel = true;
                 if (value != undefined) { // if value exists set it as default; if it doesn't do nothing
-                  paperElement.bind('value', new PathObserver({ value: value.toString() }, 'value'));
+                  coreInput.bind('value', new PathObserver({ value: value.toString() }, 'value'));
                 }
                 divElem.appendChild(paperElement);
                 this.$.insertPoint.appendChild(divElem);
