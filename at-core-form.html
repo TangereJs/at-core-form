@@ -53,6 +53,10 @@
                   coreInput.setAttribute('required', '');
                   paperElement.setAttribute('error', 'This input requires a value!');
                 }
+                if (type === "number") {
+                  coreInput.setAttribute('type', type);
+                  paperElement.setAttribute('error', 'Please enter a number!');
+                }
                 paperElement.appendChild(coreInput);
 
                 coreInput.oninput = function (e) {
