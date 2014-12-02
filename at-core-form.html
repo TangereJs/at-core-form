@@ -2,6 +2,7 @@
 
 <link rel="import" href="../paper-input/paper-input.html" />
 <link rel="import" href="../paper-checkbox/paper-checkbox.html" />
+<link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 
 <polymer-element name="at-core-form" attributes="schema data">
   <template>
@@ -71,7 +72,7 @@
                   coreInput.bind('value', new PathObserver({ value: value.toString() }, 'value'));
                 }
                 divElem.appendChild(paperElement);
-                this.$.insertPoint.appendChild(divElem);
+                //this.$.insertPoint.appendChild(divElem);
                 break;
               case "boolean":
                 // create paper-checkbox
@@ -80,6 +81,15 @@
                 paperElement.name = property;
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
                 paperElement.bind('checked', new PathObserver({ value: value }, 'value'));
+                divElem.appendChild(paperElement);
+                break;
+              case "enum":
+                paperElement = document.createElement('at-form-lookup');
+                paperElement.id = property;
+                paperElement.name = property;
+                paperElement.value = defaultValue;
+                paperElement.available = propertyDefinition['available'];
+                paperElement.setAttribute('usedropdown', true);
                 divElem.appendChild(paperElement);
                 break;
             }

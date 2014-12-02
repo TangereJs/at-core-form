@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>at-core-form</title>
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
 
@@ -81,7 +80,8 @@
             'name': { 'type': 'string', 'required': true },
             'city': { 'type': 'string', 'default': 'Default city name' },
             'active': { 'type': 'boolean' },
-            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' }
+            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
+            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'available':'XML,JSON', 'default': 'XML' }
           },
         'required': ['id', 'city']
       };
