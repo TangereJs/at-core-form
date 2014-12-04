@@ -21,8 +21,15 @@
         data: {},
       },
       ready: function () { },
+      clear: function () {
+        var myNode = this.$.insertPoint;
+        while (myNode.firstChild) {
+          myNode.removeChild(myNode.firstChild);
+        }
+      },
       schemaChanged: function (oldValue, newValue) {
         this.schema = newValue;
+        this.clear();
         var properties = this.schema.properties;
         for (property in properties) {
           var propertyDefinition = properties[property];

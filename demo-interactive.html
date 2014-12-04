@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>At-Core-Form demo</title>
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css" />
+  <!--<script src="bootstrap/js/bootstrap.min.js" ></script>-->
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <!--<link rel="import" href="../polymer/polymer.html" />-->
+  <link rel="import" href="../code-mirror/code-mirror.html" />
+  <link rel="import" href="at-core-form.html" />
+
+  <style shim-shadowdom>
+    body {
+      margin: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    code-mirror {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+</head>
+<body unresolved>
+  <div class="container-fluid" style="height: 75%">
+    <div class="row" style="height: 100%">
+      <div class="col-xs-12 col-sm-12 col-md-4 " style="height: 75%">
+        <h2>Form Schema (JSON)</h2>
+        <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
+        <code-mirror id="formSchema" mode="javascript">
+{
+  "properties":
+  {
+    "id": { "description": "The unique identifier for a product", "type": "number" },
+    "name": { "type": "string", "required": "true" },
+    "city": { "type": "string", "default": "Default city name" },
+    "active": { "type": "boolean" },
+    "activePera": { "type": "boolean", "description": "This is description for pera" },
+    "dropdownDemo": { "title": "Name", "type": "enum", "available":"XML,JSON", "default": "XML" }
+  },
+  "required": ["id", "city"]
+}
+        </code-mirror>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-4" style="height: 75%">
+        <h2>Form Data (JSON)</h2>
+        <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
+        <code-mirror id="formData" mode="javascript">
+{ 
+  "id": "0", 
+  "city": "Boston", 
+  "active": "true", 
+  "activePera": "false" 
+}
+        </code-mirror>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-4" style="height: 75%">
+        <h2>Generated form</h2>
+        <at-core-form id="coreForm"></at-core-form>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+
+      window.addEventListener('polymer-ready', function (e) {
+        var coreForm = document.getElementById('coreForm');
+
+        var formSchema = document.getElementById('formSchema');
+        formSchema.mirror.on('change', function () {
+          console.log("form schema changed");
+          try {
+            coreForm.schema = JSON.parse(formSchema.mirror.getValue());
+          } catch (e) {
+
+          }
+          
+        });
+        //autoFormat(formSchema.mirror);
+
+        var formData = document.getElementById('formData');
+        formData.mirror.on('change', function () {
+          console.log("form schema changed");
+          try {
+            coreForm.data = JSON.parse(formData.mirror.getValue());
+          } catch (e) {
+
+          }
+          
+        });
+        //autoFormat(formData.mirror);
+
+        var demoForm = document.getElementById("coreFormDemo");
+        try {
+          coreForm.schema = JSON.parse(formSchema.mirror.getValue());
+          coreForm.data = JSON.parse(formData.mirror.getValue());
+        } catch (e) {
+
+        }
+      });
+
+
+      function autoFormat(editor) {
+        // this doesn't work because polymer code mirror doesn't support code formatting :'(
+        //var totalLines = editor.lineCount();
+        //var totalChars = editor.getValue().length;
+        //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines, ch: totalChars });
+      }
+    })();
+  </script>
+</body>
+</html>
