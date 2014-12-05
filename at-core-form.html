@@ -20,6 +20,7 @@
         schema: {},
         data: {},
       },
+      dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
       ready: function () { },
       clear: function () {
         var myNode = this.$.insertPoint;
@@ -28,6 +29,8 @@
         }
       },
       schemaChanged: function (oldValue, newValue) {
+        var self = this;
+
         this.schema = newValue;
         this.clear();
         var properties = this.schema.properties;
@@ -44,6 +47,10 @@
           if (notNullOrUndefined(defaultValue) && !notNullOrUndefined(value)) {
             // make the default value regular value
             this.data[property] = defaultValue;
+          }
+
+          if (this.dataBindingObject[property] === undefined) {
+            this.dataBindingObject[property] = "";
           }
 
           var paperElement = undefined;
@@ -75,11 +82,12 @@
                 paperElement.name = property;
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
                 paperElement.floatingLabel = true;
-                if (value != undefined) { // if value exists set it as default; if it doesn't do nothing
-                  coreInput.bind('value', new PathObserver({ value: value.toString() }, 'value'));
-                }
+
+                coreInput.bind('value', new PathObserver(this.dataBindingObject, property));
                 divElem.appendChild(paperElement);
-                //this.$.insertPoint.appendChild(divElem);
+                paperElement.addEventListener('change', function (e) {
+                  self.fire('data-changed', self.dataBindingObject);
+                });
                 break;
               case "boolean":
                 // create paper-checkbox
@@ -87,8 +95,11 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
-                paperElement.bind('checked', new PathObserver({ value: value }, 'value'));
+                paperElement.bind('checked', new PathObserver(this.dataBindingObject, property));
                 divElem.appendChild(paperElement);
+                paperElement.addEventListener('core-change', function (e) {
+                  self.fire('data-changed', self.dataBindingObject);
+                });
                 break;
               case "enum":
                 paperElement = document.createElement('at-form-lookup');
@@ -107,13 +118,8 @@
         }
       },
       dataChanged: function (oldValue, newValue) {
-        this.data = newValue;
-        for (dataEntry in this.data) {
-          var element = this.shadowRoot.querySelector('*[id=\'' + dataEntry + '\']');
-          var value = this.data[dataEntry];
-          if (notNullOrUndefined(value)) {
-            element.bind('value', new PathObserver({ value: value.toString() }, 'value'));
-          }
+        for (entry in newValue) {
+          this.dataBindingObject[entry] = newValue[entry];
         }
       }
     });
