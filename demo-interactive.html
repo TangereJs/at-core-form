@@ -81,7 +81,7 @@
 
         var formSchema = document.getElementById('formSchema');
         formSchema.mirror.on('change', function () {
-          console.log("form schema changed");
+          //console.log("form schema changed");
           try {
             coreForm.schema = JSON.parse(formSchema.mirror.getValue());
           } catch (e) {
@@ -93,7 +93,7 @@
 
         var formData = document.getElementById('formData');
         formData.mirror.on('change', function () {
-          console.log("form data changed");
+          //console.log("form data changed");
           try {
             coreForm.data = JSON.parse(formData.mirror.getValue());
           } catch (e) {

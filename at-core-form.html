@@ -109,6 +109,10 @@
                 paperElement.available = propertyDefinition['available'];
                 paperElement.setAttribute('usedropdown', true);
                 divElem.appendChild(paperElement);
+                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
+                paperElement.addEventListener('change', function (e) {
+                  self.fire('data-changed', self.dataBindingObject);
+                });
                 break;
             }
             this.$.insertPoint.appendChild(divElem);
