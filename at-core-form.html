@@ -19,6 +19,7 @@
       publish: {
         schema: {},
         data: {},
+        valid: true
       },
       dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
       ready: function () { },
@@ -65,7 +66,7 @@
                 var coreInput = document.createElement('input');
                 coreInput.setAttribute('is', 'core-input');
                 if (required) {
-                  coreInput.setAttribute('required', '');
+                  coreInput.setAttribute('required', true);
                   paperElement.setAttribute('error', 'This input requires a value!');
                 }
                 if (type === "number") {
@@ -74,9 +75,11 @@
                 }
                 paperElement.appendChild(coreInput);
 
-                coreInput.oninput = function (e) {
-                  e.target.parentElement.isInvalid = !e.target.checkValidity();
-                }
+                coreInput.addEventListener('change', function (e) {
+                  var isValid = e.target.checkValidity();
+                  e.target.parentElement.isInvalid = !isValid;
+                  self.valid = self.valid && isValid;
+                });
 
                 paperElement.id = property;
                 paperElement.name = property;
@@ -112,6 +115,10 @@
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
                   self.fire('data-changed', self.dataBindingObject);
+                });
+                paperElement.addEventListener('change', function (e) {
+                  var isValid = e.target.checkValidity();
+                  self.valid = self.valid && isValid;
                 });
                 break;
             }

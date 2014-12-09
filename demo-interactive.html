@@ -53,6 +53,11 @@
     <div class="h100w100" flex>
       <div vertical layout class="h100w100">
         <h2>Form Data (JSON)</h2>
+        <div>
+          <label>Form is currently: </label>
+          <span id="formValid">valid</span>
+          <span id="formInvalid" hidden>invalid</span>
+        </div>
         <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
         <code-mirror id="formData" mode="javascript" flex>
           {
@@ -110,11 +115,35 @@
             dataString = dataString.replace(/,/g, ",\n");
             formData.value = dataString;
           });
+
+          updateFormValidGui(coreForm.valid);
         } catch (e) {
 
         }
+
+        var validObject = { valid: true };
+        var pathObserver = new PathObserver(validObject, 'valid');
+        coreForm.bind('valid', pathObserver);
+
+        var anotherPathObserver = new PathObserver(validObject, 'valid');
+        anotherPathObserver.open(function (newValue, oldValue) {
+          updateFormValidGui(newValue);
+        });
       });
 
+      var formValidSpan = document.getElementById("formValid");
+      var formInvalidSpan = document.getElementById("formInvalid");
+
+      function updateFormValidGui(valid)
+      {
+        if (valid) {
+          formValidSpan.removeAttribute('hidden');
+          formInvalidSpan.setAttribute('hidden', true);
+        } else {
+          formValidSpan.setAttribute('hidden', true);
+          formInvalidSpan.removeAttribute('hidden');
+        }
+      }
 
       function autoFormat(editor) {
         // this doesn't work because polymer code mirror doesn't support code formatting :'(
