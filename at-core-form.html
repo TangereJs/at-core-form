@@ -114,12 +114,31 @@
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
+                  var isValid = e.target.checkValidity();
+                  self.valid = self.valid && isValid;
+
                   self.fire('data-changed', self.dataBindingObject);
                 });
+                break;
+              case "lookup":
+                paperElement = document.createElement('at-form-lookup');
+                paperElement.id = property;
+                paperElement.name = property;
+                //paperElement.value = defaultValue;
+                paperElement.url = propertyDefinition['url'];
+                paperElement.setAttribute('usedropdown', true);
+                if (propertyDefinition['withCredentials'] !== undefined) {
+                  paperElement.setAttribute('withCredentials', true);
+                }
+                divElem.appendChild(paperElement);
+                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
                   var isValid = e.target.checkValidity();
                   self.valid = self.valid && isValid;
+
+                  self.fire('data-changed', self.dataBindingObject);
                 });
+                break;
                 break;
             }
             this.$.insertPoint.appendChild(divElem);

@@ -43,7 +43,8 @@
           "city": { "type": "string", "default": "Default city name" },
           "active": { "type": "boolean" },
           "activePera": { "type": "boolean", "description": "This is description for pera" },
-          "dropdownDemo": { "title": "Name", "type": "enum", "available":"XML,JSON", "default": "XML" }
+          "dropdownDemo": { "title": "Name", "type": "enum", "available":"XML,JSON", "default": "XML" },
+          "card": { "title": "Card", "type": "lookup", "url": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/", "withCredentials": "true" }
           },
           "required": ["id", "city"]
           }
