@@ -133,8 +133,8 @@
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
-                  var isValid = e.target.checkValidity();
-                  self.valid = self.valid && isValid;
+                  //var isValid = e.target.checkValidity();
+                  //self.valid = self.valid && isValid;
 
                   self.fire('data-changed', self.dataBindingObject);
                 });
