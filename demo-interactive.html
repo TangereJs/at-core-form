@@ -90,6 +90,7 @@
           //console.log("form schema changed");
           try {
             coreForm.schema = JSON.parse(formSchema.mirror.getValue());
+            coreForm.updateValidState();
           } catch (e) {
 
           }
@@ -102,6 +103,7 @@
           //console.log("form data changed");
           try {
             coreForm.data = JSON.parse(formData.mirror.getValue());
+            coreForm.updateValidState();
           } catch (e) {
 
           }

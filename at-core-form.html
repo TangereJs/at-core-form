@@ -29,6 +29,7 @@
           myNode.removeChild(myNode.firstChild);
         }
       },
+      elementsToValidate: [],
       schemaChanged: function (oldValue, newValue) {
         var self = this;
 
@@ -43,10 +44,10 @@
           var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
           // handle the input mode functionality
           var inputMode = 'optional';
-          if (propertyDefinition.inputmode === undefined && required === true ){
+          if (propertyDefinition.inputmode === undefined && required === true) {
             inputMode = 'required';
           } else {
-            inputMode = propertyDefinition.inputmode !== undefined && propertyDefinition.inputmode !== ''? propertyDefinition.inputmode : inputMode;
+            inputMode = propertyDefinition.inputmode !== undefined && propertyDefinition.inputmode !== '' ? propertyDefinition.inputmode : inputMode;
           }
 
           // get the default value and regular value
@@ -78,6 +79,7 @@
                   coreInput.setAttribute('required', true);
                   paperElement.setAttribute('error', 'This input requires a value!');
                 } else {
+                  paperElement.setAttribute(inputMode, true);
                   coreInput.setAttribute(inputMode, true);
                 }
 
@@ -88,9 +90,7 @@
                 paperElement.appendChild(coreInput);
 
                 coreInput.addEventListener('change', function (e) {
-                  var isValid = e.target.checkValidity();
-                  e.target.parentElement.isInvalid = !isValid;
-                  self.valid = self.valid && isValid;
+                  self.updateValidState();
                 });
 
                 paperElement.id = property;
@@ -103,6 +103,7 @@
                 paperElement.addEventListener('change', function (e) {
                   self.fire('data-changed', self.dataBindingObject);
                 });
+                this.elementsToValidate.push(coreInput);
                 break;
               case "boolean":
                 // create paper-checkbox
@@ -126,11 +127,13 @@
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
-                  var isValid = e.target.checkValidity();
-                  self.valid = self.valid && isValid;
+                  //var isValid = e.target.checkValidity();
+                  //self.valid = self.valid && isValid;
 
                   self.fire('data-changed', self.dataBindingObject);
                 });
+
+                this.elementsToValidate.push(paperElement);
                 break;
               case "lookup":
                 paperElement = document.createElement('at-form-lookup');
@@ -151,7 +154,6 @@
                   self.fire('data-changed', self.dataBindingObject);
                 });
                 break;
-                break;
             }
             this.$.insertPoint.appendChild(divElem);
           } else {
@@ -163,6 +165,24 @@
         for (entry in newValue) {
           this.dataBindingObject[entry] = newValue[entry];
         }
+      },
+      updateValidState: function () {
+        var closureThis = this;
+        setTimeout(function () {
+          closureThis.valid = true;
+          for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
+            var element = closureThis.elementsToValidate[i];
+            if (element.checkValidity !== undefined) {
+              var isValid = element.checkValidity();
+              element.parentElement.isInvalid = !isValid;
+              closureThis.valid = closureThis.valid && isValid;
+              //debugger;
+            }
+            //var changedEvent = document.createEvent('Event');
+            //changedEvent.initEvent('change');
+            //element.dispatchEvent(changedEvent);
+          }
+        }, 100);
       }
     });
 
