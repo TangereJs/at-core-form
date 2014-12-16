@@ -32,6 +32,7 @@
       elementsToValidate: [],
       schemaChanged: function (oldValue, newValue) {
         var self = this;
+        self.elementsToValidate = [];
 
         this.schema = newValue;
         this.clear();
@@ -78,6 +79,7 @@
                 if (inputMode === 'required') {
                   coreInput.setAttribute('required', true);
                   paperElement.setAttribute('error', 'This input requires a value!');
+                  this.elementsToValidate.push(coreInput);
                 } else {
                   paperElement.setAttribute(inputMode, true);
                   coreInput.setAttribute(inputMode, true);
@@ -102,8 +104,7 @@
                 divElem.appendChild(paperElement);
                 paperElement.addEventListener('change', function (e) {
                   self.fire('data-changed', self.dataBindingObject);
-                });
-                this.elementsToValidate.push(coreInput);
+                });                
                 break;
               case "boolean":
                 // create paper-checkbox
@@ -170,13 +171,14 @@
         var closureThis = this;
         setTimeout(function () {
           closureThis.valid = true;
+          console.clear();
           for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
             var element = closureThis.elementsToValidate[i];
             if (element.checkValidity !== undefined) {
               var isValid = element.checkValidity();
               element.parentElement.isInvalid = !isValid;
               closureThis.valid = closureThis.valid && isValid;
-              //debugger;
+              console.log("Element " + element.name + " is " + isValid);
             }
             //var changedEvent = document.createEvent('Event');
             //changedEvent.initEvent('change');
