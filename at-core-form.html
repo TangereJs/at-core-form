@@ -42,13 +42,16 @@
 
           var description = notNullOrUndefined(propertyDefinition.description) ? propertyDefinition.description : property;
           var type = propertyDefinition.type;
+          if (type === "string" && propertyDefinition.xtype !== undefined) {
+            type = propertyDefinition.xtype;
+          }
           var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
           // handle the input mode functionality
           var inputMode = 'optional';
-          if (propertyDefinition.inputmode === undefined && required === true) {
+          if (propertyDefinition.xinputmode === undefined && required === true) {
             inputMode = 'required';
           } else {
-            inputMode = propertyDefinition.inputmode !== undefined && propertyDefinition.inputmode !== '' ? propertyDefinition.inputmode : inputMode;
+            inputMode = propertyDefinition.xinputmode !== undefined && propertyDefinition.xinputmode !== '' ? propertyDefinition.xinputmode : inputMode;
           }
 
           // get the default value and regular value
@@ -123,7 +126,7 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.value = defaultValue;
-                paperElement.available = propertyDefinition['available'];
+                paperElement.available = propertyDefinition['xvaluelist'];
                 paperElement.setAttribute('usedropdown', true);
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
@@ -141,7 +144,7 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 //paperElement.value = defaultValue;
-                paperElement.url = propertyDefinition['url'];
+                paperElement.xurl = propertyDefinition['url'];
                 paperElement.setAttribute('usedropdown', true);
                 if (propertyDefinition['withCredentials'] !== undefined) {
                   paperElement.setAttribute('withCredentials', true);

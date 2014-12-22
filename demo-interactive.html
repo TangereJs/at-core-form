@@ -39,12 +39,12 @@
           "properties":
           {
           "id": { "description": "The unique identifier for a product", "type": "number" },
-          "name": { "type": "string", "required": "true", "inputmode": "required" },
+          "name": { "type": "string", "required": "true", "xinputmode": "required" },
           "city": { "type": "string", "default": "Default city name" },
           "active": { "type": "boolean" },
           "activePera": { "type": "boolean", "description": "This is description for pera" },
-          "dropdownDemo": { "title": "Name", "type": "enum", "available":"XML,JSON", "default": "XML" },
-          "card": { "title": "Card", "type": "lookup", "url": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/", "withCredentials": "true" }
+          "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
+          "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/", "withCredentials": "true" }
           },
           "required": ["id", "city"]
           }
