@@ -42,7 +42,7 @@
 
           var description = notNullOrUndefined(propertyDefinition.description) ? propertyDefinition.description : property;
           var type = propertyDefinition.type;
-          if (type === "string" && propertyDefinition.xtype !== undefined) {
+          if (type === "string" && propertyDefinition.xtype !== undefined && propertyDefinition.xtype !== null && propertyDefinition.xtype !== "") {
             type = propertyDefinition.xtype;
           }
           var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
@@ -109,6 +109,7 @@
                   self.fire('data-changed', self.dataBindingObject);
                 });                
                 break;
+              case "bool":
               case "boolean":
                 // create paper-checkbox
                 paperElement = document.createElement('paper-checkbox');
