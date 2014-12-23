@@ -144,7 +144,11 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 //paperElement.value = defaultValue;
-                paperElement.xurl = propertyDefinition['url'];
+                paperElement.url = propertyDefinition['xurl'];
+                if (paperElement.url !== undefined) {
+                  paperElement.setAttribute('preload', true);
+                  paperElement.setAttribute('params', '{"query":""}');
+                }
                 paperElement.setAttribute('usedropdown', true);
                 if (propertyDefinition['withCredentials'] !== undefined) {
                   paperElement.setAttribute('withCredentials', true);
