@@ -127,6 +127,7 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.value = defaultValue;
+                paperElement.label = description;
                 paperElement.available = propertyDefinition['xvaluelist'];
                 paperElement.setAttribute('usedropdown', true);
                 divElem.appendChild(paperElement);
@@ -144,7 +145,7 @@
                 paperElement = document.createElement('at-form-lookup');
                 paperElement.id = property;
                 paperElement.name = property;
-                //paperElement.value = defaultValue;
+                paperElement.label = description;
                 paperElement.url = propertyDefinition['xurl'];
                 if (paperElement.url !== undefined) {
                   paperElement.setAttribute('preload', true);
