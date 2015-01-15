@@ -125,20 +125,17 @@
               case "enum":
                 paperElement = document.createElement('at-form-lookup');
                 paperElement.id = property;
-                paperElement.name = property;
-                paperElement.value = defaultValue;
+                paperElement.name = property;                
                 paperElement.label = description;
+                paperElement.value = defaultValue;
                 paperElement.available = propertyDefinition['xvaluelist'];
                 paperElement.setAttribute('usedropdown', true);
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
-                  //var isValid = e.target.checkValidity();
-                  //self.valid = self.valid && isValid;
-
                   self.fire('data-changed', self.dataBindingObject);
                 });
-
+                this.dataBindingObject[property] = defaultValue;
                 this.elementsToValidate.push(paperElement);
                 break;
               case "lookup":
