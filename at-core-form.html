@@ -107,7 +107,7 @@
                 divElem.appendChild(paperElement);
                 paperElement.addEventListener('change', function (e) {
                   self.fire('data-changed', self.dataBindingObject);
-                });                
+                });
                 break;
               case "bool":
               case "boolean":
@@ -151,7 +151,7 @@
                   //paperElement.setAttribute('preload', true);
                   paperElement.setAttribute('params', '{"query":""}');
                 }
-                paperElement.setAttribute('usedropdown', true);
+                //paperElement.setAttribute('usedropdown', true);
                 if (propertyDefinition['withCredentials'] !== undefined) {
                   paperElement.setAttribute('withCredentials', true);
                 }
@@ -170,6 +170,20 @@
             console.log("Property " + property + " doens't have defined type. Skipping ...");
           }
         }
+
+        // copy all values from data property to dataBindingObject property
+        copyPropertyValues(this.dataBindingObject, this.data);
+
+        // create object observer on dataBindingObject
+        // when dataBindingObject is updated we update data property
+        // this enables data property to be used outside the component for getting the data values
+        var dbObjObserver = new ObjectObserver(this.dataBindingObject);
+        var _self = this;
+        dbObjObserver.open(function (added, removed, changed, getOldValueFn) {
+          Object.keys(changed).forEach(function (property) {
+            _self.data = _self.dataBindingObject;
+          });
+        });
       },
       dataChanged: function (oldValue, newValue) {
         for (entry in newValue) {
@@ -204,5 +218,18 @@
     function notNullUndefinedOrEmpty(param) {
       return notNullOrUndefined(param) && (param !== '');
     }
+
+    function isObject(obj) {
+      return Object.prototype.toString.call(obj) === Object.prototype.toString.call({});
+    }
+
+    function copyPropertyValues(from, to) {
+      if (isObject(from) && isObject(to)) {
+        for (property in from) {
+          to[property] = from[property];
+        }
+      }
+    }
+
   </script>
 </polymer-element>
