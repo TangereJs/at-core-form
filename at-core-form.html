@@ -19,7 +19,8 @@
       publish: {
         schema: {},
         data: {},
-        valid: true
+        valid: true,
+        disabled: false
       },
       dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
       ready: function () { },
@@ -67,6 +68,10 @@
             this.dataBindingObject[property] = "";
           }
 
+          var disabledValue = propertyDefinition.disabled !== undefined ? propertyDefinition.disabled : false;
+          if (disabledValue === "true") { disabledValue = true; }
+          if (disabledValue === "false") { disabledValue = false; }
+
           var paperElement = undefined;
           var divElem = document.createElement('div');
 
@@ -100,8 +105,13 @@
 
                 paperElement.id = property;
                 paperElement.name = property;
+                paperElement.classList.add(property);
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
                 paperElement.floatingLabel = true;
+                paperElement.setAttribute('disabled', disabledValue);
+                if (disabledValue === true) {
+                  coreInput.setAttribute('disabled', disabledValue);
+                }
 
                 coreInput.bind('value', new PathObserver(this.dataBindingObject, property));
                 divElem.appendChild(paperElement);
@@ -115,6 +125,8 @@
                 paperElement = document.createElement('paper-checkbox');
                 paperElement.id = property;
                 paperElement.name = property;
+                paperElement.classList.add(property);
+                paperElement.setAttribute('disabled', disabledValue);
                 paperElement.bind('label', new PathObserver({ label: description }, 'label'));
                 paperElement.bind('checked', new PathObserver(this.dataBindingObject, property));
                 divElem.appendChild(paperElement);
@@ -125,7 +137,9 @@
               case "enum":
                 paperElement = document.createElement('at-form-lookup');
                 paperElement.id = property;
-                paperElement.name = property;                
+                paperElement.name = property;
+                paperElement.classList.add(property);
+                paperElement.setAttribute('disabled', disabledValue);
                 paperElement.label = description;
                 paperElement.value = defaultValue;
                 paperElement.available = propertyDefinition['xvaluelist'];
@@ -142,7 +156,9 @@
                 paperElement = document.createElement('at-form-lookup');
                 paperElement.id = property;
                 paperElement.name = property;
+                paperElement.classList.add(property);
                 paperElement.label = description;
+                paperElement.setAttribute('disabled', disabledValue);
                 paperElement.url = propertyDefinition['xurl'];
                 if (paperElement.url !== undefined) {
                   //paperElement.setAttribute('preload', true);
@@ -200,11 +216,29 @@
               closureThis.valid = closureThis.valid && isValid;
               console.log("Element " + element.name + " is " + isValid);
             }
-            //var changedEvent = document.createEvent('Event');
-            //changedEvent.initEvent('change');
-            //element.dispatchEvent(changedEvent);
           }
         }, 100);
+      },
+      disabledChanged: function () {
+        for (property in this.schema.properties) {
+          var element = this.$.insertPoint.querySelector('.' + property);
+          var disabledValue = this.disabled;
+          if (this.disabled === false) {
+            var elemDisabledValue = this.schema.properties[element.id].disabled;
+            if (elemDisabledValue !== undefined && (elemDisabledValue === "true" || elemDisabledValue === true)) {
+              disabledValue = true;
+            }
+          }
+          element.setAttribute('disabled', disabledValue);
+          var childInput = element.querySelector('input');
+          if (notNullOrUndefined(childInput)) {
+            if (disabledValue === false) {
+              childInput.removeAttribute('disabled');
+            } else {
+              childInput.setAttribute('disabled', true);
+            }
+          } 
+        }
       }
     });
 
