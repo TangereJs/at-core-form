@@ -74,6 +74,8 @@
   <script>
     window.addEventListener('polymer-ready', function (e) {
       var demoForm1 = document.getElementById("coreFormDemo1");
+      var demoForm2 = document.getElementById("coreFormDemo2");
+
       demoForm1.schema = {
         'properties':
           {
@@ -82,13 +84,12 @@
             'city': { 'type': 'string', 'default': 'Default city name' },
             'active': { 'type': 'boolean' },
             'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'available':'XML,JSON', 'default': 'XML' }
+            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'xvaluelist':'XML,JSON', 'default': 'XML' }
           },
         'required': ['id', 'city']
       };
       demoForm1.data = { 'id': 0, 'city': 'Boston', 'active': true, 'activePera': false };
-
-      var demoForm2 = document.getElementById("coreFormDemo2");
+            
       demoForm2.schema = {
         'properties':
           {
@@ -97,7 +98,7 @@
             'city': { 'type': 'string', 'default': 'Default city name' },
             'active': { 'type': 'boolean' },
             'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'available': 'XML,JSON', 'default': 'XML' }
+            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'xvaluelist': 'XML,JSON', 'default': 'XML' }
           },
         'required': ['id', 'city']
       };

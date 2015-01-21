@@ -24,60 +24,68 @@
       height: 100%;
       width: 100%;
     }
+
+    .h50w100 {
+      height: 50%;
+      width: 100%;
+    }
   </style>
 
 </head>
 <body unresolved>
-  <div class="h100w100" horizontal layout>
-
-    <div class="h100w100" flex>
-      <div vertical layout class="h100w100">
-        <h2>Form Schema (JSON)</h2>
-        <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
-        <code-mirror id="formSchema" mode="javascript" flex>
-          {
-          "properties":
-          {
-          "id": { "description": "The unique identifier for a product", "type": "number" },
-          "name": { "type": "string", "required": "true", "xinputmode": "required" },
-          "city": { "type": "string", "default": "Default city name" },
-          "active": { "type": "boolean" },
-          "activePera": { "type": "boolean", "description": "This is description for pera" },
-          "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
-          "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"}
-          },
-          "required": ["id", "city"]
-          }
-        </code-mirror>
+  <div class="h100w100" vertical layout>
+    <div class="h50w100" horizontal layout>
+      <div class="h100w100" flex>
+        <div vertical layout class="h100w100">
+          <h2>Form Schema (JSON)</h2>
+          <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
+          <code-mirror id="formSchema" mode="javascript" flex>
+            {
+            "properties":
+            {
+            "id": {
+            "description": "The unique identifier for a product", "type": "number"},
+            "name": { "type": "string", "required": "true", "xinputmode": "required" },
+            "city": { "type": "string", "default": "Default city name" },
+            "active": { "type": "boolean" },
+            "activePera": { "type": "boolean", "description": "This is description for pera" },
+            "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
+            "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"}
+            },
+            "required": ["id", "city"]
+            }
+          </code-mirror>
+        </div>
+      </div>
+      <div class="h100w100" flex>
+        <div vertical layout class="h100w100">
+          <h2>Form Data (JSON)</h2>
+          <div>
+            <label>Form is currently: </label>
+            <span id="formValid">valid</span>
+            <span id="formInvalid" hidden>invalid</span>
+          </div>
+          <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
+          <code-mirror id="formData" mode="javascript" flex>
+            {
+            "id": "5",
+            "city": "Boston",
+            "active": true,
+            "activePera": false
+            }
+          </code-mirror>
+        </div>
       </div>
     </div>
-    <div class="h100w100" flex>
-      <div vertical layout class="h100w100">
-        <h2>Form Data (JSON)</h2>
-        <div>
-          <label>Form is currently: </label>
-          <span id="formValid">valid</span>
-          <span id="formInvalid" hidden>invalid</span>
-        </div>
-        <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
-        <code-mirror id="formData" mode="javascript" flex>
-          {
-          "id": "5",
-          "city": "Boston",
-          "active": true,
-          "activePera": false
-          }
-        </code-mirror>
-      </div>
-      </div>
     <div class="h100w100" flex>
       <div vertical layout class="h100w100">
         <h2>Generated form</h2>
         <at-core-form id="coreForm" flex>
         </at-core-form>
       </div>
-      </div>
+    </div>
   </div>
+
 
   <script>
     (function () {
@@ -111,8 +119,10 @@
         //autoFormat(formData.mirror);
 
         try {
-          coreForm.schema = JSON.parse(formSchema.mirror.getValue());
-          coreForm.data = JSON.parse(formData.mirror.getValue());
+          var schema = JSON.parse(formSchema.mirror.getValue());
+          coreForm.schema = schema;
+          var data = JSON.parse(formData.mirror.getValue());
+          coreForm.data = data;
           coreForm.addEventListener('data-changed', function (e) {
             var dataString = JSON.stringify(e.detail);
             dataString = dataString.replace(/,/g, ",\n");
@@ -137,8 +147,7 @@
       var formValidSpan = document.getElementById("formValid");
       var formInvalidSpan = document.getElementById("formInvalid");
 
-      function updateFormValidGui(valid)
-      {
+      function updateFormValidGui(valid) {
         if (valid) {
           formValidSpan.removeAttribute('hidden');
           formInvalidSpan.setAttribute('hidden', true);
