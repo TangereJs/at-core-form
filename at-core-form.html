@@ -218,7 +218,7 @@
         }, 100);
       },
       disabledChanged: function () {
-        for (property in this.schema.properties) {
+        for (var property in this.schema.properties) {
           var element = this.$.insertPoint.querySelector('.' + property);
           var disabledValue = this.disabled;
           if (this.disabled === false) {
