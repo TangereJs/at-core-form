@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-input/paper-input.html" />
 <link rel="import" href="../paper-checkbox/paper-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
+<link rel="import" href="../at-form-toggle/at-form-toggle.html" />
 
 <polymer-element name="at-core-form" attributes="schema data">
   <template>
@@ -125,7 +126,12 @@
               case "bool":
               case "boolean":
                 // create paper-checkbox
-                paperElement = document.createElement('paper-checkbox');
+                if (propertyDefinition['xtype'] === 'toggle') {
+                  paperElement = document.createElement('at-form-toggle');
+                } else {
+                  paperElement = document.createElement('paper-checkbox');
+                }
+                
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.classList.add(property);
@@ -133,7 +139,7 @@
                   paperElement.setAttribute('disabled', disabledValue);
                 }
                 paperElement.label = description;
-                paperElement.bind('checked', new PathObserver(this.dataBindingObject, property));
+                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 divElem.appendChild(paperElement);
                 paperElement.addEventListener('core-change', function (e) {
                   self.fireDataChangedEvent(e);
