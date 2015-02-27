@@ -1,7 +1,7 @@
 ﻿
 
 <link rel="import" href="../paper-input/paper-input.html" />
-<link rel="import" href="../paper-checkbox/paper-checkbox.html" />
+<link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 <link rel="import" href="../at-form-toggle/at-form-toggle.html" />
 
@@ -129,7 +129,7 @@
                 if (propertyDefinition['xtype'] === 'toggle') {
                   paperElement = document.createElement('at-form-toggle');
                 } else {
-                  paperElement = document.createElement('paper-checkbox');
+                  paperElement = document.createElement('at-form-checkbox');
                 }
                 
                 paperElement.id = property;
