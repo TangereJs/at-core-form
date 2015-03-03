@@ -4,6 +4,7 @@
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 <link rel="import" href="../at-form-toggle/at-form-toggle.html" />
+<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
 
 <polymer-element name="at-core-form" attributes="schema data">
   <template>
@@ -81,8 +82,34 @@
 
           if (notNullUndefinedOrEmpty(type)) {
             switch (type) {
-              case "string":
+              case "code":
+                paperElement = document.createElement('at-form-codemirror');
+
+                if (inputMode === 'required') {
+                  paperElement.setAttribute('required', true);
+                  this.elementsToValidate.push(coreInput);
+                } else {
+                  paperElement.setAttribute(inputMode, true);
+                }
+
+                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
+                paperElement.addEventListener('change', function (e) {
+                  self.updateValidState();
+                });
+
+                paperElement.id = property;
+                paperElement.name = property;
+                paperElement.label = description;
+
+                divElem.appendChild(paperElement);
+                divElem.style.height = '100px';
+                paperElement.style.height = '100%';
+                paperElement.addEventListener('change', function (e) {
+                  self.fireDataChangedEvent(e);
+                });
+                break;
               case "number":
+              case "string":
                 // create paper-input
                 paperElement = document.createElement('paper-input-decorator');
                 var coreInput = document.createElement('input');
@@ -102,7 +129,7 @@
                   paperElement.setAttribute('error', 'Please enter a number!');
                 }
 
-                coreInput.bind('value', new PathObserver(this.dataBindingObject, property)); 
+                coreInput.bind('value', new PathObserver(this.dataBindingObject, property));
                 coreInput.addEventListener('change', function (e) {
                   self.updateValidState();
                 });
@@ -131,7 +158,7 @@
                 } else {
                   paperElement = document.createElement('at-form-checkbox');
                 }
-                
+
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.classList.add(property);
