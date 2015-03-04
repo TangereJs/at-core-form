@@ -4,6 +4,7 @@
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 <link rel="import" href="../at-form-toggle/at-form-toggle.html" />
+<link rel="import" href="../at-form-markdown/at-form-markdown.html" />
 <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
 
 <polymer-element name="at-core-form" attributes="schema data">
@@ -238,6 +239,22 @@
                 if (propertyDefinition['withCredentials'] !== undefined) {
                   paperElement.setAttribute('withCredentials', true);
                 }
+                divElem.appendChild(paperElement);
+                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
+                paperElement.addEventListener('change', function (e) {
+                  self.fireDataChangedEvent(e);
+                });
+                break;
+              case "marked":
+                paperElement = document.createElement('at-form-markdown');
+                paperElement.id = property;
+                paperElement.name = property;
+                paperElement.classList.add(property);
+                paperElement.label = description;
+                if (disabledValue === true){
+                  paperElement.setAttribute('disabled', disabledValue);
+                }
+
                 divElem.appendChild(paperElement);
                 paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
                 paperElement.addEventListener('change', function (e) {
