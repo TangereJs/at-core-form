@@ -39,6 +39,13 @@
         <div vertical layout class="h100w100">
           <h2>Form Schema (JSON)</h2>
           <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
+          <!--// mappings for code-* are
+          // code-html -> htmlmixed
+          // code-css -> text/css
+          // code-javascript -> javascript
+          // code-json -> application/json
+          // code-sql -> sql
+          // code-xml -> xml-->
           <code-mirror id="formSchema" mode="javascript" flex>
             {
             "properties":
@@ -52,7 +59,7 @@
             "activeToggle": { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" },
             "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
             "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"},
-            "codeMirrorDemo": { "title": "Code Mirror", "type": "string", "xtype": "code" }
+            "codeMirrorDemo": { "title": "Code Mirror", "type": "string", "xtype": "code-markdown" }
             },
             "required": ["id", "city"]
             }

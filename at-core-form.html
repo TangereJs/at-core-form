@@ -43,6 +43,7 @@
         this.schema = newValue;
         this.clear();
         var properties = this.schema.properties;
+        var codeMode = 'htmlmixed';
         for (var property in properties) {
           var propertyDefinition = properties[property];
 
@@ -50,6 +51,39 @@
           var type = propertyDefinition.type;
           if (type === "string" && propertyDefinition.xtype !== undefined && propertyDefinition.xtype !== null && propertyDefinition.xtype !== "") {
             type = propertyDefinition.xtype;
+            if (type.indexOf('-') != -1) {
+              var startIndex = type.indexOf('-');
+              codeMode = type.substring(startIndex+1);
+              type = type.substring(0, startIndex);
+
+              // mappings for code-* are
+              // code-html -> htmlmixed
+              // code-css -> text/css
+              // code-javascript -> javascript
+              // code-json -> application/json
+              // code-sql -> sql
+              // code-xml -> xml
+              switch (codeMode) {
+                case "html":
+                  codeMode = 'htmlmixed';
+                  break;
+                case "css":
+                  codeMode = 'text/css';
+                  break;
+                case "javascript":
+                  codeMode = 'javascript';
+                  break;
+                case "json":
+                  codeMode = 'application/json';
+                  break;
+                case "sql":
+                  codeMode = 'sql';
+                  break;
+                case "xml":
+                  codeMode = 'xml';
+                  break;
+              }
+            }
           }
           var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
           // handle the input mode functionality
@@ -100,6 +134,7 @@
                 paperElement.id = property;
                 paperElement.name = property;
                 paperElement.label = description;
+                paperElement.mode = codeMode;
 
                 divElem.appendChild(paperElement);
                 divElem.style.height = '100px';
