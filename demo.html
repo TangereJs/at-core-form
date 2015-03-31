@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
@@ -13,26 +14,26 @@
       margin-right: -15px;
       margin-left: -15px;
     }
-
+    
     .container {
       padding-right: 15px;
       padding-left: 15px;
       margin-right: auto;
       margin-left: auto;
     }
-
+    
     @media (min-width: 768px) {
       .container {
         width: 750px;
       }
     }
-
+    
     @media (min-width: 992px) {
       .container {
         width: 970px;
       }
     }
-
+    
     @media (min-width: 1200px) {
       .container {
         width: 1170px;
@@ -48,47 +49,80 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       -webkit-touch-callout: none;
     }
-
+    
     paper-input.narrow {
       width: 150px;
     }
   </style>
 
 </head>
+
 <body unresolved>
   <div class="container">
     <div class="row">
       <div>
         <!-- test fields for required, all failing right now  -->
         <paper-input label="Type something" required error="This input requires a value!"></paper-input>
-        <paper-input label="Type something..." willvalidate required id="paper_input1" ></paper-input>
+        <paper-input label="Type something..." willvalidate required id="paper_input1"></paper-input>
         <paper-input label="Type something..." willvalidate validationmessage="Please fill out this field." required invalid id="paper_input" class="invalid"></paper-input>
         <at-core-form id="coreFormDemo"></at-core-form>
       </div>
     </div>
   </div>
   <script>
-    window.addEventListener('polymer-ready', function (e) {
+    window.addEventListener('WebComponentsReady', function (e) {
       var demoForm = document.getElementById("coreFormDemo");
       demoForm.schema = {
-        'properties':
-          {
-            'id': { 'description': 'The unique identifier for a product', 'type': 'number' },
-            'name': { 'type': 'string', 'required': true },
-            'city': { 'type': 'string', 'default': 'Default city name' },
-            'active': { 'type': 'boolean' },
-            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'activeToggle': { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'available': 'XML,JSON', 'default': 'XML' },
-            'codeMirrorDemo': { "title": "Code Mirror", "type": "string", "xtype": "code" }
+        'properties': {
+          'id': {
+            'description': 'The unique identifier for a product',
+            'type': 'number'
           },
+          'name': {
+            'type': 'string',
+            'required': true
+          },
+          'city': {
+            'type': 'string',
+            'default': 'Default city name'
+          },
+          'active': {
+            'type': 'boolean'
+          },
+          'activePera': {
+            'type': 'boolean',
+            'description': 'This is description for pera'
+          },
+          'activeToggle': {
+            "type": "boolean",
+            "xtype": "toggle",
+            "description": "This is description for active toggle"
+          },
+          'dropdownDemo': {
+            'title': 'Name',
+            'type': 'enum',
+            'available': 'XML,JSON',
+            'default': 'XML'
+          },
+          'codeMirrorDemo': {
+            "title": "Code Mirror",
+            "type": "string",
+            "xtype": "code"
+          }
+        },
         'required': ['id', 'city']
       };
-      demoForm.data = { 'id': 0, 'city': 'Boston', 'active': true, 'activePera': false };
+      demoForm.data = {
+        'id': 0,
+        'city': 'Boston',
+        'active': true,
+        'activePera': false
+      };
     });
   </script>
 </body>
+
 </html>

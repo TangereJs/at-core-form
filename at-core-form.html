@@ -1,47 +1,69 @@
-﻿
-
-<link rel="import" href="../paper-input/paper-input.html" />
+<link rel="import" href="../at-form-input/at-form-input.html" />
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
-<link rel="import" href="../at-form-lookup/at-form-lookup.html" />
-<link rel="import" href="../at-form-toggle/at-form-toggle.html" />
-<link rel="import" href="../at-form-markdown/at-form-markdown.html" />
-<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
+<!--<link rel="import" href="../at-form-lookup/at-form-lookup.html" />-->
+<!--<link rel="import" href="../at-form-toggle/at-form-toggle.html" />-->
+<!--<link rel="import" href="../at-form-markdown/at-form-markdown.html" />-->
+<!--<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />-->
 
-<polymer-element name="at-core-form" attributes="schema data">
+<dom-module id="at-core-form">
   <template>
     <div id="insertPoint"></div>
     <content></content>
   </template>
+</dom-module>
 
-  <script>
-    "use strict";
-    Polymer('at-core-form', {
-      publish: {
-        schema: {},
-        data: {},
-        valid: true,
-        disabled: false
+<script>
+  "use strict";
+  Polymer({
+    is: 'at-core-form',
+    properties: {
+      schema: {
+        type: Object,
+        value: {},
+        observer: 'schemaChanged'
       },
-      dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
-      ready: function () {
-        this.dataBindingObject = {};
-        this.elementsToValidate = [];
+      data: {
+        type: Object,
+        value: {},
+        notify: true,
+        observer: 'dataChanged'
       },
-      clear: function () {
-        var myNode = this.$.insertPoint;
-        while (myNode.firstChild) {
-          myNode.removeChild(myNode.firstChild);
-        }
+      invalid: {
+        type: Boolean,
+        notify: true,
+        value: false
       },
-      fireDataChangedEvent: function (e) {
-        this.fire('data-changed', this.dataBindingObject);
-      },
-      elementsToValidate: [],
-      schemaChanged: function (oldValue, newValue) {
+      disabled: {
+        type: Boolean,
+        notify: true,
+        value: false
+      }
+    },
+    _isReady: false,
+    dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
+    ready: function () {
+      this.dataBindingObject = {};
+      this.elementsToValidate = [];
+      this._isReady = true;
+      this.schemaChanged(this.schema, this.schema);
+      this.dataChanged(this.data, this.data);
+    },
+    clear: function () {
+      var myNode = this.$.insertPoint;
+      while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+      }
+    },
+    fireDataChangedEvent: function (e) {
+      this.fire('data-changed', this.dataBindingObject);
+    },
+    elementsToValidate: [],
+    schemaChanged: function (oldValue, newValue) {
+      if (this._isReady) {
         var self = this;
         self.elementsToValidate = [];
 
-        this.schema = newValue;
+        //      this.schema = newValue;
         this.clear();
         var properties = this.schema.properties;
         var codeMode = 'htmlmixed';
@@ -54,7 +76,7 @@
             type = propertyDefinition.xtype;
             if (type.indexOf('-') != -1) {
               var startIndex = type.indexOf('-');
-              codeMode = type.substring(startIndex+1);
+              codeMode = type.substring(startIndex + 1);
               type = type.substring(0, startIndex);
 
               // mappings for code-* are
@@ -65,24 +87,24 @@
               // code-sql -> sql
               // code-xml -> xml
               switch (codeMode) {
-                case "html":
-                  codeMode = 'htmlmixed';
-                  break;
-                case "css":
-                  codeMode = 'text/css';
-                  break;
-                case "javascript":
-                  codeMode = 'javascript';
-                  break;
-                case "json":
-                  codeMode = 'application/json';
-                  break;
-                case "sql":
-                  codeMode = 'sql';
-                  break;
-                case "xml":
-                  codeMode = 'xml';
-                  break;
+              case "html":
+                codeMode = 'htmlmixed';
+                break;
+              case "css":
+                codeMode = 'text/css';
+                break;
+              case "javascript":
+                codeMode = 'javascript';
+                break;
+              case "json":
+                codeMode = 'application/json';
+                break;
+              case "sql":
+                codeMode = 'sql';
+                break;
+              case "xml":
+                codeMode = 'xml';
+                break;
               }
             }
           }
@@ -109,158 +131,153 @@
           }
 
           var disabledValue = propertyDefinition.disabled !== undefined ? propertyDefinition.disabled : false;
-          if (disabledValue === "true") { disabledValue = true; }
-          if (disabledValue === "false") { disabledValue = false; }
+          if (disabledValue === "true") {
+            disabledValue = true;
+          }
+          if (disabledValue === "false") {
+            disabledValue = false;
+          }
 
           var paperElement = undefined;
           var divElem = document.createElement('div');
 
           if (notNullUndefinedOrEmpty(type)) {
             switch (type) {
-              case "code":
-                paperElement = document.createElement('at-form-codemirror');
+            case "code":
+              paperElement = document.createElement('at-form-codemirror');
 
-                if (inputMode === 'required') {
-                  paperElement.setAttribute('required', true);
-                  this.elementsToValidate.push(coreInput);
-                } else {
-                  paperElement.setAttribute(inputMode, true);
-                }
+              if (inputMode === 'required') {
+                paperElement.setAttribute('required', true);
+                this.elementsToValidate.push(coreInput);
+              } else {
+                paperElement.setAttribute(inputMode, true);
+              }
 
-                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
-                paperElement.addEventListener('change', function (e) {
-                  self.updateValidState();
-                });
+              paperElement.addEventListener('value-changed', function (event) {
+                self.dataBindingObject[property] = event.detail.value;
+                self.updateValidState();
+                self.fireDataChangedEvent(e);
+              });
 
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.label = description;
-                paperElement.mode = codeMode;
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.label = description;
+              paperElement.mode = codeMode;
 
-                divElem.appendChild(paperElement);
-                divElem.style.height = '100px';
-                paperElement.style.height = '100%';
-                paperElement.addEventListener('change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
-                break;
-              case "number":
-              case "string":
-                // create paper-input
-                paperElement = document.createElement('paper-input-decorator');
-                var coreInput = document.createElement('input');
-                coreInput.setAttribute('is', 'core-input');
+              divElem.appendChild(paperElement);
+              divElem.style.height = '100px';
+              paperElement.style.height = '100%';
+              break;
+            case "number":
+            case "string":
+              // create paper-input
+              paperElement = document.createElement('at-form-input');
 
-                if (inputMode === 'required') {
-                  coreInput.setAttribute('required', true);
-                  paperElement.setAttribute('error', 'This input requires a value!');
-                  this.elementsToValidate.push(coreInput);
-                } else {
-                  paperElement.setAttribute(inputMode, true);
-                  coreInput.setAttribute(inputMode, true);
-                }
-
-                if (type === "number") {
-                  coreInput.setAttribute('type', type);
-                  paperElement.setAttribute('error', 'Please enter a number!');
-                }
-
-                coreInput.bind('value', new PathObserver(this.dataBindingObject, property));
-                coreInput.addEventListener('change', function (e) {
-                  self.updateValidState();
-                });
-
-                paperElement.appendChild(coreInput);
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.classList.add(property);
-                paperElement.label = description;
-                paperElement.floatingLabel = true;
-                paperElement.setAttribute('disabled', disabledValue);
-                if (disabledValue === true) {
-                  coreInput.setAttribute('disabled', disabledValue);
-                }
-
-                divElem.appendChild(paperElement);
-                paperElement.addEventListener('change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
-                break;
-              case "bool":
-              case "boolean":
-                // create paper-checkbox
-                if (propertyDefinition['xtype'] === 'toggle') {
-                  paperElement = document.createElement('at-form-toggle');
-                } else {
-                  paperElement = document.createElement('at-form-checkbox');
-                }
-
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.classList.add(property);
-                if (disabledValue === true) {
-                  paperElement.setAttribute('disabled', disabledValue);
-                }
-                paperElement.label = description;
-                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
-                divElem.appendChild(paperElement);
-                paperElement.addEventListener('core-change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
-                break;
-              case "enum":
-                paperElement = document.createElement('at-form-lookup');
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.classList.add(property);
-                paperElement.setAttribute('disabled', disabledValue);
-                paperElement.label = description;
-                paperElement.available = propertyDefinition['xvaluelist'];
-                divElem.appendChild(paperElement);
-                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
-                paperElement.addEventListener('change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
+              if (inputMode === 'required') {
+                paperElement.required = true;
                 this.elementsToValidate.push(paperElement);
-                break;
-              case "lookup":
-                paperElement = document.createElement('at-form-lookup');
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.classList.add(property);
-                paperElement.label = description;
-                paperElement.setAttribute('disabled', disabledValue);
-                paperElement.url = propertyDefinition['xurl'];
-                if (paperElement.url !== undefined) {
-                  //paperElement.setAttribute('preload', true);
-                  paperElement.setAttribute('params', '{"query":""}');
-                }
-                //paperElement.setAttribute('usedropdown', true);
-                if (propertyDefinition['withCredentials'] !== undefined) {
-                  paperElement.setAttribute('withCredentials', true);
-                }
-                divElem.appendChild(paperElement);
-                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
-                paperElement.addEventListener('change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
-                break;
-              case "marked":
-                paperElement = document.createElement('at-form-markdown');
-                paperElement.id = property;
-                paperElement.name = property;
-                paperElement.classList.add(property);
-                paperElement.label = description;
-                if (disabledValue === true){
-                  paperElement.setAttribute('disabled', disabledValue);
-                }
+              } else {
+                paperElement.setAttribute(inputMode, true);
+              }
 
-                divElem.appendChild(paperElement);
-                paperElement.bind('value', new PathObserver(this.dataBindingObject, property));
-                paperElement.addEventListener('change', function (e) {
-                  self.fireDataChangedEvent(e);
-                });
-                break;
+              if (type === "number") {
+                paperElement.type = type;
+                // paperElement.setAttribute('error', 'Please enter a number!');
+              }
+              
+              paperElement.addEventListener('value-changed', function (e) {
+                self.dataBindingObject[property] = e.detail;
+                self.updateValidState();
+                self.fireDataChangedEvent(e);
+              });
+
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              paperElement.label = description;
+              paperElement.disabled = disabledValue;
+
+              divElem.appendChild(paperElement);
+              break;
+            case "bool":
+            case "boolean":
+              // create paper-checkbox
+              if (propertyDefinition['xtype'] === 'toggle') {
+                paperElement = document.createElement('at-form-toggle');
+              } else {
+                paperElement = document.createElement('at-form-checkbox');
+              }
+
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              if (disabledValue === true) {
+                paperElement.setAttribute('disabled', disabledValue);
+              }
+              paperElement.label = description;
+              paperElement.addEventListener('value-changed', function (e) {
+                self.dataBindingObject[property] = e.detail.value;
+                self.fireDataChangedEvent(e);
+              });
+
+              divElem.appendChild(paperElement);
+              break;
+            case "enum":
+              paperElement = document.createElement('at-form-lookup');
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              paperElement.setAttribute('disabled', disabledValue);
+              paperElement.label = description;
+              paperElement.available = propertyDefinition['xvaluelist'];
+              divElem.appendChild(paperElement);
+              paperElement.addEventListener('value-changed', function (e) {
+                self.dataBindingObject[property] = e.detail.value;
+                self.updateValidState();
+                self.fireDataChangedEvent(e);
+              });
+              this.elementsToValidate.push(paperElement);
+              break;
+            case "lookup":
+              paperElement = document.createElement('at-form-lookup');
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              paperElement.label = description;
+              paperElement.setAttribute('disabled', disabledValue);
+              paperElement.url = propertyDefinition['xurl'];
+              if (paperElement.url !== undefined) {
+                //paperElement.setAttribute('preload', true);
+                paperElement.setAttribute('params', '{"query":""}');
+              }
+              //paperElement.setAttribute('usedropdown', true);
+              if (propertyDefinition['withCredentials'] !== undefined) {
+                paperElement.setAttribute('withCredentials', true);
+              }
+              divElem.appendChild(paperElement);
+              paperElement.addEventListener('value-changed', function (e) {
+                self.dataBindingObject[property] = e.detail.value;
+                self.updateValidState();
+                self.fireDataChangedEvent(e);
+              });
+              break;
+            case "marked":
+              paperElement = document.createElement('at-form-markdown');
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              paperElement.label = description;
+              if (disabledValue === true) {
+                paperElement.setAttribute('disabled', disabledValue);
+              }
+
+              divElem.appendChild(paperElement);
+              paperElement.addEventListener('value-changed', function (e) {
+                self.dataBindingObject[property] = e.detail.value;
+                self.updateValidState();
+                self.fireDataChangedEvent(e);
+              });              
+              break;
             }
             this.$.insertPoint.appendChild(divElem);
           } else {
@@ -274,75 +291,74 @@
         // create object observer on dataBindingObject
         // when dataBindingObject is updated we update data property
         // this enables data property to be used outside the component for getting the data values
-        var dbObjObserver = new ObjectObserver(this.dataBindingObject);
-        dbObjObserver.open(function (added, removed, changed, getOldValueFn) {
-          Object.keys(changed).forEach(function (property) {
-            self.data[property] = self.dataBindingObject[property];
-          });
-        });
-      },
-      dataChanged: function (oldValue, newValue) {
-        for (var entry in this.data) {
-          this.dataBindingObject[entry] = this.data[entry];
+        // var dbObjObserver = new ObjectObserver(this.dataBindingObject); // dbObjObserver.open(function (added, removed, changed, getOldValueFn) { // Object.keys(changed).forEach(function (property) { // self.data[property] = self.dataBindingObject[property]; // }); // });
+      }
+    },
+    dataChanged: function (oldValue, newValue) {
+      for (var entry in this.data) {
+        var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+        if (element) {
+          element.value = this.data[entry];
         }
-      },
-      updateValidState: function () {
-        var closureThis = this;
-        setTimeout(function () {
-          closureThis.valid = true;
-          //console.clear();
-          for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
-            var element = closureThis.elementsToValidate[i];
-            if (element.checkValidity !== undefined) {
-              var isValid = element.checkValidity();
-              element.parentElement.isInvalid = !isValid;
-              closureThis.valid = closureThis.valid && isValid;
-              //console.log("Element " + element.name + " is " + isValid);
-            }
-          }
-        }, 100);
-      },
-      disabledChanged: function () {
-        for (var property in this.schema.properties) {
-          var element = this.$.insertPoint.querySelector('.' + property);
-          var disabledValue = this.disabled;
-          if (this.disabled === false) {
-            var elemDisabledValue = this.schema.properties[element.id].disabled;
-            if (elemDisabledValue !== undefined && (elemDisabledValue === "true" || elemDisabledValue === true)) {
-              disabledValue = true;
-            }
-          }
-          element.setAttribute('disabled', disabledValue);
-          var childInput = element.querySelector('input');
-          if (notNullOrUndefined(childInput)) {
-            if (disabledValue === false) {
-              childInput.removeAttribute('disabled');
-            } else {
-              childInput.setAttribute('disabled', true);
-            }
+        //this.dataBindingObject[entry] = this.data[entry];
+      }
+    },
+    updateValidState: function () {
+      var closureThis = this;
+      setTimeout(function () {
+        closureThis.valid = true;
+        //console.clear();
+        for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
+          var element = closureThis.elementsToValidate[i];
+          if (element.checkValidity !== undefined) {
+            var isValid = element.checkValidity();
+            element.parentElement.isInvalid = !isValid;
+            closureThis.valid = closureThis.valid && isValid;
+            //console.log("Element " + element.name + " is " + isValid);
           }
         }
-      },
-    });
-
-    function notNullOrUndefined(param) {
-      return (param !== null) && (param !== undefined)
-    }
-
-    function notNullUndefinedOrEmpty(param) {
-      return notNullOrUndefined(param) && (param !== '');
-    }
-
-    function isObject(obj) {
-      return Object.prototype.toString.call(obj) === Object.prototype.toString.call({});
-    }
-
-    function copyPropertyValues(from, to) {
-      if (isObject(from) && isObject(to)) {
-        for (var property in from) {
-          to[property] = from[property];
+      }, 100);
+    },
+    disabledChanged: function () {
+      for (var property in this.schema.properties) {
+        var element = this.$.insertPoint.querySelector('.' + property);
+        var disabledValue = this.disabled;
+        if (this.disabled === false) {
+          var elemDisabledValue = this.schema.properties[element.id].disabled;
+          if (elemDisabledValue !== undefined && (elemDisabledValue === "true" || elemDisabledValue === true)) {
+            disabledValue = true;
+          }
+        }
+        element.setAttribute('disabled', disabledValue);
+        var childInput = element.querySelector('input');
+        if (notNullOrUndefined(childInput)) {
+          if (disabledValue === false) {
+            childInput.removeAttribute('disabled');
+          } else {
+            childInput.setAttribute('disabled', true);
+          }
         }
       }
+    },
+  });
+
+  function notNullOrUndefined(param) {
+    return (param !== null) && (param !== undefined)
+  }
+
+  function notNullUndefinedOrEmpty(param) {
+    return notNullOrUndefined(param) && (param !== '');
+  }
+
+  function isObject(obj) {
+    return Object.prototype.toString.call(obj) === Object.prototype.toString.call({});
+  }
+
+  function copyPropertyValues(from, to) {
+    if (isObject(from) && isObject(to)) {
+      for (var property in from) {
+        to[property] = from[property];
+      }
     }
-  </script>
-</polymer-element>
+  }
+</script>
