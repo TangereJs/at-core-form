@@ -1,6 +1,6 @@
 <link rel="import" href="../at-form-input/at-form-input.html" />
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
-<!--<link rel="import" href="../at-form-lookup/at-form-lookup.html" />-->
+<link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 <!--<link rel="import" href="../at-form-toggle/at-form-toggle.html" />-->
 <!--<link rel="import" href="../at-form-markdown/at-form-markdown.html" />-->
 <!--<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />-->
@@ -40,9 +40,7 @@
       }
     },
     _isReady: false,
-    dataBindingObject: {}, // this object will be used to bind values to form elements; when this.data changes dataBindingObject will be updated and form element values will be udpated automatically
     ready: function () {
-      this.dataBindingObject = {};
       this.elementsToValidate = [];
       this._isReady = true;
       this.schemaChanged(this.schema, this.schema);
@@ -53,9 +51,6 @@
       while (myNode.firstChild) {
         myNode.removeChild(myNode.firstChild);
       }
-    },
-    fireDataChangedEvent: function (e) {
-      this.fire('data-changed', this.dataBindingObject);
     },
     elementsToValidate: [],
     schemaChanged: function (oldValue, newValue) {
@@ -126,10 +121,6 @@
             this.data[property] = defaultValue;
           }
 
-          if (this.dataBindingObject[property] === undefined) {
-            this.dataBindingObject[property] = "";
-          }
-
           var disabledValue = propertyDefinition.disabled !== undefined ? propertyDefinition.disabled : false;
           if (disabledValue === "true") {
             disabledValue = true;
@@ -154,15 +145,16 @@
               }
 
               paperElement.addEventListener('value-changed', function (event) {
-                self.dataBindingObject[property] = event.detail.value;
+                self.data[property] = event.detail.value;
                 self.updateValidState();
-                self.fireDataChangedEvent(e);
+
               });
 
               paperElement.id = property;
               paperElement.name = property;
               paperElement.label = description;
               paperElement.mode = codeMode;
+              paperElement.value = this.data[property] ? this.data[property] : '';
 
               divElem.appendChild(paperElement);
               divElem.style.height = '100px';
@@ -184,11 +176,10 @@
                 paperElement.type = type;
                 // paperElement.setAttribute('error', 'Please enter a number!');
               }
-              
+
               paperElement.addEventListener('value-changed', function (e) {
-                self.dataBindingObject[property] = e.detail;
+                self.data[e.target.name] = e.detail;
                 self.updateValidState();
-                self.fireDataChangedEvent(e);
               });
 
               paperElement.id = property;
@@ -196,6 +187,7 @@
               paperElement.classList.add(property);
               paperElement.label = description;
               paperElement.disabled = disabledValue;
+              paperElement.value = this.data[property] ? this.data[property] : '';
 
               divElem.appendChild(paperElement);
               break;
@@ -216,9 +208,9 @@
               }
               paperElement.label = description;
               paperElement.addEventListener('value-changed', function (e) {
-                self.dataBindingObject[property] = e.detail.value;
-                self.fireDataChangedEvent(e);
+                self.data[e.target.name] = e.detail.value;
               });
+              paperElement.value = this.data[property] ? this.data[property] : '';
 
               divElem.appendChild(paperElement);
               break;
@@ -230,11 +222,12 @@
               paperElement.setAttribute('disabled', disabledValue);
               paperElement.label = description;
               paperElement.available = propertyDefinition['xvaluelist'];
+              paperElement.value = this.data[property] ? this.data[property] : '';
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
-                self.dataBindingObject[property] = e.detail.value;
+                self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
-                self.fireDataChangedEvent(e);
+
               });
               this.elementsToValidate.push(paperElement);
               break;
@@ -250,15 +243,17 @@
                 //paperElement.setAttribute('preload', true);
                 paperElement.setAttribute('params', '{"query":""}');
               }
+              paperElement.value = this.data[property] ? this.data[property] : '';
+
               //paperElement.setAttribute('usedropdown', true);
-              if (propertyDefinition['withCredentials'] !== undefined) {
-                paperElement.setAttribute('withCredentials', true);
+              if (propertyDefinition['noCredentials'] !== undefined) {
+                paperElement.setAttribute('noCredentials', true);
               }
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
-                self.dataBindingObject[property] = e.detail.value;
+                self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
-                self.fireDataChangedEvent(e);
+
               });
               break;
             case "marked":
@@ -267,16 +262,16 @@
               paperElement.name = property;
               paperElement.classList.add(property);
               paperElement.label = description;
+              paperElement.value = this.data[property] ? this.data[property] : '';
               if (disabledValue === true) {
                 paperElement.setAttribute('disabled', disabledValue);
               }
 
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
-                self.dataBindingObject[property] = e.detail.value;
+                self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
-                self.fireDataChangedEvent(e);
-              });              
+              });
               break;
             }
             this.$.insertPoint.appendChild(divElem);
@@ -284,14 +279,6 @@
             console.log("Property " + property + " doens't have defined type. Skipping ...");
           }
         }
-
-        // copy all values from data property to dataBindingObject property
-        //copyPropertyValues(this.dataBindingObject, this.data);
-
-        // create object observer on dataBindingObject
-        // when dataBindingObject is updated we update data property
-        // this enables data property to be used outside the component for getting the data values
-        // var dbObjObserver = new ObjectObserver(this.dataBindingObject); // dbObjObserver.open(function (added, removed, changed, getOldValueFn) { // Object.keys(changed).forEach(function (property) { // self.data[property] = self.dataBindingObject[property]; // }); // });
       }
     },
     dataChanged: function (oldValue, newValue) {
@@ -300,7 +287,6 @@
         if (element) {
           element.value = this.data[entry];
         }
-        //this.dataBindingObject[entry] = this.data[entry];
       }
     },
     updateValidState: function () {
