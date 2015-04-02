@@ -1,16 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>At-Core-Form demo</title>
 
   <script src="../webcomponentsjs/webcomponents.js"></script>
-  <!--<link rel="import" href="../polymer/polymer.html" />-->
+  <link rel="import" href="../polymer/polymer.html" />
   <link rel="import" href="../code-mirror/code-mirror.html" />
+  <link rel="import" href="../layout/layout.html" />
   <link rel="import" href="at-core-form.html" />
 
-  <style shim-shadowdom>
+  <style>
     body {
       margin: 0;
       position: absolute;
@@ -19,24 +21,34 @@
       height: 100%;
       width: 100%;
     }
-
+    
     .h100w100 {
       height: 100%;
       width: 100%;
     }
-
+    
+    .h100w50 {
+      height: 100%;
+      width: 50%;
+    }
+    
     .h50w100 {
       height: 50%;
       width: 100%;
     }
+    
+    code-mirror {
+      height: inherit;
+      width: inherit;
+    }
   </style>
-
 </head>
-<body unresolved>
-  <div class="h100w100" vertical layout>
-    <div class="h50w100" horizontal layout>
-      <div class="h100w100" flex>
-        <div vertical layout class="h100w100">
+
+<body>
+  <div class="vertical layout h100w100">
+    <div class="horizontal layout h50w100">
+      <div class="flex h100w100">
+        <div class="vertical layout h100w100">
           <h2>Form Schema (JSON)</h2>
           <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
           <!--// mappings for code-* are
@@ -46,29 +58,13 @@
           // code-json -> application/json
           // code-sql -> sql
           // code-xml -> xml-->
-          <code-mirror id="formSchema" mode="javascript" flex>
-            {
-            "properties":
-            {
-            "id": {
-            "description": "The unique identifier for a product", "type": "number"},
-            "name": { "type": "string", "required": "true", "xinputmode": "required" },
-            "city": { "type": "string", "default": "Default city name" },
-            "active": { "type": "boolean" },
-            "activePera": { "type": "boolean", "description": "This is description for pera" },
-            "activeToggle": { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" },
-            "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
-            "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"},
-            "codeMirrorDemo": { "title": "Code Mirror", "type": "string", "xtype": "code-markdown"},
-            "markdownDemo": { "title": "Markdown", "type": "string", "xtype": "marked" }
-            },
-            "required": ["id", "city"]
-            }
+          <code-mirror id="formSchema" mode="javascript" class="h100100">
+            { "properties": { "id": { "description": "The unique identifier for a product", "type": "number"}, "name": { "type": "string", "required": "true", "xinputmode": "required" }, "city": { "type": "string", "default": "Default city name" }, "active": { "type": "boolean" }, "activePera": { "type": "boolean", "description": "This is description for pera" }, "activeToggle": { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" }, "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" }, "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"}, "codeMirrorDemo": { "title": "Code Mirror", "type": "string", "xtype": "code-markdown"}, "markdownDemo": { "title": "Markdown", "type": "string", "xtype": "marked" } }, "required": ["id", "city"] }
           </code-mirror>
         </div>
       </div>
-      <div class="h100w100" flex>
-        <div vertical layout class="h100w100">
+      <div class="flex  h100w100">
+        <div class="vertical layout h100w100">
           <h2>Form Data (JSON)</h2>
           <div>
             <label>Form is currently: </label>
@@ -76,21 +72,16 @@
             <span id="formInvalid" hidden>invalid</span>
           </div>
           <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
-          <code-mirror id="formData" mode="javascript" flex>
-            {
-            "id": "5",
-            "city": "Boston",
-            "active": true,
-            "activePera": false
-            }
+          <code-mirror id="formData" mode="javascript" class="h100w100">
+            { "id": "5", "city": "Boston", "active": true, "activePera": false }
           </code-mirror>
         </div>
       </div>
     </div>
-    <div class="h100w100" flex>
-      <div vertical layout class="h100w100">
+    <div class="flex">
+      <div class="vertical layout">
         <h2>Generated form</h2>
-        <at-core-form id="coreForm" flex>
+        <at-core-form id="coreForm" class="flex">
         </at-core-form>
       </div>
     </div>
@@ -100,7 +91,7 @@
   <script>
     (function () {
 
-      window.addEventListener('polymer-ready', function (e) {
+      window.addEventListener('WebComponentsReady', function (e) {
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
@@ -133,24 +124,23 @@
           coreForm.schema = schema;
           var data = JSON.parse(formData.mirror.getValue());
           coreForm.data = data;
-          coreForm.addEventListener('data-changed', function (e) {
+          coreForm.addEventListener('data-updated', function (e) {
             var dataString = JSON.stringify(e.detail);
             dataString = dataString.replace(/,/g, ",\n");
             formData.value = dataString;
           });
 
-          updateFormValidGui(coreForm.valid);
+          updateFormValidGui(!coreForm.invalid);
         } catch (e) {
 
         }
 
-        var validObject = { valid: true };
-        var pathObserver = new PathObserver(validObject, 'valid');
-        coreForm.bind('valid', pathObserver);
-
-        var anotherPathObserver = new PathObserver(validObject, 'valid');
-        anotherPathObserver.open(function (newValue, oldValue) {
-          updateFormValidGui(newValue);
+        var validObject = {
+          valid: true
+        };
+        coreForm.addEventListener('invalid-changed', function (e) {
+          validObject.valid = !e.detail.value;
+          updateFormValidGui(validObject.valid);
         });
       });
 
@@ -176,4 +166,5 @@
     })();
   </script>
 </body>
+
 </html>

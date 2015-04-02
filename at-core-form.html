@@ -147,7 +147,7 @@
               paperElement.addEventListener('value-changed', function (event) {
                 self.data[property] = event.detail.value;
                 self.updateValidState();
-
+                this.fire('data-updated', self.data);
               });
 
               paperElement.id = property;
@@ -178,8 +178,9 @@
               }
 
               paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail;
+                self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
+                this.fire('data-updated', self.data);
               });
 
               paperElement.id = property;
@@ -209,6 +210,7 @@
               paperElement.label = description;
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
+                this.fire('data-updated', self.data);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -227,7 +229,7 @@
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
-
+                this.fire('data-updated', self.data);
               });
               this.elementsToValidate.push(paperElement);
               break;
@@ -253,7 +255,7 @@
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
-
+                this.fire('data-updated', self.data);
               });
               break;
             case "marked":
@@ -271,6 +273,7 @@
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
                 self.updateValidState();
+                this.fire('data-updated', self.data);
               });
               break;
             }
@@ -292,17 +295,17 @@
     updateValidState: function () {
       var closureThis = this;
       setTimeout(function () {
-        closureThis.valid = true;
+        var isInvalid = false;
         //console.clear();
         for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
           var element = closureThis.elementsToValidate[i];
-          if (element.checkValidity !== undefined) {
-            var isValid = element.checkValidity();
-            element.parentElement.isInvalid = !isValid;
-            closureThis.valid = closureThis.valid && isValid;
+          if (element.invalid !== undefined) {
+            var invalid = element.invalid;
+            isInvalid = isInvalid || invalid;
             //console.log("Element " + element.name + " is " + isValid);
           }
         }
+        closureThis.invalid = isInvalid;
       }, 100);
     },
     disabledChanged: function () {
