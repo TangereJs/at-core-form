@@ -87,7 +87,7 @@
           },
           'city': {
             'type': 'string',
-            'default': 'Default city name'
+            'value': 'Default city name'
           },
           'active': {
             'type': 'boolean'
@@ -104,8 +104,7 @@
           'dropdownDemo': {
             'title': 'Name',
             'type': 'enum',
-            'available': 'XML,JSON',
-            'default': 'XML'
+            'xvaluelist': 'XML,JSON'
           },
           'codeMirrorDemo': {
             "title": "Code Mirror",
@@ -116,10 +115,12 @@
         'required': ['id', 'city']
       };
       demoForm.data = {
-        'id': 0,
+        'id': 3213,
         'city': 'Boston',
+        'name': 'Djura',
         'active': true,
-        'activePera': false
+        'activePera': false,
+        'dropdownDemo': 'XML'
       };
     });
   </script>
