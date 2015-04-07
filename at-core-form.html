@@ -28,10 +28,11 @@
         notify: true,
         observer: 'dataChanged'
       },
-      invalid: {
+      valid: {
         type: Boolean,
         notify: true,
-        value: false
+        value: true,
+        readOnly: true
       },
       disabled: {
         type: Boolean,
@@ -295,17 +296,16 @@
     updateValidState: function () {
       var closureThis = this;
       setTimeout(function () {
-        var isInvalid = false;
+        var isValid = true;
         //console.clear();
         for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
           var element = closureThis.elementsToValidate[i];
-          if (element.invalid !== undefined) {
-            var invalid = element.invalid;
-            isInvalid = isInvalid || invalid;
-            //console.log("Element " + element.name + " is " + isValid);
+          if (element.valid !== undefined) {
+            isValid = isValid && element.valid;
+            console.log("Element " + element.name + " is " + element.valid);
           }
         }
-        closureThis.invalid = isInvalid;
+        closureThis._setValid(isValid);
       }, 100);
     },
     disabledChanged: function () {

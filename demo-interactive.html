@@ -89,8 +89,7 @@
                 "title": "Name", 
                 "type": "string", 
                 "xtype": "enum", 
-                "xvaluelist":"XML,JSON", 
-                "default": "XML" 
+                "xvaluelist":"XML,JSON"
               }, 
               "card": { 
                 "title": "Card", 
@@ -128,7 +127,8 @@
             "id": "5", 
             "city": "Boston", 
             "active": true, 
-            "activePera": false 
+            "activePera": false,
+            "dropdownDemo": "XML"
           }
         </code-mirror>
       </div>
@@ -192,8 +192,8 @@
         var validObject = {
           valid: true
         };
-        coreForm.addEventListener('invalid-changed', function (e) {
-          validObject.valid = !e.detail.value;
+        coreForm.addEventListener('valid-changed', function (e) {
+          validObject.valid = e.detail.value;
           updateFormValidGui(validObject.valid);
         });
       });
