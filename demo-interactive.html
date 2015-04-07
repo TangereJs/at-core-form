@@ -8,7 +8,7 @@
 
   <script src="../webcomponentsjs/webcomponents.js"></script>
   <link rel="import" href="../polymer/polymer.html" />
-  <link rel="import" href="../code-mirror/code-mirror.html" />
+  <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
   <link rel="import" href="../layout/layout.html" />
   <link rel="import" href="at-core-form.html" />
 
@@ -58,58 +58,58 @@
           // code-sql -> sql
           // code-xml -> xml-->
         <code-mirror id="formSchema" mode="javascript" class="h100w100">
-          { 
-            "properties": { 
-              "id": { 
-                "description": "The unique identifier for a product", 
-                "type": "number"
-              }, 
-              "name": { 
-                "type": "string", 
-                "required": "true", 
-                "xinputmode": "required" 
-              }, 
-              "city": { 
-                "type": "string", 
-                "default": "Default city name" 
-              }, 
-              "active": { 
-                "type": "boolean" 
-              }, 
-              "activePera": { 
-                "type": "boolean", 
-                "description": "This is description for pera" 
-              }, 
-              "activeToggle": { 
-                "type": "boolean", 
-                "xtype": "toggle", 
-                "description": "This is description for active toggle" 
-              }, 
-              "dropdownDemo": { 
-                "title": "Name", 
-                "type": "string", 
-                "xtype": "enum", 
-                "xvaluelist":"XML,JSON"
-              }, 
-              "card": { 
-                "title": "Card", 
-                "type": "string", 
-                "xtype": "lookup", 
-                "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
-              }, 
-              "codeMirrorDemo": { 
-                "title": "Code Mirror", 
-                "type": "string", 
-                "xtype": "code-markdown"
-              }, 
-              "markdownDemo": { 
-                "title": "Markdown", 
-                "type": "string", 
-                "xtype": "marked"
-              }
-            }, 
-            "required": ["id", "city"] 
-          }
+{
+  "properties": {
+      "id": {
+          "description": "The unique identifier for a product",
+          "type": "number"
+      },
+      "name": {
+          "type": "string",
+          "required": "true",
+          "xinputmode": "required"
+      },
+      "city": {
+          "type": "string",
+          "default": "Default city name"
+      },
+      "active": {
+          "type": "boolean"
+      },
+      "activePera": {
+          "type": "boolean",
+          "description": "This is description for pera"
+      },
+      "activeToggle": {
+          "type": "boolean",
+          "xtype": "toggle",
+          "description": "This is description for active toggle"
+      },
+      "dropdownDemo": {
+          "title": "Name",
+          "type": "string",
+          "xtype": "enum",
+          "xvaluelist": "XML,JSON"
+      },
+      "card": {
+          "title": "Card",
+          "type": "string",
+          "xtype": "lookup",
+          "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
+      },
+      "codeMirrorDemo": {
+          "title": "Code Mirror",
+          "type": "string",
+          "xtype": "code-markdown"
+      },
+      "markdownDemo": {
+          "title": "Markdown",
+          "type": "string",
+          "xtype": "marked"
+      }
+  },
+  "required": ["id", "city", "markdownDemo"]
+}
         </code-mirror>
       </div>
     </div>
@@ -123,13 +123,13 @@
         </div>
         <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
         <code-mirror id="formData" mode="javascript" class="h100w100">
-          { 
-            "id": "5", 
-            "city": "Boston", 
-            "active": true, 
-            "activePera": false,
-            "dropdownDemo": "XML"
-          }
+{
+  "id": "5",
+  "city": "Boston",
+  "active": true,
+  "activePera": false,
+  "dropdownDemo": "XML"
+}
         </code-mirror>
       </div>
     </div>

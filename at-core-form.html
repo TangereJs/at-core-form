@@ -2,8 +2,8 @@
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
 <!--<link rel="import" href="../at-form-toggle/at-form-toggle.html" />-->
-<!--<link rel="import" href="../at-form-markdown/at-form-markdown.html" />-->
-<!--<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />-->
+<link rel="import" href="../at-form-markdown/at-form-markdown.html" />
+<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
 
 <dom-module id="at-core-form">
   <template>
@@ -66,14 +66,13 @@
         for (var property in properties) {
           var propertyDefinition = properties[property];
 
-          var description = property; 
-          if (notNullOrUndefined(propertyDefinition.description))
-          { 
-            description = propertyDefinition.description;           
+          var description = property;
+          if (notNullOrUndefined(propertyDefinition.description)) {
+            description = propertyDefinition.description;
           } else if (notNullOrUndefined(propertyDefinition.title)) {
             description = propertyDefinition.title;
-          }          
-          
+          }
+
           var type = propertyDefinition.type;
           if (type === "string" && propertyDefinition.xtype !== undefined && propertyDefinition.xtype !== null && propertyDefinition.xtype !== "") {
             type = propertyDefinition.xtype;
@@ -140,17 +139,17 @@
           var paperElement = undefined;
           var divElem = document.createElement('div');
           divElem.classList.add('field');
-          
+
           if (notNullUndefinedOrEmpty(type)) {
             switch (type) {
             case "code":
               paperElement = document.createElement('at-form-codemirror');
 
               if (inputMode === 'required') {
-                paperElement.setAttribute('required', true);
-                this.elementsToValidate.push(coreInput);
+                paperElement.required = true;
+                this.elementsToValidate.push(paperElement);
               } else {
-                paperElement.setAttribute(inputMode, true);
+                //                paperElement.setAttribute(inputMode, true);
               }
 
               paperElement.addEventListener('value-changed', function (event) {
@@ -166,8 +165,8 @@
               paperElement.value = this.data[property] ? this.data[property] : '';
 
               divElem.appendChild(paperElement);
-              divElem.style.height = '100px';
-              paperElement.style.height = '100%';
+              //              divElem.style.height = '100px';
+              //              paperElement.style.height = '100%';
               break;
             case "number":
             case "string":
@@ -273,6 +272,7 @@
               paperElement.name = property;
               paperElement.classList.add(property);
               paperElement.label = description;
+              paperElement.required = true;
               paperElement.value = this.data[property] ? this.data[property] : '';
               if (disabledValue === true) {
                 paperElement.setAttribute('disabled', disabledValue);
@@ -310,7 +310,7 @@
           var element = closureThis.elementsToValidate[i];
           if (element.valid !== undefined) {
             isValid = isValid && element.valid;
-            console.log("Element " + element.name + " is " + element.valid);
+            //            console.log("Element " + element.name + " is " + element.valid);
           }
         }
         closureThis._setValid(isValid);
