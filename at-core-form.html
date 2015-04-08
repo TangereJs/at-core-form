@@ -229,7 +229,7 @@
               paperElement.id = property;
               paperElement.name = property;
               paperElement.classList.add(property);
-              paperElement.setAttribute('disabled', disabledValue);
+              paperElement.disabled = disabledValue;
               paperElement.label = description;
               paperElement.available = propertyDefinition['xvaluelist'];
               paperElement.value = this.data[property] ? this.data[property] : '';
