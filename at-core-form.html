@@ -41,6 +41,7 @@
       }
     },
     _isReady: false,
+    _isDataUpdating: false,
     ready: function () {
       this.elementsToValidate = [];
       this._isReady = true;
@@ -154,7 +155,6 @@
 
               paperElement.addEventListener('value-changed', function (event) {
                 self.data[property] = event.detail.value;
-                self.updateValidState();
                 this.fire('data-updated', self.data);
               });
 
@@ -187,7 +187,6 @@
 
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
-                self.updateValidState();
                 this.fire('data-updated', self.data);
               });
 
@@ -236,7 +235,6 @@
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
-                self.updateValidState();
                 this.fire('data-updated', self.data);
               });
               this.elementsToValidate.push(paperElement);
@@ -262,7 +260,6 @@
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
-                self.updateValidState();
                 this.fire('data-updated', self.data);
               });
               break;
@@ -281,7 +278,6 @@
               divElem.appendChild(paperElement);
               paperElement.addEventListener('value-changed', function (e) {
                 self.data[e.target.name] = e.detail.value;
-                self.updateValidState();
                 this.fire('data-updated', self.data);
               });
               break;
@@ -294,27 +290,34 @@
       }
     },
     dataChanged: function (oldValue, newValue) {
-      for (var entry in this.data) {
-        var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
-        if (element) {
-          element.value = this.data[entry];
-        }
-      }
-    },
-    updateValidState: function () {
-      var closureThis = this;
-      setTimeout(function () {
-        var isValid = true;
-        //console.clear();
-        for (var i = 0; i < closureThis.elementsToValidate.length; i++) {
-          var element = closureThis.elementsToValidate[i];
-          if (element.valid !== undefined) {
-            isValid = isValid && element.valid;
-            //            console.log("Element " + element.name + " is " + element.valid);
+      if (!this._isDataUpdating) {
+        this._isDataUpdating = true;
+        for (var entry in this.data) {
+          var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+          if (element) {
+            element.value = this.data[entry];
           }
         }
-        closureThis._setValid(isValid);
-      }, 100);
+        this._isDataUpdating = false;
+      }
+    },
+
+    /*
+     * Validates the form
+     * It calls validate method of each element in elementsToValidate array
+     * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
+     */
+    validate: function () {
+      var isValid = true;
+
+      for (var i = 0; i < this.elementsToValidate.length; i++) {
+        var element = this.elementsToValidate[i];
+        if (isFunction(element.validate)) {
+          isValid = isValid && element.validate();
+        }
+      }
+
+      return isValid;
     },
     disabledChanged: function () {
       for (var property in this.schema.properties) {
@@ -338,6 +341,10 @@
       }
     },
   });
+
+  function isFunction(obj) {
+    return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function () {});
+  }
 
   function notNullOrUndefined(param) {
     return (param !== null) && (param !== undefined)
