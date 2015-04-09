@@ -145,14 +145,16 @@
   <script>
     (function () {
 
+      var isUserInput = false;
+      
       window.addEventListener('WebComponentsReady', function (e) {
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
-        formSchema.mirror.on('change', function () {
+        formSchema.addEventListener('value-changed', function () {
           //console.log("form schema changed");
           try {
-            coreForm.schema = JSON.parse(formSchema.mirror.getValue());
+            coreForm.schema = JSON.parse(formSchema.value);
             coreForm.updateValidState();
           } catch (e) {
 
@@ -162,11 +164,13 @@
         //autoFormat(formSchema.mirror);
 
         var formData = document.getElementById('formData');
-        formData.mirror.on('change', function () {
+        formData.addEventListener('value-changed', function () {
           //console.log("form data changed");
           try {
-            coreForm.data = JSON.parse(formData.mirror.getValue());
+            if (!isUserInput){
+            coreForm.data = JSON.parse(formData.value);
             coreForm.updateValidState();
+              }
           } catch (e) {
 
           }
@@ -174,17 +178,19 @@
         //autoFormat(formData.mirror);
 
         try {
-          var schema = JSON.parse(formSchema.mirror.getValue());
+          var schema = JSON.parse(formSchema.value);
           coreForm.schema = schema;
-          var data = JSON.parse(formData.mirror.getValue());
+          var data = JSON.parse(formData.value);
           coreForm.data = data;
-          coreForm.addEventListener('data-updated', function (e) {
+          coreForm.addEventListener('data-changed', function (e) {
             var dataString = JSON.stringify(e.detail);
             dataString = dataString.replace(/,/g, ",\n");
+            isUserInput = true;
             formData.value = dataString;
+            isUserInput = false;
           });
 
-          updateFormValidGui(!coreForm.invalid);
+          updateFormValidGui(coreForm.valid);
         } catch (e) {
 
         }

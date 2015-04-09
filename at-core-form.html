@@ -41,7 +41,6 @@
       }
     },
     _isReady: false,
-    _isDataUpdating: false,
     ready: function () {
       this.elementsToValidate = [];
       this._isReady = true;
@@ -154,8 +153,7 @@
               }
 
               paperElement.addEventListener('value-changed', function (event) {
-                self.data[property] = event.detail.value;
-                this.fire('data-updated', self.data);
+                self._updateDataObject(event.target.name, event.detail.value);
               });
 
               paperElement.id = property;
@@ -185,9 +183,8 @@
                 // paperElement.setAttribute('error', 'Please enter a number!');
               }
 
-              paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail.value;
-                this.fire('data-updated', self.data);
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
               });
 
               paperElement.id = property;
@@ -215,9 +212,8 @@
                 paperElement.setAttribute('disabled', disabledValue);
               }
               paperElement.label = description;
-              paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail.value;
-                this.fire('data-updated', self.data);
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -233,9 +229,8 @@
               paperElement.available = propertyDefinition['xvaluelist'];
               paperElement.value = this.data[property] ? this.data[property] : '';
               divElem.appendChild(paperElement);
-              paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail.value;
-                this.fire('data-updated', self.data);
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
               });
               this.elementsToValidate.push(paperElement);
               break;
@@ -258,9 +253,8 @@
                 paperElement.setAttribute('noCredentials', true);
               }
               divElem.appendChild(paperElement);
-              paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail.value;
-                this.fire('data-updated', self.data);
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
               });
               break;
             case "marked":
@@ -269,16 +263,17 @@
               paperElement.name = property;
               paperElement.classList.add(property);
               paperElement.label = description;
-              paperElement.required = true;
+              paperElement.required = required;
+              this.elementsToValidate.push(paperElement);
+                
               paperElement.value = this.data[property] ? this.data[property] : '';
               if (disabledValue === true) {
                 paperElement.setAttribute('disabled', disabledValue);
               }
 
               divElem.appendChild(paperElement);
-              paperElement.addEventListener('value-changed', function (e) {
-                self.data[e.target.name] = e.detail.value;
-                this.fire('data-updated', self.data);
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
               });
               break;
             }
@@ -290,16 +285,24 @@
       }
     },
     dataChanged: function (oldValue, newValue) {
-      if (!this._isDataUpdating) {
-        this._isDataUpdating = true;
-        for (var entry in this.data) {
-          var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
-          if (element) {
-            element.value = this.data[entry];
-          }
+      for (var entry in this.data) {
+        var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+        if (element) {
+          element.value = this.data[entry];
         }
-        this._isDataUpdating = false;
       }
+      this.validate();
+    },
+
+    /*
+     * This function is called on value-changed event for each element on the form
+     * property is property name
+     * value is the new value to be set
+     */
+    _updateDataObject: function (property, value) {
+      this.data[property] = value;
+      this.validate();
+      this.fire('data-changed', this.data);
     },
 
     /*
@@ -313,9 +316,12 @@
       for (var i = 0; i < this.elementsToValidate.length; i++) {
         var element = this.elementsToValidate[i];
         if (isFunction(element.validate)) {
-          isValid = isValid && element.validate();
+          var elementValid = element.validate();
+          isValid = isValid && elementValid;
         }
       }
+
+      this._setValid(isValid);
 
       return isValid;
     },
@@ -365,4 +371,5 @@
       }
     }
   }
+</script>
 </script>
