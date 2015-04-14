@@ -111,13 +111,6 @@
             }
           }
           var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
-          // handle the input mode functionality
-          var inputMode = 'optional';
-          if (propertyDefinition.xinputmode === undefined && required === true) {
-            inputMode = 'required';
-          } else {
-            inputMode = propertyDefinition.xinputmode !== undefined && propertyDefinition.xinputmode !== '' ? propertyDefinition.xinputmode : inputMode;
-          }
 
           // get the default value and regular value
           var defaultValue = propertyDefinition.default;
@@ -145,11 +138,9 @@
             case "code":
               paperElement = document.createElement('at-form-codemirror');
 
-              if (inputMode === 'required') {
-                paperElement.required = true;
+              paperElement.required = required;
+              if (required) {
                 this.elementsToValidate.push(paperElement);
-              } else {
-                //                paperElement.setAttribute(inputMode, true);
               }
 
               paperElement.addEventListener('value-changed', function (event) {
@@ -171,11 +162,9 @@
               // create paper-input
               paperElement = document.createElement('at-form-input');
 
-              if (inputMode === 'required') {
-                paperElement.required = true;
+              paperElement.required = required;
+              if (required) {
                 this.elementsToValidate.push(paperElement);
-              } else {
-                paperElement.setAttribute(inputMode, true);
               }
 
               if (type === "number") {
@@ -231,7 +220,12 @@
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
-              this.elementsToValidate.push(paperElement);
+
+              paperElement.required = required;
+              if (required) {
+                this.elementsToValidate.push(paperElement);
+              }
+
               break;
             case "lookup":
               paperElement = document.createElement('at-form-lookup');
@@ -239,7 +233,11 @@
               paperElement.name = property;
               paperElement.classList.add(property);
               paperElement.label = description;
-              if (disabledValue){
+              paperElement.required = required;
+              if (required) {
+                this.elementsToValidate.push(paperElement);
+              }
+              if (disabledValue) {
                 paperElement.setAttribute('disabled', disabledValue);
               }
               paperElement.url = propertyDefinition['xurl'];
@@ -265,8 +263,10 @@
               paperElement.classList.add(property);
               paperElement.label = description;
               paperElement.required = required;
-              this.elementsToValidate.push(paperElement);
-                
+              if (required) {
+                this.elementsToValidate.push(paperElement);
+              }
+
               paperElement.value = this.data[property] ? this.data[property] : '';
               if (disabledValue === true) {
                 paperElement.setAttribute('disabled', disabledValue);
@@ -303,7 +303,9 @@
     _updateDataObject: function (property, value) {
       this.data[property] = value;
       this.validate();
-      this.fire('data-changed', {value: this.data});
+      this.fire('data-changed', {
+        value: this.data
+      });
     },
 
     /*

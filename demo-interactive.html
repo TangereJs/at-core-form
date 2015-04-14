@@ -66,8 +66,7 @@
       },
       "name": {
           "type": "string",
-          "required": "true",
-          "xinputmode": "required"
+          "required": "true"
       },
       "city": {
           "type": "string",
@@ -151,9 +150,11 @@
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
+        var formData = document.getElementById('formData');
+        
         var formSchemaChangedFunc = debounce(function(){
             try {
-              coreForm.schema = JSON.parse(formSchema.value);
+              coreForm.schema = JSON.parse(formSchema.value);              
               coreForm.validate();
             } catch (e) {
 //              console.log(e);
@@ -162,11 +163,11 @@
         
         formSchema.addEventListener('value-changed', function () {
           //console.log("form schema changed");
-          formSchemaChangedFunc();          
+          formSchemaChangedFunc();
+          formDataChangedFunc();
         });
         //autoFormat(formSchema.mirror);
-
-        var formData = document.getElementById('formData');
+        
         var formDataChangedFunc = debounce(function(){
             try {
               if (!isUserInput){
