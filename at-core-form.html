@@ -198,11 +198,10 @@
               break;
             case "bool":
             case "boolean":
-              // create paper-checkbox
+              // create at-form-checkbox
+              paperElement = document.createElement('at-form-checkbox');
               if (propertyDefinition['xtype'] === 'toggle') {
-                paperElement = document.createElement('at-form-toggle');
-              } else {
-                paperElement = document.createElement('at-form-checkbox');
+                paperElement.toggle = true;
               }
 
               paperElement.id = property;
@@ -240,7 +239,9 @@
               paperElement.name = property;
               paperElement.classList.add(property);
               paperElement.label = description;
-              paperElement.setAttribute('disabled', disabledValue);
+              if (disabledValue){
+                paperElement.setAttribute('disabled', disabledValue);
+              }
               paperElement.url = propertyDefinition['xurl'];
               if (paperElement.url !== undefined) {
                 //paperElement.setAttribute('preload', true);
@@ -302,7 +303,7 @@
     _updateDataObject: function (property, value) {
       this.data[property] = value;
       this.validate();
-      this.fire('data-changed', this.data);
+      this.fire('data-changed', {value: this.data});
     },
 
     /*

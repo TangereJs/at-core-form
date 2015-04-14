@@ -151,29 +151,37 @@
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
+        var formSchemaChangedFunc = debounce(function(){
+            try {
+              coreForm.schema = JSON.parse(formSchema.value);
+              coreForm.validate();
+            } catch (e) {
+//              console.log(e);
+            }
+          }, 200, false);
+        
         formSchema.addEventListener('value-changed', function () {
           //console.log("form schema changed");
-          try {
-            coreForm.schema = JSON.parse(formSchema.value);
-            coreForm.updateValidState();
-          } catch (e) {
-
-          }
-
+          formSchemaChangedFunc();          
         });
         //autoFormat(formSchema.mirror);
 
         var formData = document.getElementById('formData');
+        var formDataChangedFunc = debounce(function(){
+            try {
+              if (!isUserInput){
+                var formDataValue = JSON.parse(formData.value);
+                coreForm.data = formDataValue;
+                coreForm.validate();
+              }
+            } catch (e) {
+//              console.log(e);
+            }
+          }, 200, false);
+        
         formData.addEventListener('value-changed', function () {
           //console.log("form data changed");
-          try {
-            if (!isUserInput){
-            coreForm.data = JSON.parse(formData.value);
-            coreForm.updateValidState();
-              }
-          } catch (e) {
-
-          }
+          formDataChangedFunc();
         });
         //autoFormat(formData.mirror);
 
@@ -183,7 +191,7 @@
           var data = JSON.parse(formData.value);
           coreForm.data = data;
           coreForm.addEventListener('data-changed', function (e) {
-            var dataString = JSON.stringify(e.detail);
+            var dataString = JSON.stringify(e.detail.value);
             dataString = dataString.replace(/,/g, ",\n");
             isUserInput = true;
             formData.value = dataString;
@@ -223,6 +231,22 @@
         //var totalChars = editor.getValue().length;
         //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines, ch: totalChars });
       }
+      
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+      };
+      
     })();
   </script>
 </body>
