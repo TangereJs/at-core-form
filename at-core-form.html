@@ -279,20 +279,40 @@
               break;
             }
             this.$.insertPoint.appendChild(divElem);
+            this.data[property] = paperElement.value;
           } else {
             console.log("Property " + property + " doens't have defined type. Skipping ...");
           }
         }
       }
     },
-    dataChanged: function (oldValue, newValue) {
-      for (var entry in this.data) {
-        var element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+    dataChanged: function (newValue, oldValue) {
+      var oldValueEntry,
+        entry,
+        element;
+
+      for (oldValueEntry in oldValue) {
+        if (isNullOrUndefined(this.data[oldValueEntry])) {
+          this.data[oldValueEntry] = oldValue[oldValueEntry];
+        }
+      }
+
+      for (entry in this.data) {
+        element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
         if (element) {
-          element.value = this.data[entry];
+          if (notNullOrUndefined(this.data[entry])) {
+            element.value = this.data[entry];
+          }
         }
       }
       this.validate();
+
+
+      if (notNullOrUndefined(oldValue) && Object.keys(oldValue).length > 0) {
+        this.fire('data-changed', {
+          value: this.data
+        });
+      }
     },
 
     /*
@@ -356,7 +376,11 @@
   }
 
   function notNullOrUndefined(param) {
-    return (param !== null) && (param !== undefined)
+    return (param !== null) && (param !== undefined);
+  }
+
+  function isNullOrUndefined(param) {
+    return param === null || param === undefined;
   }
 
   function notNullUndefinedOrEmpty(param) {
