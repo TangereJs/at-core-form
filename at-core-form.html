@@ -110,7 +110,7 @@
               }
             }
           }
-          var required = propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
+          var required = propertyDefinition.required === true || propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
 
           // get the default value and regular value
           var defaultValue = propertyDefinition.default;
