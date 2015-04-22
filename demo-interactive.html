@@ -11,6 +11,7 @@
   <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
   <link rel="import" href="../layout/layout.html" />
   <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 
   <style>
     body {
@@ -73,7 +74,7 @@
           "default": "Default city name"
       },
       "active": {
-          "type": "boolean"
+          "type": "string"
       },
       "activePera": {
           "type": "boolean",
@@ -119,6 +120,9 @@
           <label>Form is currently: </label>
           <span id="formValid">valid</span>
           <span id="formInvalid" hidden>invalid</span>
+        </div>
+        <div>
+          <at-form-checkbox id="disableForm" label="Disable form"></at-form-checkbox>
         </div>
         <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
         <code-mirror id="formData" mode="javascript" class="h100w100">
@@ -227,6 +231,11 @@
         }
       }
 
+      var disableForm = document.getElementById('disableForm');
+      disableForm.addEventListener('value-changed', function(event){
+        coreForm.disabled = event.detail.value;
+      });
+      
       function autoFormat(editor) {
         // this doesn't work because polymer code mirror doesn't support code formatting :'(
         //var totalLines = editor.lineCount();

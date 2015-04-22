@@ -37,10 +37,12 @@
       disabled: {
         type: Boolean,
         notify: true,
-        value: false
+        value: false,
+        observer: 'disabledChanged'
       }
     },
     _isReady: false,
+    _scopeCssViaAttr: true,
     ready: function () {
       this.elementsToValidate = [];
       this._isReady = true;
@@ -149,6 +151,7 @@
 
               paperElement.id = property;
               paperElement.name = property;
+              paperElement.classList.add(property);
               paperElement.label = description;
               paperElement.mode = codeMode;
               paperElement.value = this.data[property] ? this.data[property] : '';
@@ -181,7 +184,7 @@
               paperElement.classList.add(property);
               paperElement.label = description;
               paperElement.disabled = disabledValue;
-              paperElement.value = this.data[property] ? this.data[property] : '';
+              paperElement.value = new String(this.data[property] ? this.data[property] : '');
 
               divElem.appendChild(paperElement);
               break;
@@ -350,7 +353,7 @@
     },
     disabledChanged: function () {
       for (var property in this.schema.properties) {
-        var element = this.$.insertPoint.querySelector('.' + property);
+        var element = this.querySelector('.' + property);
         var disabledValue = this.disabled;
         if (this.disabled === false) {
           var elemDisabledValue = this.schema.properties[element.id].disabled;
@@ -358,7 +361,7 @@
             disabledValue = true;
           }
         }
-        element.setAttribute('disabled', disabledValue);
+        element.disabled = disabledValue;// setAttribute('disabled', disabledValue);
         var childInput = element.querySelector('input');
         if (notNullOrUndefined(childInput)) {
           if (disabledValue === false) {
@@ -398,5 +401,4 @@
       }
     }
   }
-</script>
 </script>
