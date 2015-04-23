@@ -4,6 +4,7 @@
 <!--<link rel="import" href="../at-form-toggle/at-form-toggle.html" />-->
 <link rel="import" href="../at-form-markdown/at-form-markdown.html" />
 <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
+<link rel="import" href="../at-form-password/at-form-password.html" />
 
 <dom-module id="at-core-form">
   <template>
@@ -188,6 +189,27 @@
 
               divElem.appendChild(paperElement);
               break;
+            case "password":
+              paperElement = document.createElement('at-form-password');
+
+              paperElement.id = property;
+              paperElement.name = property;
+              paperElement.classList.add(property);
+              paperElement.label = description;
+              paperElement.disabled = disabledValue;
+              paperElement.value = new String(this.data[property] ? this.data[property] : '');
+
+              paperElement.required = required;
+              if (required) {
+                this.elementsToValidate.push(paperElement);
+              }
+                
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
+              });
+
+              divElem.appendChild(paperElement);
+              break;
             case "bool":
             case "boolean":
               // create at-form-checkbox
@@ -361,7 +383,7 @@
             disabledValue = true;
           }
         }
-        element.disabled = disabledValue;// setAttribute('disabled', disabledValue);
+        element.disabled = disabledValue; // setAttribute('disabled', disabledValue);
         var childInput = element.querySelector('input');
         if (notNullOrUndefined(childInput)) {
           if (disabledValue === false) {
