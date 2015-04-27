@@ -1,10 +1,11 @@
 <link rel="import" href="../at-form-input/at-form-input.html" />
 <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 <link rel="import" href="../at-form-lookup/at-form-lookup.html" />
-<!--<link rel="import" href="../at-form-toggle/at-form-toggle.html" />-->
 <link rel="import" href="../at-form-markdown/at-form-markdown.html" />
 <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
 <link rel="import" href="../at-form-password/at-form-password.html" />
+<link rel="import" href="../at-form-file/at-form-file.html" />
+<link rel="import" href="../at-form-image/at-form-image.html" />
 
 <dom-module id="at-core-form">
   <template>
@@ -70,10 +71,10 @@
           var propertyDefinition = properties[property];
 
           var description = property;
-          if (notNullOrUndefined(propertyDefinition.description)) {
-            description = propertyDefinition.description;
-          } else if (notNullOrUndefined(propertyDefinition.title)) {
+          if (notNullOrUndefined(propertyDefinition.title)) {
             description = propertyDefinition.title;
+          } else if (notNullOrUndefined(propertyDefinition.description)) {
+            description = propertyDefinition.description;
           }
 
           var type = propertyDefinition.type;
@@ -141,74 +142,37 @@
             case "code":
               paperElement = document.createElement('at-form-codemirror');
 
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
-              }
-
-              paperElement.addEventListener('value-changed', function (event) {
+                paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
-
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.label = description;
-              paperElement.mode = codeMode;
               paperElement.value = this.data[property] ? this.data[property] : '';
 
-              divElem.appendChild(paperElement);
-              //              divElem.style.height = '100px';
-              //              paperElement.style.height = '100%';
+              paperElement.mode = codeMode;
+
               break;
             case "number":
             case "string":
               // create paper-input
               paperElement = document.createElement('at-form-input');
 
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
-              }
-
               if (type === "number") {
                 paperElement.type = type;
-                // paperElement.setAttribute('error', 'Please enter a number!');
-              }
-
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
-              });
-
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.label = description;
-              paperElement.disabled = disabledValue;
-              paperElement.value = new String(this.data[property] ? this.data[property] : '');
-
-              divElem.appendChild(paperElement);
-              break;
-            case "password":
-              paperElement = document.createElement('at-form-password');
-
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.label = description;
-              paperElement.disabled = disabledValue;
-              paperElement.value = new String(this.data[property] ? this.data[property] : '');
-
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
               }
                 
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
-
-              divElem.appendChild(paperElement);
+              paperElement.value = new String(this.data[property] ? this.data[property] : '');
+                
+              break;
+            case "password":
+              paperElement = document.createElement('at-form-password');
+              
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
+              });
+              paperElement.value = new String(this.data[property] ? this.data[property] : '');
+              
               break;
             case "bool":
             case "boolean":
@@ -217,93 +181,80 @@
               if (propertyDefinition['xtype'] === 'toggle') {
                 paperElement.toggle = true;
               }
-
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              if (disabledValue === true) {
-                paperElement.setAttribute('disabled', disabledValue);
-              }
-              paperElement.label = description;
+              
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
-
-              divElem.appendChild(paperElement);
+              
               break;
             case "enum":
               paperElement = document.createElement('at-form-lookup');
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.disabled = disabledValue;
-              paperElement.label = description;
+                
               paperElement.available = propertyDefinition['xvaluelist'];
-              paperElement.value = this.data[property] ? this.data[property] : '';
-              divElem.appendChild(paperElement);
+                
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
-
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
-              }
-
+              paperElement.value = this.data[property] ? this.data[property] : '';
+                
               break;
             case "lookup":
               paperElement = document.createElement('at-form-lookup');
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.label = description;
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
-              }
-              if (disabledValue) {
-                paperElement.setAttribute('disabled', disabledValue);
-              }
+                            
               paperElement.url = propertyDefinition['xurl'];
-              if (paperElement.url !== undefined) {
-                //paperElement.setAttribute('preload', true);
+              if (paperElement.url !== undefined) {                
                 paperElement.setAttribute('params', '{"query":""}');
               }
-              paperElement.value = this.data[property] ? this.data[property] : '';
-
-              //paperElement.setAttribute('usedropdown', true);
+                            
               if (propertyDefinition['noCredentials'] !== undefined) {
                 paperElement.setAttribute('noCredentials', true);
               }
-              divElem.appendChild(paperElement);
+              
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
+              paperElement.value = this.data[property] ? this.data[property] : '';
+                
               break;
             case "marked":
               paperElement = document.createElement('at-form-markdown');
-              paperElement.id = property;
-              paperElement.name = property;
-              paperElement.classList.add(property);
-              paperElement.label = description;
-              paperElement.required = required;
-              if (required) {
-                this.elementsToValidate.push(paperElement);
-              }
-
-              paperElement.value = this.data[property] ? this.data[property] : '';
-              if (disabledValue === true) {
-                paperElement.setAttribute('disabled', disabledValue);
-              }
-
-              divElem.appendChild(paperElement);
+              
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
+              paperElement.value = this.data[property] ? this.data[property] : '';
+                
+              break;
+            case "file":
+                paperElement = document.createElement('at-form-file');
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.name, event.detail.value);
+                });
+              break;
+            case "image":
+                paperElement = document.createElement('at-form-image');
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.name, event.detail.value);
+                });
               break;
             }
+            
+            // assign all commmon attributes to all elements            
+            paperElement.id = property;
+            paperElement.name = property;
+            paperElement.classList.add(property);
+            paperElement.label = description;
+            paperElement.disabled = disabledValue;
+            paperElement.required = required;
+            if (required) {
+              this.elementsToValidate.push(paperElement);
+            }
+            // append paper element to its container
+            divElem.appendChild(paperElement);
+            // add container to as child to insertPoint
             this.$.insertPoint.appendChild(divElem);
+            
             this.data[property] = paperElement.value;
           } else {
             console.log("Property " + property + " doens't have defined type. Skipping ...");
