@@ -78,7 +78,7 @@
           }
 
           var type = propertyDefinition.type;
-          if (type === "string" && propertyDefinition.xtype !== undefined && propertyDefinition.xtype !== null && propertyDefinition.xtype !== "") {
+          if (type === "string" && propertyDefinition.hasOwnProperty('xtype') && propertyDefinition.xtype !== "") {
             type = propertyDefinition.xtype;
             if (type.indexOf('-') != -1) {
               var startIndex = type.indexOf('-');
@@ -114,6 +114,14 @@
               }
             }
           }
+
+          // *ma* if type === string and xtype === '' but "enum": ["value1", "value2"] exists than
+          // type === enum and xvaluelist = value list
+          if (type === "string" && (!propertyDefinition.hasOwnProperty('xtype') || propertyDefinition.xtype === '') && propertyDefinition.hasOwnProperty('enum') && Object.prototype.toString.apply(propertyDefinition.enum) === "[object Array]") {
+            type = "enum";
+            propertyDefinition.xvaluelist = propertyDefinition.enum.join(',');
+          }
+
           var required = propertyDefinition.required === true || propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
 
           // get the default value and regular value
@@ -141,8 +149,10 @@
             switch (type) {
             case "code":
               paperElement = document.createElement('at-form-codemirror');
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
 
-                paperElement.addEventListener('value-changed', function (event) {
+              paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
@@ -154,95 +164,113 @@
             case "string":
               // create paper-input
               paperElement = document.createElement('at-form-input');
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
 
               if (type === "number") {
                 paperElement.type = type;
               }
-                
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = new String(this.data[property] ? this.data[property] : '');
-                
+
               break;
             case "password":
               paperElement = document.createElement('at-form-password');
-              
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = new String(this.data[property] ? this.data[property] : '');
-              
+
               break;
             case "bool":
             case "boolean":
               // create at-form-checkbox
               paperElement = document.createElement('at-form-checkbox');
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
               if (propertyDefinition['xtype'] === 'toggle') {
                 paperElement.toggle = true;
               }
-              
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
-              
+
               break;
             case "enum":
               paperElement = document.createElement('at-form-lookup');
-                
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
               paperElement.available = propertyDefinition['xvaluelist'];
-                
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
-                
+
               break;
             case "lookup":
               paperElement = document.createElement('at-form-lookup');
-                            
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
               paperElement.url = propertyDefinition['xurl'];
-              if (paperElement.url !== undefined) {                
+              if (paperElement.url !== undefined) {
                 paperElement.setAttribute('params', '{"query":""}');
               }
-                            
+
               if (propertyDefinition['noCredentials'] !== undefined) {
                 paperElement.setAttribute('noCredentials', true);
               }
-              
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
-                
+
               break;
             case "marked":
               paperElement = document.createElement('at-form-markdown');
-              
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
-                
+
               break;
             case "file":
-                paperElement = document.createElement('at-form-file');
-                paperElement.addEventListener('value-changed', function(event){
-                  self._updateDataObject(event.target.name, event.detail.value);
-                });
+              paperElement = document.createElement('at-form-file');
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
+              });
               break;
             case "image":
-                paperElement = document.createElement('at-form-image');
-                paperElement.addEventListener('value-changed', function(event){
-                  self._updateDataObject(event.target.name, event.detail.value);
-                });
+              paperElement = document.createElement('at-form-image');
+              // *ij* name is required here so when value-changed event is first fired element has its name set
+              paperElement.name = property;
+
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
+              });
               break;
             }
-            
+
             // assign all commmon attributes to all elements            
             paperElement.id = property;
-            paperElement.name = property;
             paperElement.classList.add(property);
             paperElement.label = description;
             paperElement.disabled = disabledValue;
@@ -254,7 +282,7 @@
             divElem.appendChild(paperElement);
             // add container to as child to insertPoint
             this.$.insertPoint.appendChild(divElem);
-            
+
             this.data[property] = paperElement.value;
           } else {
             console.log("Property " + property + " doens't have defined type. Skipping ...");
@@ -273,13 +301,17 @@
         }
       }
 
-      for (entry in this.data) {
-        element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
-        if (element) {
-          if (notNullOrUndefined(this.data[entry])) {
-            element.value = this.data[entry];
+      try {
+        for (entry in this.data) {
+          element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+          if (element) {
+            if (notNullOrUndefined(this.data[entry])) {
+              element.value = this.data[entry];
+            }
           }
         }
+      } catch (event) {
+        console.log(event);
       }
       this.validate();
 
