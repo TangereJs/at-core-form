@@ -174,7 +174,9 @@
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.name, event.detail.value);
               });
-              paperElement.value = new String(this.data[property] ? this.data[property] : '');
+              if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
+                paperElement.value = new String(this.data[property] ? this.data[property] : '');
+              }
 
               break;
             case "password":
@@ -271,7 +273,12 @@
 
             // assign all commmon attributes to all elements            
             paperElement.id = property;
-            paperElement.classList.add(property);
+            var classesToAdd = property.split(' ');
+            for (var classesToAddIndex = 0; classesToAddIndex < classesToAdd.length; classesToAddIndex += 1) {
+              if (classesToAdd[classesToAddIndex] !== '') {
+                paperElement.classList.add(classesToAdd[classesToAddIndex]);
+              }
+            }            
             paperElement.label = description;
             paperElement.disabled = disabledValue;
             paperElement.required = required;
@@ -313,8 +320,7 @@
       } catch (event) {
         console.log(event);
       }
-      this.validate();
-
+      //this.validate(); // this was commented out for #621; it is unclear if this line should be deleted right now (19.05.2015)
 
       if (notNullOrUndefined(oldValue) && Object.keys(oldValue).length > 0) {
         this.fire('data-changed', {
