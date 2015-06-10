@@ -278,7 +278,7 @@
               if (classesToAdd[classesToAddIndex] !== '') {
                 paperElement.classList.add(classesToAdd[classesToAddIndex]);
               }
-            }            
+            }
             paperElement.label = description;
             paperElement.disabled = disabledValue;
             paperElement.required = required;
@@ -308,18 +308,20 @@
         }
       }
 
-      try {
-        for (entry in this.data) {
-          element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
-          if (element) {
-            if (notNullOrUndefined(this.data[entry])) {
+
+      for (entry in this.data) {
+        element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+        if (element) {
+          if (notNullOrUndefined(this.data[entry])) {
+            try {
               element.value = this.data[entry];
+            } catch (event) {
+              console.log(event);
             }
           }
         }
-      } catch (event) {
-        console.log(event);
       }
+
       //this.validate(); // this was commented out for #621; it is unclear if this line should be deleted right now (19.05.2015)
 
       if (notNullOrUndefined(oldValue) && Object.keys(oldValue).length > 0) {
