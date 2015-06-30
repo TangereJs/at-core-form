@@ -297,6 +297,47 @@
         }
       }
     },
+    /* *ij*
+     OK. Imperative data binding doesn't work in polymer anymore.
+     It may happen in the future but not in near future.
+     Using at-core-form.data[field] = 'newValue' doesn't work. Its not possible to bind to at-core-form.data[field] to update field value automatically     
+     Explained in https://github.com/Polymer/polymer/issues/1778 and https://github.com/Polymer/polymer/issues/1796
+     
+     So, to solve this shortcoming a updateFormElementData function is introduced
+     The purpose of this function is, obviously, to update a value of the specific field.
+     This function will update the .data object and .value of the field with provided elementId.
+     If the field with provided elementId doesn't exist a debug message will be loged in the console
+     
+     Alternative to this approach is to create a completely new object each time you want to update the .data property
+     IMO, this approach is a waste of time. An updateFormElementData function is much more efficient
+     
+     Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
+     not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
+     */
+    updateFormElementData(elementId, data) {
+      if (this.data.hasOwnProperty(elementId)) {
+        // if element exists update its value
+        this.data[elementId] = data;
+        var element = this.$.insertPoint.querySelector('#'+elementId)
+        if (element) {
+          element.value = data;
+        }
+      } else {
+        // if not log the debug message
+        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+      }
+    },
+    
+    setElementState(elementId, state, value) {
+      var element = this.$.insertPoint.querySelector('#'+elementId);
+      if (element) {
+        element.setAttribute(state, value);
+      } else {
+        // if not log the debug message
+        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+      }
+    },
+    
     dataChanged: function (newValue, oldValue) {
       var oldValueEntry,
         entry,
