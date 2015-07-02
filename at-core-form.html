@@ -314,7 +314,7 @@
      Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
      not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
      */
-    updateFormElementData(elementId, data) {
+    updateFormElementData: function(elementId, data) {
       if (this.data.hasOwnProperty(elementId)) {
         // if element exists update its value
         this.data[elementId] = data;
@@ -328,7 +328,7 @@
       }
     },
     
-    setElementState(elementId, state, value) {
+    setElementState: function(elementId, state, value) {
       var element = this.$.insertPoint.querySelector('#'+elementId);
       if (element) {
         element.setAttribute(state, value);
