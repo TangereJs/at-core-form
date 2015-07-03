@@ -9,6 +9,7 @@
     "at-form-codemirror": "TangereJs/at-form-codemirror#0.8-preview",
     "at-form-password": "TangereJs/at-form-password#0.8-preview",
     "at-form-file": "TangereJs/at-form-file#0.8-preview",
-    "at-form-image": "TangereJs/at-form-image#0.8-preview"
+    "at-form-image": "TangereJs/at-form-image#0.8-preview",
+    "at-form-complex": "TangereJs/at-form-complex#0.8-preview"
   }
 }
