@@ -1,11 +1,12 @@
-<link rel="import" href="../at-form-input/at-form-input.html" />
-<link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
-<link rel="import" href="../at-form-lookup/at-form-lookup.html" />
-<link rel="import" href="../at-form-markdown/at-form-markdown.html" />
-<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
-<link rel="import" href="../at-form-password/at-form-password.html" />
-<link rel="import" href="../at-form-file/at-form-file.html" />
-<link rel="import" href="../at-form-image/at-form-image.html" />
+<link rel="import" href="../at-form-input/at-form-input.html">
+<link rel="import" href="../at-form-checkbox/at-form-checkbox.html">
+<link rel="import" href="../at-form-lookup/at-form-lookup.html">
+<link rel="import" href="../at-form-markdown/at-form-markdown.html">
+<link rel="import" href="../at-form-codemirror/at-form-codemirror.html">
+<link rel="import" href="../at-form-password/at-form-password.html">
+<link rel="import" href="../at-form-file/at-form-file.html">
+<link rel="import" href="../at-form-image/at-form-image.html">
+<link rel="import" href="../at-form-complex/at-form-complex.html">
 
 <dom-module id="at-core-form">
   <template>
@@ -58,7 +59,7 @@
       }
     },
     elementsToValidate: [],
-    schemaChanged: function (oldValue, newValue) {
+    schemaChanged: function (newValue, oldValue) {
       if (this._isReady) {
         var self = this;
         self.elementsToValidate = [];
@@ -269,6 +270,19 @@
                 self._updateDataObject(event.target.name, event.detail.value);
               });
               break;
+            case "complex":
+              paperElement = document.createElement('at-form-complex');
+
+              paperElement.name = property;
+              paperElement.schema = propertyDefinition.xschema;
+              if (propertyDefinition.xvalue) {
+                paperElement.value = propertyDefinition.xvalue;
+              }
+
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.name, event.detail.value);
+              });
+              break;
             }
 
             // assign all commmon attributes to all elements            
@@ -279,6 +293,7 @@
                 paperElement.classList.add(classesToAdd[classesToAddIndex]);
               }
             }
+
             paperElement.label = description;
             paperElement.disabled = disabledValue;
             paperElement.required = required;
@@ -314,11 +329,11 @@
      Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
      not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
      */
-    updateFormElementData: function(elementId, data) {
+    updateFormElementData: function (elementId, data) {
       if (this.data.hasOwnProperty(elementId)) {
         // if element exists update its value
         this.data[elementId] = data;
-        var element = this.$.insertPoint.querySelector('#'+elementId)
+        var element = this.$.insertPoint.querySelector('#' + elementId)
         if (element) {
           element.value = data;
         }
@@ -327,9 +342,9 @@
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
       }
     },
-    
-    setElementState: function(elementId, state, value) {
-      var element = this.$.insertPoint.querySelector('#'+elementId);
+
+    setElementState: function (elementId, state, value) {
+      var element = this.$.insertPoint.querySelector('#' + elementId);
       if (element) {
         element.setAttribute(state, value);
       } else {
@@ -337,7 +352,7 @@
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
       }
     },
-    
+
     dataChanged: function (newValue, oldValue) {
       var oldValueEntry,
         entry,

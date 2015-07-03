@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>At-Core-Form demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/polymer.html" />
+  <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
+  <link rel="import" href="../layout/layout.html" />
+  <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
+
+  <style>
+    body {
+      margin: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+    }
+    
+    .h100w100 {
+      height: 100%;
+      width: 100%;
+    }
+    
+    .h100w50 {
+      height: 100%;
+      width: 50%;
+    }
+    
+    .h50w100 {
+      height: 50%;
+      width: 100%;
+    }  </style>
+</head>
+
+<body>
+  <div class="horizontal layout h100w100">
+    <div class="flex h100w50">
+      <div class="vertical layout h100w100">
+        <h2>Form Schema (JSON)</h2>
+        <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
+        <!--// mappings for code-* are
+          // code-html -> htmlmixed
+          // code-css -> text/css
+          // code-javascript -> javascript
+          // code-json -> application/json
+          // code-sql -> sql
+          // code-xml -> xml-->
+        <code-mirror id="formSchema" mode="javascript" class="h100w100">
+{
+  "properties": {
+      "id": {
+          "description": "The unique identifier for a product",
+          "type": "number"
+      },
+      "name": {
+          "type": "string",
+          "required": "true"
+      },
+      "city": {
+          "type": "string",
+          "default": "Default city name"
+      },
+      "password": {
+          "type": "string",
+          "xtype": "password",
+          "label": "Type your password"
+      },
+      "active": {
+          "type": "string"
+      },
+      "activePera": {
+          "type": "boolean",
+          "description": "This is description for pera"
+      },
+      "activeToggle": {
+          "type": "boolean",
+          "xtype": "toggle",
+          "description": "This is description for active toggle"
+      },
+      "complexDemo": {
+          "type": "string",
+          "xtype": "complex",
+          "xschema": {
+            "properties": {
+              "dropdownDemo": {
+                  "title": "Name",
+                  "type": "string",
+                  "xtype": "enum",
+                  "xvaluelist": "XML,JSON"
+              },
+              "dropdownEnumDemo": {
+                  "title": "Name",
+                  "type": "string",
+                  "enum": ["XML", "JSON"]
+              },
+              "card": {
+                  "title": "Card",
+                  "type": "string",
+                  "xtype": "lookup",
+                  "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
+              },
+              "file": {
+                  "title": "at-form-file demo",
+                  "type": "string",
+                  "xtype": "file"
+              },
+              "image": {
+                  "title": "at-form-image demo",
+                  "type": "string",
+                  "xtype": "image"
+              },          
+              "codeMirrorDemo": {
+                  "title": "Code Mirror",
+                  "type": "string",
+                  "xtype": "code-markdown"
+              },
+              "markdownDemo": {
+                  "title": "Markdown",
+                  "type": "string",
+                  "xtype": "marked"
+              }
+            }
+          },
+        "description": "This is complex field demo"
+      }      
+  },
+  "required": ["id", "city", "markdownDemo"]
+}
+        </code-mirror>
+      </div>
+    </div>
+    <div class="flex h100w50">
+      <div class="vertical layout h100w100">
+        <h2>Form Data (JSON)</h2>
+        <div>
+          <label>Form is currently: </label>
+          <span id="formValid">valid</span>
+          <span id="formInvalid" hidden>invalid</span>
+        </div>
+        <div>
+          <at-form-checkbox id="disableForm" label="Disable form"></at-form-checkbox>
+        </div>
+        <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
+        <code-mirror id="formData" mode="javascript" class="h100w100">
+{
+  "id": "5",
+  "city": "Boston",
+  "active": true,
+  "activePera": false,
+  "dropdownDemo": "XML"
+}
+        </code-mirror>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="vertical layout">
+        <h2>Generated form</h2>
+        <at-core-form id="coreForm" class="flex">
+        </at-core-form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+
+      var isUserInput = false;
+      
+      window.addEventListener('WebComponentsReady', function (e) {
+        var coreForm = document.getElementById('coreForm');
+
+        var formSchema = document.getElementById('formSchema');
+        var formData = document.getElementById('formData');
+        
+        var formSchemaChangedFunc = debounce(function(){
+            try {
+              coreForm.schema = JSON.parse(formSchema.value);              
+              coreForm.validate();
+            } catch (e) {
+//              console.log(e);
+            }
+          }, 200, false);
+        
+        formSchema.addEventListener('value-changed', function () {
+          //console.log("form schema changed");
+          formSchemaChangedFunc();
+          formDataChangedFunc();
+        });
+        //autoFormat(formSchema.mirror);
+        
+        var formDataChangedFunc = debounce(function(){
+            try {
+              if (!isUserInput){
+                var formDataValue = JSON.parse(formData.value);
+                coreForm.data = formDataValue;
+                coreForm.validate();
+              }
+            } catch (e) {
+//              console.log(e);
+            }
+          }, 200, false);
+        
+        formData.addEventListener('value-changed', function () {
+          //console.log("form data changed");
+          formDataChangedFunc();
+        });
+        //autoFormat(formData.mirror);
+
+        try {
+          var schema = JSON.parse(formSchema.value);
+          coreForm.schema = schema;
+          var data = JSON.parse(formData.value);
+          coreForm.data = data;
+          coreForm.addEventListener('data-changed', function (e) {
+            var dataString = JSON.stringify(e.detail.value);
+            dataString = dataString.replace(/,/g, ",\n");
+            isUserInput = true;
+            formData.value = dataString;
+            isUserInput = false;
+          });
+
+          formData.value = JSON.stringify(coreForm.data);
+          updateFormValidGui(coreForm.valid);
+        } catch (e) {
+
+        }
+
+        var validObject = {
+          valid: true
+        };
+        coreForm.addEventListener('valid-changed', function (e) {
+          validObject.valid = e.detail.value;
+          updateFormValidGui(validObject.valid);
+        });
+      });
+
+      var formValidSpan = document.getElementById("formValid");
+      var formInvalidSpan = document.getElementById("formInvalid");
+
+      function updateFormValidGui(valid) {
+        if (valid) {
+          formValidSpan.removeAttribute('hidden');
+          formInvalidSpan.setAttribute('hidden', true);
+        } else {
+          formValidSpan.setAttribute('hidden', true);
+          formInvalidSpan.removeAttribute('hidden');
+        }
+      }
+
+      var disableForm = document.getElementById('disableForm');
+      disableForm.addEventListener('value-changed', function(event){
+        coreForm.disabled = event.detail.value;
+      });
+      
+      function autoFormat(editor) {
+        // this doesn't work because polymer code mirror doesn't support code formatting :'(
+        //var totalLines = editor.lineCount();
+        //var totalChars = editor.getValue().length;
+        //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines, ch: totalChars });
+      }
+      
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+      };
+      
+    })();
+  </script>
+</body>
+
+</html>
