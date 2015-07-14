@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>At-Core-Form demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../polymer/polymer.html" />
   <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
   <link rel="import" href="../layout/layout.html" />
@@ -84,43 +84,52 @@
           "xtype": "toggle",
           "description": "This is description for active toggle"
       },
-      "dropdownDemo": {
-          "title": "Name",
+      "complexDemo": {
           "type": "string",
-          "xtype": "enum",
-          "xvaluelist": "XML,JSON"
-      },
-      "dropdownEnumDemo": {
-          "title": "Name",
-          "type": "string",
-          "enum": ["XML", "JSON"]
-      },
-      "card": {
-          "title": "Card",
-          "type": "string",
-          "xtype": "lookup",
-          "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
-      },
-      "file": {
-          "title": "at-form-file demo",
-          "type": "string",
-          "xtype": "file"
-      },
-      "image": {
-          "title": "at-form-image demo",
-          "type": "string",
-          "xtype": "image"
-      },          
-      "codeMirrorDemo": {
-          "title": "Code Mirror",
-          "type": "string",
-          "xtype": "code-markdown"
-      },
-      "markdownDemo": {
-          "title": "Markdown",
-          "type": "string",
-          "xtype": "marked"
-      }
+          "xtype": "complex",
+          "xschema": {
+            "properties": {
+              "dropdownDemo": {
+                  "title": "Name",
+                  "type": "string",
+                  "xtype": "enum",
+                  "xvaluelist": "XML,JSON"
+              },
+              "dropdownEnumDemo": {
+                  "title": "Name",
+                  "type": "string",
+                  "enum": ["XML", "JSON"]
+              },
+              "card": {
+                  "title": "Card",
+                  "type": "string",
+                  "xtype": "lookup",
+                  "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
+              },
+              "file": {
+                  "title": "at-form-file demo",
+                  "type": "string",
+                  "xtype": "file"
+              },
+              "image": {
+                  "title": "at-form-image demo",
+                  "type": "string",
+                  "xtype": "image"
+              },          
+              "codeMirrorDemo": {
+                  "title": "Code Mirror",
+                  "type": "string",
+                  "xtype": "code-markdown"
+              },
+              "markdownDemo": {
+                  "title": "Markdown",
+                  "type": "string",
+                  "xtype": "marked"
+              }
+            }
+          },
+        "description": "This is complex field demo"
+      }      
   },
   "required": ["id", "city", "markdownDemo"]
 }
