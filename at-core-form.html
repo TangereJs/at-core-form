@@ -1,11 +1,12 @@
-<link rel="import" href="../at-form-input/at-form-input.html" />
-<link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
-<link rel="import" href="../at-form-lookup/at-form-lookup.html" />
-<link rel="import" href="../at-form-markdown/at-form-markdown.html" />
-<link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
-<link rel="import" href="../at-form-password/at-form-password.html" />
-<link rel="import" href="../at-form-file/at-form-file.html" />
-<link rel="import" href="../at-form-image/at-form-image.html" />
+<link rel="import" href="../at-form-input/at-form-input.html">
+<link rel="import" href="../at-form-checkbox/at-form-checkbox.html">
+<link rel="import" href="../at-form-lookup/at-form-lookup.html">
+<link rel="import" href="../at-form-markdown/at-form-markdown.html">
+<link rel="import" href="../at-form-codemirror/at-form-codemirror.html">
+<link rel="import" href="../at-form-password/at-form-password.html">
+<link rel="import" href="../at-form-file/at-form-file.html">
+<link rel="import" href="../at-form-image/at-form-image.html">
+<link rel="import" href="../at-form-complex/at-form-complex.html">
 
 <dom-module id="at-core-form">
   <template>
@@ -58,7 +59,7 @@
       }
     },
     elementsToValidate: [],
-    schemaChanged: function (oldValue, newValue) {
+    schemaChanged: function (newValue, oldValue) {
       if (this._isReady) {
         var self = this;
         self.elementsToValidate = [];
@@ -150,10 +151,10 @@
             case "code":
               paperElement = document.createElement('at-form-codemirror');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -165,14 +166,14 @@
               // create paper-input
               paperElement = document.createElement('at-form-input');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               if (type === "number") {
                 paperElement.type = type;
               }
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
                 paperElement.value = new String(this.data[property] ? this.data[property] : '');
@@ -182,10 +183,10 @@
             case "password":
               paperElement = document.createElement('at-form-password');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = new String(this.data[property] ? this.data[property] : '');
 
@@ -195,14 +196,14 @@
               // create at-form-checkbox
               paperElement = document.createElement('at-form-checkbox');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               if (propertyDefinition['xtype'] === 'toggle') {
                 paperElement.toggle = true;
               }
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -210,12 +211,12 @@
             case "enum":
               paperElement = document.createElement('at-form-lookup');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.available = propertyDefinition['xvaluelist'];
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -223,7 +224,7 @@
             case "lookup":
               paperElement = document.createElement('at-form-lookup');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.url = propertyDefinition['xurl'];
               if (paperElement.url !== undefined) {
@@ -235,7 +236,7 @@
               }
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -243,10 +244,10 @@
             case "marked":
               paperElement = document.createElement('at-form-markdown');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               paperElement.value = this.data[property] ? this.data[property] : '';
 
@@ -254,31 +255,44 @@
             case "file":
               paperElement = document.createElement('at-form-file');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               break;
             case "image":
               paperElement = document.createElement('at-form-image');
               // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.name = property;
+              paperElement.id = property;
 
               paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.name, event.detail.value);
+                self._updateDataObject(event.target.id, event.detail.value);
+              });
+              break;
+            case "complex":
+              paperElement = document.createElement('at-form-complex');
+
+              paperElement.id = property;
+              paperElement.schema = propertyDefinition.xschema;
+              if (propertyDefinition.xvalue) {
+                paperElement.value = propertyDefinition.xvalue;
+              }
+
+              paperElement.addEventListener('value-changed', function (event) {
+                self._updateDataObject(event.target.id, event.detail.value);
               });
               break;
             }
 
-            // assign all commmon attributes to all elements            
-            paperElement.id = property;
+            // assign all commmon attributes to all elements
             var classesToAdd = property.split(' ');
             for (var classesToAddIndex = 0; classesToAddIndex < classesToAdd.length; classesToAddIndex += 1) {
               if (classesToAdd[classesToAddIndex] !== '') {
                 paperElement.classList.add(classesToAdd[classesToAddIndex]);
               }
             }
+
             paperElement.label = description;
             paperElement.disabled = disabledValue;
             paperElement.required = required;
@@ -297,10 +311,56 @@
         }
       }
     },
+    /* *ij*
+     OK. Imperative data binding doesn't work in polymer anymore.
+     It may happen in the future but not in near future.
+     Using at-core-form.data[field] = 'newValue' doesn't work. Its not possible to bind to at-core-form.data[field] to update field value automatically
+     Explained in https://github.com/Polymer/polymer/issues/1778 and https://github.com/Polymer/polymer/issues/1796
+
+     So, to solve this shortcoming a updateFormElementData function is introduced
+     The purpose of this function is, obviously, to update a value of the specific field.
+     This function will update the .data object and .value of the field with provided elementId.
+     If the field with provided elementId doesn't exist a debug message will be loged in the console
+
+     Alternative to this approach is to create a completely new object each time you want to update the .data property
+     IMO, this approach is a waste of time. An updateFormElementData function is much more efficient
+
+     Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
+     not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
+     */
+    updateFormElementData: function (elementId, data) {
+      if (this.data.hasOwnProperty(elementId)) {
+        // if element exists update its value
+        this.data[elementId] = data;
+        var element = this.$.insertPoint.querySelector('#' + elementId)
+        if (element) {
+          element.value = data;
+        }
+      } else {
+        // if not log the debug message
+        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+      }
+    },
+
+    setElementState: function (elementId, state, value) {
+      var element = this.$.insertPoint.querySelector('#' + elementId);
+      if (element) {
+        element.setAttribute(state, value);
+      } else {
+        // if not log the debug message
+        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+      }
+    },
+
     dataChanged: function (newValue, oldValue) {
       var oldValueEntry,
         entry,
         element;
+
+      if (isNullOrUndefined(this.data)) {
+          this.data = JSON.parse('{}');
+          oldValue = JSON.parse('{}');
+      }
 
       for (oldValueEntry in oldValue) {
         if (isNullOrUndefined(this.data[oldValueEntry])) {
