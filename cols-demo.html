@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>cols-demo</title>
+
+
+  <style>
+    .container-w {
+      width: 1024px;
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+      overflow: auto;
+    }
+    
+    .container-m {
+      width: 768px;
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+      overflow: auto;
+    }
+    
+    .container-s {
+      width: 320px;
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+      overflow: auto;
+    }
+    
+    [class*='col-'] {
+      float: left;
+      position: relative;
+      min-height: 1px;
+      padding-left: 15px;
+      padding-right: 15px;
+      box-sizing: border-box;
+    }
+    
+    [class*='col-'].col-center {
+      float: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .col-12 {
+      width: 100%;
+    }
+    
+    .col-6 {
+      width: 50%;
+    }
+    
+    .col-4 {
+      width: 33.3333%;
+    }
+    
+    .col-8 {
+      width: 66.6666%;
+    }
+    
+    .col-3 {
+      width: 25%;
+    }
+    
+    .col-9 {
+      width: 75%;
+    }
+    
+    .col-2 {
+      width: 16.6667%;
+    }
+    
+    .vertical .col-12 {
+      width: 100%;
+    }
+    
+    .vertical .col-6 {
+      width: 100%;
+    }
+    
+    .vertical .col-4 {
+      width: 100%;
+    }
+    
+    .vertical .col-8 {
+      width: 100%;
+    }
+    
+    .vertical .col-3 {
+      width: 50%;
+    }
+    
+    .vertical .col-9 {
+      width: 100%;
+    }
+    
+    .vertical .col-2 {
+      width: 16.6667%;
+    }
+    
+    .field {
+      width: 100%;
+      background-color: lightgray;
+      margin: 4px;
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div>Two column container, 12 column grid, 1024px</div>
+  <div class="container-w">
+    <div class="col-12">
+      <div class="field">12</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+  </div>
+
+  <div>Two column container, 12 column grid, 768px</div>
+  <div class="container-m">
+    <div class="col-12">
+      <div class="field">12</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+  </div>
+
+  <div>One column container(class: vertical), 12 column grid, 320px</div>
+  <div class="container-s vertical">
+    <div class="col-12">
+      <div class="field">12</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+  </div>
+
+
+  <div>Two column container, 12 column grid, 1024px, uneven distribution</div>
+  <div class="container-w">
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-12">
+      <div class="field">12</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-4">
+      <div class="field">4</div>
+    </div>
+    <div class="col-6">
+      <div class="field">6</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+    <div class="col-3">
+      <div class="field">3</div>
+    </div>
+  </div>
+
+</body>
+
+</html>
