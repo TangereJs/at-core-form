@@ -10,14 +10,17 @@
   <link rel="import" href="at-core-form.html" />
 
   <style>
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
   </style>
 
 </head>
 
 <body>
-      <div>
-        <at-core-form id="coreFormDemo"></at-core-form>
-      </div>
+  <div>
+    <at-core-form id="coreFormDemo"></at-core-form>
+  </div>
   <script>
     window.addEventListener('WebComponentsReady', function (e) {
       var demoForm = document.getElementById("coreFormDemo");
@@ -31,13 +34,14 @@
             'type': 'string',
             'required': true
           },
+          'activeDemo1': {
+            'type': 'boolean'
+          },
           'city': {
             'type': 'string',
             'value': 'Default city name'
           },
-          'activeDemo1': {
-            'type': 'boolean'
-          },
+
           'activeDemo2': {
             'type': 'boolean',
             'description': 'This is description for pera'

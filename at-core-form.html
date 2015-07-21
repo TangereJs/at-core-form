@@ -111,9 +111,8 @@
     width: 16.6667%;
   }
 
-  .field {
-    width: 100%;
-    margin: 4px;
+  .field {    
+   
   }
 </style>
   <template>
@@ -263,11 +262,12 @@
           if (notNullUndefinedOrEmpty(propertyDefinition.xgridcols)) {
             xgridcols = parseInt(propertyDefinition.xgridcols);
           }
-          var colClass = "col-" + xgridcols;
-
+          
           var paperElement = undefined;
           var divElem = document.createElement('div');
-          divElem.classList.add(colClass);
+          divElem.classList.add("field");
+          divElem.classList.add("col-" + xgridcols);
+          
           divElem.setAttribute('style-scope', 'at-core-form');
 
           if (notNullUndefinedOrEmpty(type)) {
