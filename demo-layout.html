@@ -1,44 +1,55 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
   <meta name="viewport" content="width=device-width" />
-  <title>At-Core-Form demo</title>
+  <title>at-core-form layout demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../polymer/polymer.html" />
   <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../layout/layout.html">
 
   <style>
-  </style>
 
+  </style>
 </head>
 
 <body>
-      <div>
-        <at-core-form id="coreFormDemo"></at-core-form>
-      </div>
+  <div class="layout vertical">
+    <div>
+      <h2>This is first form</h2>
+      <at-core-form id="coreForm1"></at-core-form>
+    </div>
+    <div>
+      <h2>This is second form</h2>
+      <at-core-form id="coreForm2" layout="vertical"></at-core-form>
+    </div>
+  </div>
   <script>
-    window.addEventListener('WebComponentsReady', function (e) {
-      var demoForm = document.getElementById("coreFormDemo");
-      demoForm.schema = {
+    window.addEventListener('WebComponentsReady', function(e) {
+      var formSchema = {
         'properties': {
           'id': {
             'description': 'The unique identifier for a product',
-            'type': 'number'
+            'type': 'number',
+            'xgridcols': '9'
           },
           'name': {
             'type': 'string',
-            'required': true
+            'required': true,
+            'xgridcols': '3'
           },
           'city': {
             'type': 'string',
-            'value': 'Default city name'
+            'value': 'Default city name',
+            'xgridcols': '9'
           },
-          'activeDemo1': {
-            'type': 'boolean'
+          'active': {
+            'type': 'boolean',
+            'xgridcols': '3'
           },
-          'activeDemo2': {
+          'activePera': {
             'type': 'boolean',
             'description': 'This is description for pera'
           },
@@ -56,38 +67,28 @@
             "title": "Code Mirror",
             "type": "string",
             "xtype": "code"
-          },
-          'markedDemo': {
-            "title": "Markdown Demo",
-            "type": "string",
-            "xtype": "marked"
-          },
-          'passwordDemo': {
-            "title": "Password Demo",
-            "type": "string",
-            "xtype": "password"
-          },
-          'formFileDemo': {
-            "title": "Form file Demo",
-            "type": "string",
-            "xtype": "file"
-          },
-          'formImageDemo': {
-            "title": "Form image Demo",
-            "type": "string",
-            "xtype": "image"
           }
         },
         'required': ['id', 'city']
       };
-      demoForm.data = {
+
+      var formData = {
         'id': 3213,
         'city': 'Boston',
         'name': 'Djura',
-        'activeDemo1': true,
-        'activeDemo2': false,
+        'active': true,
+        'activePera': false,
         'dropdownDemo': 'XML'
       };
+
+
+      var coreForm1 = document.getElementById("coreForm1");
+      coreForm1.schema = formSchema;
+      coreForm1.data = formData;
+
+      var coreForm2 = document.getElementById("coreForm2");
+      coreForm2.schema = formSchema;
+      coreForm2.data = formData;
     });
   </script>
 </body>
