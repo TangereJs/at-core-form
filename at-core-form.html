@@ -10,36 +10,6 @@
 
 <dom-module id="at-core-form">
 <style>
-  .container-w {
-    width: 1024px;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-    overflow: auto;
-  }
-
-  .container-m {
-    width: 768px;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-    overflow: auto;
-  }
-
-  .container-s {
-    width: 320px;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-    overflow: auto;
-  }
-
   [class*='col-'] {
     float: left;
     position: relative;
@@ -111,12 +81,12 @@
     width: 16.6667%;
   }
 
-  .field {    
-   
+  .field {
+
   }
 </style>
   <template>
-    <div id="insertPoint" class="container-w"></div>
+    <div id="insertPoint"></div>
     <content></content>
   </template>
 </dom-module>
@@ -262,12 +232,12 @@
           if (notNullUndefinedOrEmpty(propertyDefinition.xgridcols)) {
             xgridcols = parseInt(propertyDefinition.xgridcols);
           }
-          
+
           var paperElement = undefined;
           var divElem = document.createElement('div');
           divElem.classList.add("field");
           divElem.classList.add("col-" + xgridcols);
-          
+
           divElem.setAttribute('style-scope', 'at-core-form');
 
           if (notNullUndefinedOrEmpty(type)) {

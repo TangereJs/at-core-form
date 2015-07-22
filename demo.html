@@ -10,6 +10,36 @@
   <link rel="import" href="at-core-form.html" />
 
   <style>
+  .container-w {
+    width: 1024px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+  .container-m {
+    width: 768px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+  .container-s {
+    width: 320px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
     [class*='col-'] {
       border: 1px dashed blue;
     }
@@ -18,7 +48,7 @@
 </head>
 
 <body>
-  <div>
+  <div class="container-w">
     <at-core-form id="coreFormDemo"></at-core-form>
   </div>
   <script>

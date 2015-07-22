@@ -11,17 +11,49 @@
   <link rel="import" href="../layout/layout.html">
 
   <style>
+  .container-w {
+    width: 1024px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
 
+  .container-m {
+    width: 768px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+  .container-s {
+    width: 320px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
   </style>
 </head>
 
 <body>
   <div class="layout vertical">
-    <div>
+    <div class="container-m">
       <h2>This is first form</h2>
       <at-core-form id="coreForm1"></at-core-form>
     </div>
-    <div>
+    <div class="container-w">
       <h2>This is second form</h2>
       <at-core-form id="coreForm2" layout="vertical"></at-core-form>
     </div>
