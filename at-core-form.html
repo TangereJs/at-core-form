@@ -7,6 +7,8 @@
 <link rel="import" href="../at-form-file/at-form-file.html">
 <link rel="import" href="../at-form-image/at-form-image.html">
 <link rel="import" href="../at-form-complex/at-form-complex.html">
+<link rel="import" href="../at-form-date/at-form-date.html">
+<link rel="import" href="../at-form-daterange/at-form-daterange.html">
 
 <dom-module id="at-core-form">
 <style>
@@ -376,6 +378,41 @@
               paperElement.addEventListener('value-changed', function (event) {
                 self._updateDataObject(event.target.id, event.detail.value);
               });
+              break;
+              case "date":
+                paperElement = document.createElement('at-form-date');
+                paperElement.format = 'YY-MM-DD';
+
+                paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+              break;
+              case "time":
+                paperElement = document.createElement('at-form-date');
+                paperElement.format = 'hh:mm:ss';
+
+                paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+              break;
+              case "datetime":
+                paperElement = document.createElement('at-form-date');
+                paperElement.format = 'YY-MM-DD hh:mm:ss';
+
+                paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+              break;
+              case "daterange":
+                paperElement = document.createElement('at-form-daterange');
+
+                paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
               break;
             }
 
