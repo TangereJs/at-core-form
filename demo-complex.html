@@ -14,26 +14,26 @@
       margin-right: -15px;
       margin-left: -15px;
     }
-    
+
     .container {
       padding-right: 15px;
       padding-left: 15px;
       margin-right: auto;
       margin-left: auto;
     }
-    
+
     @media (min-width: 768px) {
       .container {
         width: 750px;
       }
     }
-    
+
     @media (min-width: 992px) {
       .container {
         width: 970px;
       }
     }
-    
+
     @media (min-width: 1200px) {
       .container {
         width: 1170px;
@@ -52,7 +52,7 @@
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       -webkit-touch-callout: none;
     }
-    
+
     paper-input.narrow {
       width: 150px;
     }
@@ -90,31 +90,15 @@
             'value': 'Default city name'
           },
           'complexDemo': {
-            'type': 'string',
-            'xtype': 'complex',
+            'type': 'object',
             'xschema': {
-              properties: {
+              'properties': {
+                'Name': {
+                  'type': 'string',
+                  'description': 'This is lorem ipsum description'
+                },
                 'active': {
                   'type': 'boolean'
-                },
-                'activePera': {
-                  'type': 'boolean',
-                  'description': 'This is description for pera'
-                },
-                'activeToggle': {
-                  "type": "boolean",
-                  "xtype": "toggle",
-                  "description": "This is description for active toggle"
-                },
-                'dropdownDemo': {
-                  'title': 'Name',
-                  'type': 'enum',
-                  'xvaluelist': 'XML,JSON'
-                },
-                'codeMirrorDemo': {
-                  "title": "Code Mirror",
-                  "type": "string",
-                  "xtype": "code"
                 }
               }
             },

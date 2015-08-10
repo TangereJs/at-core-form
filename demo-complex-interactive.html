@@ -22,17 +22,17 @@
       height: 100%;
       width: 100%;
     }
-    
+
     .h100w100 {
       height: 100%;
       width: 100%;
     }
-    
+
     .h100w50 {
       height: 100%;
       width: 50%;
     }
-    
+
     .h50w100 {
       height: 50%;
       width: 100%;
@@ -85,51 +85,21 @@
           "description": "This is description for active toggle"
       },
       "complexDemo": {
-          "type": "string",
-          "xtype": "complex",
+          "type": "object",
           "xschema": {
             "properties": {
-              "dropdownDemo": {
+              "aname": {
                   "title": "Name",
-                  "type": "string",
-                  "xtype": "enum",
-                  "xvaluelist": "XML,JSON"
+                  "type": "string"
               },
-              "dropdownEnumDemo": {
-                  "title": "Name",
-                  "type": "string",
-                  "enum": ["XML", "JSON"]
-              },
-              "card": {
-                  "title": "Card",
-                  "type": "string",
-                  "xtype": "lookup",
-                  "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
-              },
-              "file": {
-                  "title": "at-form-file demo",
-                  "type": "string",
-                  "xtype": "file"
-              },
-              "image": {
-                  "title": "at-form-image demo",
-                  "type": "string",
-                  "xtype": "image"
-              },          
-              "codeMirrorDemo": {
-                  "title": "Code Mirror",
-                  "type": "string",
-                  "xtype": "code-markdown"
-              },
-              "markdownDemo": {
-                  "title": "Markdown",
-                  "type": "string",
-                  "xtype": "marked"
+              "isActive": {
+                  "title": "Active?",
+                  "type": "boolean"
               }
             }
           },
         "description": "This is complex field demo"
-      }      
+      }
   },
   "required": ["id", "city", "markdownDemo"]
 }
@@ -172,29 +142,29 @@
     (function () {
 
       var isUserInput = false;
-      
+
       window.addEventListener('WebComponentsReady', function (e) {
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
         var formData = document.getElementById('formData');
-        
+
         var formSchemaChangedFunc = debounce(function(){
             try {
-              coreForm.schema = JSON.parse(formSchema.value);              
+              coreForm.schema = JSON.parse(formSchema.value);
               coreForm.validate();
             } catch (e) {
 //              console.log(e);
             }
           }, 200, false);
-        
+
         formSchema.addEventListener('value-changed', function () {
           //console.log("form schema changed");
           formSchemaChangedFunc();
           formDataChangedFunc();
         });
         //autoFormat(formSchema.mirror);
-        
+
         var formDataChangedFunc = debounce(function(){
             try {
               if (!isUserInput){
@@ -206,7 +176,7 @@
 //              console.log(e);
             }
           }, 200, false);
-        
+
         formData.addEventListener('value-changed', function () {
           //console.log("form data changed");
           formDataChangedFunc();
@@ -258,14 +228,14 @@
       disableForm.addEventListener('value-changed', function(event){
         coreForm.disabled = event.detail.value;
       });
-      
+
       function autoFormat(editor) {
         // this doesn't work because polymer code mirror doesn't support code formatting :'(
         //var totalLines = editor.lineCount();
         //var totalChars = editor.getValue().length;
         //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines, ch: totalChars });
       }
-      
+
       function debounce(func, wait, immediate) {
         var timeout;
         return function() {
@@ -280,7 +250,7 @@
             if (callNow) func.apply(context, args);
         };
       };
-      
+
     })();
   </script>
 </body>
