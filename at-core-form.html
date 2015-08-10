@@ -557,7 +557,7 @@
     },
     disabledChanged: function () {
       for (var property in this.schema.properties) {
-        var element = this.querySelector('.' + property);
+        var element = this.querySelector('#' + property);
         var disabledValue = this.disabled;
         if (this.disabled === false) {
           var elemDisabledValue = this.schema.properties[element.id].disabled;
