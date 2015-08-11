@@ -50,11 +50,11 @@
 <body>
   <div class="layout vertical">
     <div class="container-m">
-      <h2>This is first form</h2>
+      <h2>Horizontal</h2>
       <at-core-form id="coreForm1"></at-core-form>
     </div>
     <div class="container-w">
-      <h2>This is second form</h2>
+      <h2>Vertical</h2>
       <at-core-form id="coreForm2" layout="vertical"></at-core-form>
     </div>
   </div>
@@ -64,22 +64,19 @@
         'properties': {
           'id': {
             'description': 'The unique identifier for a product',
-            'type': 'number',
-            'xgridcols': '9'
+            'type': 'number'            
           },
           'name': {
             'type': 'string',
             'required': true,
-            'xgridcols': '3'
+            'xgridcols': 12
           },
           'city': {
             'type': 'string',
-            'value': 'Default city name',
-            'xgridcols': '9'
+            'value': 'Default city name'
           },
           'active': {
-            'type': 'boolean',
-            'xgridcols': '3'
+            'type': 'boolean'
           },
           'activePera': {
             'type': 'boolean',
