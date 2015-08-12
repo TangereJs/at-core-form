@@ -14,26 +14,26 @@
       margin-right: -15px;
       margin-left: -15px;
     }
-
+    
     .container {
       padding-right: 15px;
       padding-left: 15px;
       margin-right: auto;
       margin-left: auto;
     }
-
+    
     @media (min-width: 768px) {
       .container {
         width: 750px;
       }
     }
-
+    
     @media (min-width: 992px) {
       .container {
         width: 970px;
       }
     }
-
+    
     @media (min-width: 1200px) {
       .container {
         width: 1170px;
@@ -52,7 +52,7 @@
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       -webkit-touch-callout: none;
     }
-
+    
     paper-input.narrow {
       width: 150px;
     }
@@ -73,8 +73,9 @@
     </div>
   </div>
   <script>
-    window.addEventListener('WebComponentsReady', function(e) {
+    window.addEventListener('WebComponentsReady', function (e) {
       var demoForm = document.getElementById("coreFormDemo");
+      window.demoForm = demoForm;
       demoForm.schema = {
         'properties': {
           'id': {
@@ -91,6 +92,7 @@
           },
           'complexDemo': {
             'type': 'object',
+            'description': 'Object typed field',
             'properties': {
               'Name': {
                 'type': 'string',
@@ -107,10 +109,14 @@
         },
         'required': ['id', 'city']
       };
+
       demoForm.data = {
         'id': 3213,
         'city': 'Boston',
-        'name': 'Djura'
+        'name': 'Djura',
+        'complexDemo': {
+          'Name': 'complex name'
+        }
       };
     });
   </script>
