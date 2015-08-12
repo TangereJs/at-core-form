@@ -73,7 +73,7 @@
     </div>
   </div>
   <script>
-    window.addEventListener('WebComponentsReady', function (e) {
+    window.addEventListener('WebComponentsReady', function(e) {
       var demoForm = document.getElementById("coreFormDemo");
       demoForm.schema = {
         'properties': {
@@ -91,21 +91,17 @@
           },
           'complexDemo': {
             'type': 'object',
-            'xschema': {
-              'properties': {
-                'Name': {
-                  'type': 'string',
-                  'description': 'This is lorem ipsum description'
-                },
-                'active': {
-                  'type': 'boolean'
-                }
+            'properties': {
+              'Name': {
+                'type': 'string',
+                'description': 'This is lorem ipsum description',
+                'value': 'This is name value'
+              },
+              'active': {
+                'type': 'boolean',
+                'description': 'This is active description',
+                'value': true
               }
-            },
-            xvalue: {
-              'active': true,
-              'activePera': false,
-              'dropdownDemo': 'XML'
             }
           },
         },

@@ -370,9 +370,10 @@
               paperElement = document.createElement('at-form-complex');
 
               paperElement.id = property;
-              paperElement.schema = propertyDefinition.xschema;
-              if (propertyDefinition.xvalue) {
-                paperElement.value = propertyDefinition.xvalue;
+              if (propertyDefinition.properties) {
+                var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
+                paperElement.schema = convertionResult.schema;
+                paperElement.value = convertionResult.values;
               }
 
               paperElement.addEventListener('value-changed', function (event) {
@@ -578,6 +579,32 @@
     },
     layoutChanged: function (newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
+    },
+    _convertPropertiesToSchemaValues: function(properties) {
+      var result = {
+        schema: {
+          properties: {}
+        },
+        values: {}
+      },
+      property,
+      propDef,
+      innerProp,
+      propObj;
+
+      for(property in properties) {
+        propObj = result.schema.properties[property] = {};
+         propDef = properties[property];
+         for (innerProp in propDef) {
+           if(innerProp === 'value') {
+             result.values[property] = propDef[innerProp];
+           } else {
+             propObj[innerProp] = propDef[innerProp];
+           }
+         }
+      }
+
+      return result;
     }
   });
 
