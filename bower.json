@@ -13,6 +13,7 @@
     "at-form-image": "TangereJs/at-form-image#0.8-preview",
     "at-form-complex": "TangereJs/at-form-complex#0.8-preview",
     "at-form-date": "TangereJs/at-form-date#0.8-preview",
-    "at-form-daterange": "TangereJs/at-form-daterange#0.8-preview"
+    "at-form-daterange": "TangereJs/at-form-daterange#0.8-preview",
+    "at-form-radio": "TangereJs/at-form-radio#0.8-preview"
   }
 }

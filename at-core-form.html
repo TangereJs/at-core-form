@@ -9,6 +9,7 @@
 <link rel="import" href="../at-form-complex/at-form-complex.html">
 <link rel="import" href="../at-form-date/at-form-date.html">
 <link rel="import" href="../at-form-daterange/at-form-daterange.html">
+<link rel="import" href="../at-form-radio/at-form-radio.html">
 
 <dom-module id="at-core-form">
 <style>
@@ -414,6 +415,19 @@
                 paperElement.addEventListener('value-changed', function(event){
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
+              break;
+              case "radio":
+                paperElement = document.createElement('at-form-radio');
+                paperElement.id = property;
+                if (propertyDefinition['xvaluelist'] !== undefined) {
+                  var radioValueList = propertyDefinition['xvaluelist'];
+                  paperElement.valuelist = radioValueList;
+                }
+
+                paperElement.addEventListener('value-changed', function(event){
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
               break;
             }
 
