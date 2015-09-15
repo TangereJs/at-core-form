@@ -10,85 +10,88 @@
 <link rel="import" href="../at-form-date/at-form-date.html">
 <link rel="import" href="../at-form-daterange/at-form-daterange.html">
 <link rel="import" href="../at-form-radio/at-form-radio.html">
+<link rel="import" href="../at-core-theme/at-core-theme.html">
 
 <dom-module id="at-core-form">
-<style>
-  [class*='col-'] {
-    float: left;
-    position: relative;
-    min-height: 1px;
-    padding-left: 15px;
-    padding-right: 15px;
-    box-sizing: border-box;
-  }
+  <style>
+    [class*='col-'] {
+      float: left;
+      position: relative;
+      min-height: 1px;
+      padding-left: 15px;
+      padding-right: 15px;
+      box-sizing: border-box;
+    }
 
-  [class*='col-'].col-center {
-    float: none;
-    margin-left: auto;
-    margin-right: auto;
-  }
+    [class*='col-'].col-center {
+      float: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  .col-12 {
-    width: 100%;
-  }
+    .col-12 {
+      width: 100%;
+    }
 
-  .col-6 {
-    width: 50%;
-  }
+    .col-6 {
+      width: 50%;
+    }
 
-  .col-4 {
-    width: 33.3333%;
-  }
+    .col-4 {
+      width: 33.3333%;
+    }
 
-  .col-8 {
-    width: 66.6666%;
-  }
+    .col-8 {
+      width: 66.6666%;
+    }
 
-  .col-3 {
-    width: 25%;
-  }
+    .col-3 {
+      width: 25%;
+    }
 
-  .col-9 {
-    width: 75%;
-  }
+    .col-9 {
+      width: 75%;
+    }
 
-  .col-2 {
-    width: 16.6667%;
-  }
+    .col-2 {
+      width: 16.6667%;
+    }
 
-  .vertical .col-12 {
-    width: 100%;
-  }
+    .vertical .col-12 {
+      width: 100%;
+    }
 
-  .vertical .col-6 {
-    width: 100%;
-  }
+    .vertical .col-6 {
+      width: 100%;
+    }
 
-  .vertical .col-4 {
-    width: 100%;
-  }
+    .vertical .col-4 {
+      width: 100%;
+    }
 
-  .vertical .col-8 {
-    width: 100%;
-  }
+    .vertical .col-8 {
+      width: 100%;
+    }
 
-  .vertical .col-3 {
-    width: 50%;
-  }
+    .vertical .col-3 {
+      width: 50%;
+    }
 
-  .vertical .col-9 {
-    width: 100%;
-  }
+    .vertical .col-9 {
+      width: 100%;
+    }
 
-  .vertical .col-2 {
-    width: 16.6667%;
-  }
+    .vertical .col-2 {
+      width: 16.6667%;
+    }
 
-  .field {
-
-  }
-</style>
+    .field {
+      clear: both;
+      margin: 0em 0em 1em;
+    }
+  </style>
   <template>
+    <at-core-theme></at-core-theme>
     <div id="insertPoint"></div>
     <content></content>
   </template>
@@ -135,20 +138,20 @@
     },
     _isReady: false,
     _scopeCssViaAttr: true,
-    ready: function () {
+    ready: function() {
       this.elementsToValidate = [];
       this._isReady = true;
       this.schemaChanged(this.schema, this.schema);
       this.dataChanged(this.data, this.data);
     },
-    clear: function () {
+    clear: function() {
       var myNode = this.$.insertPoint;
       while (myNode.firstChild) {
         myNode.removeChild(myNode.firstChild);
       }
     },
     elementsToValidate: [],
-    schemaChanged: function (newValue, oldValue) {
+    schemaChanged: function(newValue, oldValue) {
       if (this._isReady) {
         var self = this;
         self.elementsToValidate = [];
@@ -183,24 +186,24 @@
               // code-sql -> sql
               // code-xml -> xml
               switch (codeMode) {
-              case "html":
-                codeMode = 'htmlmixed';
-                break;
-              case "css":
-                codeMode = 'text/css';
-                break;
-              case "javascript":
-                codeMode = 'javascript';
-                break;
-              case "json":
-                codeMode = 'application/json';
-                break;
-              case "sql":
-                codeMode = 'sql';
-                break;
-              case "xml":
-                codeMode = 'xml';
-                break;
+                case "html":
+                  codeMode = 'htmlmixed';
+                  break;
+                case "css":
+                  codeMode = 'text/css';
+                  break;
+                case "javascript":
+                  codeMode = 'javascript';
+                  break;
+                case "json":
+                  codeMode = 'application/json';
+                  break;
+                case "sql":
+                  codeMode = 'sql';
+                  break;
+                case "xml":
+                  codeMode = 'xml';
+                  break;
               }
             }
           }
@@ -245,177 +248,177 @@
 
           if (notNullUndefinedOrEmpty(type)) {
             switch (type) {
-            case "code":
-              paperElement = document.createElement('at-form-codemirror');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+              case "code":
+                paperElement = document.createElement('at-form-codemirror');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = this.data[property] ? this.data[property] : '';
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
 
-              paperElement.mode = codeMode;
+                paperElement.mode = codeMode;
 
-              break;
-            case "number":
-            case "string":
-              // create paper-input
-              paperElement = document.createElement('at-form-input');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                break;
+              case "number":
+              case "string":
+                // create paper-input
+                paperElement = document.createElement('at-form-input');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              if (type === "number") {
-                paperElement.type = type;
-              }
+                if (type === "number") {
+                  paperElement.type = type;
+                }
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
+                  paperElement.value = new String(this.data[property] ? this.data[property] : '');
+                }
+
+                break;
+              case "password":
+                paperElement = document.createElement('at-form-password');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
+
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
                 paperElement.value = new String(this.data[property] ? this.data[property] : '');
-              }
 
-              break;
-            case "password":
-              paperElement = document.createElement('at-form-password');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                break;
+              case "bool":
+              case "boolean":
+                // create at-form-checkbox
+                paperElement = document.createElement('at-form-checkbox');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = new String(this.data[property] ? this.data[property] : '');
+                if (propertyDefinition['xtype'] === 'toggle') {
+                  paperElement.toggle = true;
+                }
 
-              break;
-            case "bool":
-            case "boolean":
-              // create at-form-checkbox
-              paperElement = document.createElement('at-form-checkbox');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
 
-              if (propertyDefinition['xtype'] === 'toggle') {
-                paperElement.toggle = true;
-              }
+                break;
+              case "enum":
+                paperElement = document.createElement('at-form-lookup');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = this.data[property] ? this.data[property] : '';
+                paperElement.available = propertyDefinition['xvaluelist'];
 
-              break;
-            case "enum":
-              paperElement = document.createElement('at-form-lookup');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
 
-              paperElement.available = propertyDefinition['xvaluelist'];
+                break;
+              case "lookup":
+                paperElement = document.createElement('at-form-lookup');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = this.data[property] ? this.data[property] : '';
+                paperElement.url = propertyDefinition['xurl'];
+                if (paperElement.url !== undefined) {
+                  paperElement.setAttribute('params', '{"query":""}');
+                }
 
-              break;
-            case "lookup":
-              paperElement = document.createElement('at-form-lookup');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                if (propertyDefinition['noCredentials'] !== undefined) {
+                  paperElement.setAttribute('noCredentials', true);
+                }
 
-              paperElement.url = propertyDefinition['xurl'];
-              if (paperElement.url !== undefined) {
-                paperElement.setAttribute('params', '{"query":""}');
-              }
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
 
-              if (propertyDefinition['noCredentials'] !== undefined) {
-                paperElement.setAttribute('noCredentials', true);
-              }
+                break;
+              case "marked":
+                paperElement = document.createElement('at-form-markdown');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = this.data[property] ? this.data[property] : '';
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                paperElement.value = this.data[property] ? this.data[property] : '';
 
-              break;
-            case "marked":
-              paperElement = document.createElement('at-form-markdown');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                break;
+              case "file":
+                paperElement = document.createElement('at-form-file');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              paperElement.value = this.data[property] ? this.data[property] : '';
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                break;
+              case "image":
+                paperElement = document.createElement('at-form-image');
+                // *ij* name is required here so when value-changed event is first fired element has its name set
+                paperElement.id = property;
 
-              break;
-            case "file":
-              paperElement = document.createElement('at-form-file');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                break;
+              case "object":
+                paperElement = document.createElement('at-form-complex');
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              break;
-            case "image":
-              paperElement = document.createElement('at-form-image');
-              // *ij* name is required here so when value-changed event is first fired element has its name set
-              paperElement.id = property;
+                paperElement.id = property;
+                if (propertyDefinition.properties) {
+                  var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
+                  paperElement.schema = convertionResult.schema;
+                  paperElement.value = convertionResult.values;
+                }
 
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              break;
-            case "object":
-              paperElement = document.createElement('at-form-complex');
-
-              paperElement.id = property;
-              if (propertyDefinition.properties) {
-                var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
-                paperElement.schema = convertionResult.schema;
-                paperElement.value = convertionResult.values;
-              }
-
-              paperElement.addEventListener('value-changed', function (event) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              });
-              break;
+                paperElement.addEventListener('value-changed', function(event) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                });
+                break;
               case "date":
                 paperElement = document.createElement('at-form-date');
                 paperElement.format = 'YYYY-MM-DD';
 
                 paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event){
+                paperElement.addEventListener('value-changed', function(event) {
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
-              break;
+                break;
               case "time":
                 paperElement = document.createElement('at-form-date');
                 paperElement.format = 'hh:mm:ss';
 
                 paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event){
+                paperElement.addEventListener('value-changed', function(event) {
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
-              break;
+                break;
               case "datetime":
                 paperElement = document.createElement('at-form-date');
                 paperElement.format = 'YY-MM-DD hh:mm:ss';
 
                 paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event){
+                paperElement.addEventListener('value-changed', function(event) {
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
-              break;
+                break;
               case "daterange":
                 paperElement = document.createElement('at-form-daterange');
 
                 paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event){
+                paperElement.addEventListener('value-changed', function(event) {
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
-              break;
+                break;
               case "radio":
                 paperElement = document.createElement('at-form-radio');
                 paperElement.id = property;
@@ -424,11 +427,11 @@
                   paperElement.valuelist = radioValueList;
                 }
 
-                paperElement.addEventListener('value-changed', function(event){
+                paperElement.addEventListener('value-changed', function(event) {
                   self._updateDataObject(event.target.id, event.detail.value);
                 });
                 paperElement.value = this.data[property] ? this.data[property] : '';
-              break;
+                break;
             }
 
             // assign all commmon attributes to all elements
@@ -474,7 +477,7 @@
      Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
      not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
      */
-    updateFormElementData: function (elementId, data) {
+    updateFormElementData: function(elementId, data) {
       if (this.data.hasOwnProperty(elementId)) {
         // if element exists update its value
         this.data[elementId] = data;
@@ -488,7 +491,7 @@
       }
     },
 
-    setElementState: function (elementId, state, value) {
+    setElementState: function(elementId, state, value) {
       var element = this.$.insertPoint.querySelector('#' + elementId);
       if (element) {
         element.setAttribute(state, value);
@@ -498,14 +501,14 @@
       }
     },
 
-    dataChanged: function (newValue, oldValue) {
+    dataChanged: function(newValue, oldValue) {
       var oldValueEntry,
         entry,
         element;
 
       if (isNullOrUndefined(this.data)) {
-          this.data = JSON.parse('{}');
-          oldValue = JSON.parse('{}');
+        this.data = JSON.parse('{}');
+        oldValue = JSON.parse('{}');
       }
 
       for (oldValueEntry in oldValue) {
@@ -542,7 +545,7 @@
      * property is property name
      * value is the new value to be set
      */
-    _updateDataObject: function (property, value) {
+    _updateDataObject: function(property, value) {
       this.data[property] = value;
       this.validate();
       this.fire('data-changed', {
@@ -555,7 +558,7 @@
      * It calls validate method of each element in elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
      */
-    validate: function () {
+    validate: function() {
       var isValid = true;
 
       for (var i = 0; i < this.elementsToValidate.length; i++) {
@@ -570,7 +573,7 @@
 
       return isValid;
     },
-    disabledChanged: function () {
+    disabledChanged: function() {
       for (var property in this.schema.properties) {
         var element = this.querySelector('#' + property);
         var disabledValue = this.disabled;
@@ -591,31 +594,31 @@
         }
       }
     },
-    layoutChanged: function (newValue, oldValue) {
+    layoutChanged: function(newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
     },
     _convertPropertiesToSchemaValues: function(properties) {
       var result = {
-        schema: {
-          properties: {}
+          schema: {
+            properties: {}
+          },
+          values: {}
         },
-        values: {}
-      },
-      property,
-      propDef,
-      innerProp,
-      propObj;
+        property,
+        propDef,
+        innerProp,
+        propObj;
 
-      for(property in properties) {
+      for (property in properties) {
         propObj = result.schema.properties[property] = {};
-         propDef = properties[property];
-         for (innerProp in propDef) {
-           if(innerProp === 'value') {
-             result.values[property] = propDef[innerProp];
-           } else {
-             propObj[innerProp] = propDef[innerProp];
-           }
-         }
+        propDef = properties[property];
+        for (innerProp in propDef) {
+          if (innerProp === 'value') {
+            result.values[property] = propDef[innerProp];
+          } else {
+            propObj[innerProp] = propDef[innerProp];
+          }
+        }
       }
 
       return result;
@@ -623,7 +626,7 @@
   });
 
   function isFunction(obj) {
-    return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function () {});
+    return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function() {});
   }
 
   function notNullOrUndefined(param) {
