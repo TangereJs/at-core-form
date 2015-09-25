@@ -10,646 +10,699 @@
 <link rel="import" href="../at-form-date/at-form-date.html">
 <link rel="import" href="../at-form-daterange/at-form-daterange.html">
 <link rel="import" href="../at-form-radio/at-form-radio.html">
-<link rel="import" href="../at-core-theme/at-core-theme.html">
+<link rel="import" href="../at-carbon-icon/at-carbon-icon.html">
 
 <dom-module id="at-core-form">
-  <style>
-    [class*='col-'] {
-      float: left;
-      position: relative;
-      min-height: 1px;
-      padding-left: 15px;
-      padding-right: 15px;
-      box-sizing: border-box;
-    }
+    <style>
+        [class*='col-'] {
+            float: left;
+            position: relative;
+            min-height: 1px;
+            padding-left: 15px;
+            padding-right: 15px;
+            box-sizing: border-box;
+        }
 
-    [class*='col-'].col-center {
-      float: none;
-      margin-left: auto;
-      margin-right: auto;
-    }
+            [class*='col-'].col-center {
+                float: none;
+                margin-left: auto;
+                margin-right: auto;
+            }
 
-    .col-12 {
-      width: 100%;
-    }
+        .col-12 {
+            width: 100%;
+        }
 
-    .col-6 {
-      width: 50%;
-    }
+        .col-9 {
+            width: 75%;
+        }
 
-    .col-4 {
-      width: 33.3333%;
-    }
+        .col-8 {
+            width: 66.6666%;
+        }
 
-    .col-8 {
-      width: 66.6666%;
-    }
+        .col-6 {
+            width: 50%;
+        }
 
-    .col-3 {
-      width: 25%;
-    }
+        .col-5 {
+            width: 41.66%;
+        }
 
-    .col-9 {
-      width: 75%;
-    }
+        .col-4 {
+            width: 33.3333%;
+        }
 
-    .col-2 {
-      width: 16.6667%;
-    }
+        .col-3 {
+            width: 25%;
+        }
 
-    .vertical .col-12 {
-      width: 100%;
-    }
+        .col-2 {
+            width: 16.6667%;
+        }
 
-    .vertical .col-6 {
-      width: 100%;
-    }
+        .col-1 {
+            width: 8%;
+        }
 
-    .vertical .col-4 {
-      width: 100%;
-    }
+        .vertical .col-12 {
+            width: 100%;
+        }
 
-    .vertical .col-8 {
-      width: 100%;
-    }
+        .vertical .col-9 {
+            width: 100%;
+        }
 
-    .vertical .col-3 {
-      width: 50%;
-    }
+        .vertical .col-8 {
+            width: 100%;
+        }
 
-    .vertical .col-9 {
-      width: 100%;
-    }
+        .vertical .col-6 {
+            width: 100%;
+        }
 
-    .vertical .col-2 {
-      width: 16.6667%;
-    }
+        .vertical .col-5 {
+            width: 41.66%;
+        }
 
-    .field {
-      clear: both;
-      margin: 0em 0em 1em;
-    }
-  </style>
-  <template>
-    <at-core-theme></at-core-theme>
-    <div id="insertPoint"></div>
-    <content></content>
-  </template>
+        .vertical .col-4 {
+            width: 100%;
+        }
+
+        .vertical .col-3 {
+            width: 50%;
+        }
+
+        .vertical .col-2 {
+            width: 16.6667%;
+        }
+
+        .vertical .col-1 {
+            width: 8%;
+        }
+
+        .field {
+        }
+
+        #btnTrash {
+            cursor: pointer;
+            position: absolute;
+            bottom: 0.8em;
+        }
+
+        #insertPoint {
+            position: relative;
+        }
+    </style>
+    <template>
+        <div id="insertPoint" class="clearfix"></div>
+        <content></content>
+    </template>
 </dom-module>
 
 <script>
-  "use strict";
-  Polymer({
-    is: 'at-core-form',
-    properties: {
-      schema: {
-        type: Object,
-        value: {},
-        observer: 'schemaChanged'
-      },
-      data: {
-        type: Object,
-        value: {},
-        notify: true,
-        observer: 'dataChanged'
-      },
-      valid: {
-        type: Boolean,
-        notify: true,
-        value: true,
-        readOnly: true
-      },
-      disabled: {
-        type: Boolean,
-        notify: true,
-        value: false,
-        observer: 'disabledChanged'
-      },
-      // added for #684
-      // at-core-form can now have a one column or two column layout
-      // by default a two column layout is used but a single column layout can be specified
-      // layout === 'horizontal' renders the default two column layout
-      // layout === 'vertical' renders the single column layout
-      layout: {
-        type: String,
-        value: "vertical",
-        observer: 'layoutChanged'
-      }
-    },
-    _isReady: false,
-    _scopeCssViaAttr: true,
-    ready: function() {
-      this.elementsToValidate = [];
-      this._isReady = true;
-      this.schemaChanged(this.schema, this.schema);
-      this.dataChanged(this.data, this.data);
-    },
-    clear: function() {
-      var myNode = this.$.insertPoint;
-      while (myNode.firstChild) {
-        myNode.removeChild(myNode.firstChild);
-      }
-    },
-    elementsToValidate: [],
-    schemaChanged: function(newValue, oldValue) {
-      if (this._isReady) {
-        var self = this;
-        self.elementsToValidate = [];
-
-        //      this.schema = newValue;
-        this.clear();
-        var properties = this.schema.properties;
-        var codeMode = 'htmlmixed';
-        for (var property in properties) {
-          var propertyDefinition = properties[property];
-
-          var description = property;
-          if (notNullOrUndefined(propertyDefinition.title)) {
-            description = propertyDefinition.title;
-          } else if (notNullOrUndefined(propertyDefinition.description)) {
-            description = propertyDefinition.description;
-          }
-
-          var type = propertyDefinition.type;
-          if (type === "string" && propertyDefinition.hasOwnProperty('xtype') && propertyDefinition.xtype !== "") {
-            type = propertyDefinition.xtype;
-            if (type.indexOf('-') != -1) {
-              var startIndex = type.indexOf('-');
-              codeMode = type.substring(startIndex + 1);
-              type = type.substring(0, startIndex);
-
-              // mappings for code-* are
-              // code-html -> htmlmixed
-              // code-css -> text/css
-              // code-javascript -> javascript
-              // code-json -> application/json
-              // code-sql -> sql
-              // code-xml -> xml
-              switch (codeMode) {
-                case "html":
-                  codeMode = 'htmlmixed';
-                  break;
-                case "css":
-                  codeMode = 'text/css';
-                  break;
-                case "javascript":
-                  codeMode = 'javascript';
-                  break;
-                case "json":
-                  codeMode = 'application/json';
-                  break;
-                case "sql":
-                  codeMode = 'sql';
-                  break;
-                case "xml":
-                  codeMode = 'xml';
-                  break;
-              }
+    "use strict";
+    Polymer({
+        is: 'at-core-form',
+        properties: {
+            schema: {
+                type: Object,
+                value: {},
+                observer: 'schemaChanged'
+            },
+            data: {
+                type: Object,
+                value: {},
+                notify: true,
+                observer: 'dataChanged'
+            },
+            valid: {
+                type: Boolean,
+                notify: true,
+                value: true,
+                readOnly: true
+            },
+            disabled: {
+                type: Boolean,
+                notify: true,
+                value: false,
+                observer: 'disabledChanged'
+            },
+            removable: {
+                type: Boolean,
+                notify: true,
+                value: false,
+                observer: 'removableChanged'
+            },
+            // added for #684
+            // at-core-form can now have a one column or two column layout
+            // by default a two column layout is used but a single column layout can be specified
+            // layout === 'horizontal' renders the default two column layout
+            // layout === 'vertical' renders the single column layout
+            layout: {
+                type: String,
+                value: "vertical",
+                observer: 'layoutChanged'
             }
-          }
-
-          // *ma* if type === string and xtype === '' but "enum": ["value1", "value2"] exists than
-          // type === enum and xvaluelist = value list
-          if (type === "string" && (!propertyDefinition.hasOwnProperty('xtype') || propertyDefinition.xtype === '') && propertyDefinition.hasOwnProperty('enum') && Object.prototype.toString.apply(propertyDefinition.enum) === "[object Array]") {
-            type = "enum";
-            propertyDefinition.xvaluelist = propertyDefinition.enum.join(',');
-          }
-
-          var required = propertyDefinition.required === true || propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
-
-          // get the default value and regular value
-          var defaultValue = propertyDefinition.default;
-          var value = this.data[property];
-          // if default value is not null or undefined and regular value is null or undefined
-          if (notNullOrUndefined(defaultValue) && !notNullOrUndefined(value)) {
-            // make the default value regular value
-            this.data[property] = defaultValue;
-          }
-
-          var disabledValue = propertyDefinition.disabled !== undefined ? propertyDefinition.disabled : false;
-          if (disabledValue === "true") {
-            disabledValue = true;
-          }
-          if (disabledValue === "false") {
-            disabledValue = false;
-          }
-
-          var xgridcols = 6;
-          if (notNullUndefinedOrEmpty(propertyDefinition.xgridcols)) {
-            xgridcols = parseInt(propertyDefinition.xgridcols);
-          }
-
-          var paperElement = undefined;
-          var divElem = document.createElement('div');
-          divElem.classList.add("field");
-          divElem.classList.add("col-" + xgridcols);
-
-          divElem.setAttribute('style-scope', 'at-core-form');
-
-          if (notNullUndefinedOrEmpty(type)) {
-            switch (type) {
-              case "code":
-                paperElement = document.createElement('at-form-codemirror');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-
-                paperElement.mode = codeMode;
-
-                break;
-              case "number":
-              case "string":
-                // create paper-input
-                paperElement = document.createElement('at-form-input');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                if (type === "number") {
-                  paperElement.type = type;
-                }
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
-                  paperElement.value = new String(this.data[property] ? this.data[property] : '');
-                }
-
-                break;
-              case "password":
-                paperElement = document.createElement('at-form-password');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = new String(this.data[property] ? this.data[property] : '');
-
-                break;
-              case "bool":
-              case "boolean":
-                // create at-form-checkbox
-                paperElement = document.createElement('at-form-checkbox');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                if (propertyDefinition['xtype'] === 'toggle') {
-                  paperElement.toggle = true;
-                }
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-
-                break;
-              case "enum":
-                paperElement = document.createElement('at-form-lookup');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.available = propertyDefinition['xvaluelist'];
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-
-                break;
-              case "lookup":
-                paperElement = document.createElement('at-form-lookup');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.url = propertyDefinition['xurl'];
-                if (paperElement.url !== undefined) {
-                  paperElement.setAttribute('params', '{"query":""}');
-                }
-
-                if (propertyDefinition['noCredentials'] !== undefined) {
-                  paperElement.setAttribute('noCredentials', true);
-                }
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-
-                break;
-              case "marked":
-                paperElement = document.createElement('at-form-markdown');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-
-                break;
-              case "file":
-                paperElement = document.createElement('at-form-file');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "image":
-                paperElement = document.createElement('at-form-image');
-                // *ij* name is required here so when value-changed event is first fired element has its name set
-                paperElement.id = property;
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "object":
-                paperElement = document.createElement('at-form-complex');
-
-                paperElement.id = property;
-                if (propertyDefinition.properties) {
-                  var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
-                  paperElement.schema = convertionResult.schema;
-                  paperElement.value = convertionResult.values;
-                }
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "date":
-                paperElement = document.createElement('at-form-date');
-                paperElement.format = 'YYYY-MM-DD';
-
-                paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "time":
-                paperElement = document.createElement('at-form-date');
-                paperElement.format = 'hh:mm:ss';
-
-                paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "datetime":
-                paperElement = document.createElement('at-form-date');
-                paperElement.format = 'YY-MM-DD hh:mm:ss';
-
-                paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "daterange":
-                paperElement = document.createElement('at-form-daterange');
-
-                paperElement.id = property;
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                break;
-              case "radio":
-                paperElement = document.createElement('at-form-radio');
-                paperElement.id = property;
-                if (propertyDefinition['xvaluelist'] !== undefined) {
-                  var radioValueList = propertyDefinition['xvaluelist'];
-                  paperElement.valuelist = radioValueList;
-                }
-
-                paperElement.addEventListener('value-changed', function(event) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                });
-                paperElement.value = this.data[property] ? this.data[property] : '';
-                break;
-            }
-
-            // assign all commmon attributes to all elements
-            var classesToAdd = property.split(' ');
-            for (var classesToAddIndex = 0; classesToAddIndex < classesToAdd.length; classesToAddIndex += 1) {
-              if (classesToAdd[classesToAddIndex] !== '') {
-                paperElement.classList.add(classesToAdd[classesToAddIndex]);
-              }
-            }
-
-            paperElement.label = description;
-            paperElement.disabled = disabledValue;
-            paperElement.required = required;
-            if (required) {
-              this.elementsToValidate.push(paperElement);
-            }
-            // append paper element to its container
-            divElem.appendChild(paperElement);
-            // add container to as child to insertPoint
-            this.$.insertPoint.appendChild(divElem);
-
-            this.data[property] = paperElement.value;
-          } else {
-            console.log("Property " + property + " doens't have defined type. Skipping ...");
-          }
-        }
-      }
-    },
-    /* *ij*
-     OK. Imperative data binding doesn't work in polymer anymore.
-     It may happen in the future but not in near future.
-     Using at-core-form.data[field] = 'newValue' doesn't work. Its not possible to bind to at-core-form.data[field] to update field value automatically
-     Explained in https://github.com/Polymer/polymer/issues/1778 and https://github.com/Polymer/polymer/issues/1796
-
-     So, to solve this shortcoming a updateFormElementData function is introduced
-     The purpose of this function is, obviously, to update a value of the specific field.
-     This function will update the .data object and .value of the field with provided elementId.
-     If the field with provided elementId doesn't exist a debug message will be loged in the console
-
-     Alternative to this approach is to create a completely new object each time you want to update the .data property
-     IMO, this approach is a waste of time. An updateFormElementData function is much more efficient
-
-     Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
-     not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
-     */
-    updateFormElementData: function(elementId, data) {
-      if (this.data.hasOwnProperty(elementId)) {
-        // if element exists update its value
-        this.data[elementId] = data;
-        var element = this.$.insertPoint.querySelector('#' + elementId)
-        if (element) {
-          element.value = data;
-        }
-      } else {
-        // if not log the debug message
-        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
-      }
-    },
-
-    setElementState: function(elementId, state, value) {
-      var element = this.$.insertPoint.querySelector('#' + elementId);
-      if (element) {
-        element.setAttribute(state, value);
-      } else {
-        // if not log the debug message
-        console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
-      }
-    },
-
-    dataChanged: function(newValue, oldValue) {
-      var oldValueEntry,
-        entry,
-        element;
-
-      if (isNullOrUndefined(this.data)) {
-        this.data = JSON.parse('{}');
-        oldValue = JSON.parse('{}');
-      }
-
-      for (oldValueEntry in oldValue) {
-        if (isNullOrUndefined(this.data[oldValueEntry])) {
-          this.data[oldValueEntry] = oldValue[oldValueEntry];
-        }
-      }
-
-
-      for (entry in this.data) {
-        element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
-        if (element) {
-          if (notNullOrUndefined(this.data[entry])) {
-            try {
-              element.value = this.data[entry];
-            } catch (event) {
-              console.log(event);
-            }
-          }
-        }
-      }
-
-      //this.validate(); // this was commented out for #621; it is unclear if this line should be deleted right now (19.05.2015)
-
-      if (notNullOrUndefined(oldValue) && Object.keys(oldValue).length > 0) {
-        this.fire('data-changed', {
-          value: this.data
-        });
-      }
-    },
-
-    /*
-     * This function is called on value-changed event for each element on the form
-     * property is property name
-     * value is the new value to be set
-     */
-    _updateDataObject: function(property, value) {
-      this.data[property] = value;
-      this.validate();
-      this.fire('data-changed', {
-        value: this.data
-      });
-    },
-
-    /*
-     * Validates the form
-     * It calls validate method of each element in elementsToValidate array
-     * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
-     */
-    validate: function() {
-      var isValid = true;
-
-      for (var i = 0; i < this.elementsToValidate.length; i++) {
-        var element = this.elementsToValidate[i];
-        if (isFunction(element.validate)) {
-          var elementValid = element.validate();
-          isValid = isValid && elementValid;
-        }
-      }
-
-      this._setValid(isValid);
-
-      return isValid;
-    },
-    disabledChanged: function() {
-      for (var property in this.schema.properties) {
-        var element = this.querySelector('#' + property);
-        var disabledValue = this.disabled;
-        if (this.disabled === false) {
-          var elemDisabledValue = this.schema.properties[element.id].disabled;
-          if (elemDisabledValue !== undefined && (elemDisabledValue === "true" || elemDisabledValue === true)) {
-            disabledValue = true;
-          }
-        }
-        element.disabled = disabledValue; // setAttribute('disabled', disabledValue);
-        var childInput = element.querySelector('input');
-        if (notNullOrUndefined(childInput)) {
-          if (disabledValue === false) {
-            childInput.removeAttribute('disabled');
-          } else {
-            childInput.setAttribute('disabled', true);
-          }
-        }
-      }
-    },
-    layoutChanged: function(newValue, oldValue) {
-      this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
-    },
-    _convertPropertiesToSchemaValues: function(properties) {
-      var result = {
-          schema: {
-            properties: {}
-          },
-          values: {}
         },
-        property,
-        propDef,
-        innerProp,
-        propObj;
+        _isReady: false,
+        _scopeCssViaAttr: true,
+        ready: function () {
+            this.elementsToValidate = [];
+            this._isReady = true;
+            this.schemaChanged(this.schema, this.schema);
+            this.dataChanged(this.data, this.data);
+            this.removableChanged(this.removable, this.removable);
+        },
+        clear: function () {
+            var myNode = this.$.insertPoint;
+            while (myNode.firstChild) {
+                myNode.removeChild(myNode.firstChild);
+            }
+        },
+        elementsToValidate: [],
+        schemaChanged: function (newValue, oldValue) {
+            if (this._isReady) {
+                var self = this;
+                self.elementsToValidate = [];
 
-      for (property in properties) {
-        propObj = result.schema.properties[property] = {};
-        propDef = properties[property];
-        for (innerProp in propDef) {
-          if (innerProp === 'value') {
-            result.values[property] = propDef[innerProp];
-          } else {
-            propObj[innerProp] = propDef[innerProp];
-          }
+                //      this.schema = newValue;
+                this.clear();
+                var properties = this.schema.properties;
+                var codeMode = 'htmlmixed';
+                for (var property in properties) {
+                    var propertyDefinition = properties[property];
+
+                    var description = property;
+                    if (notNullOrUndefined(propertyDefinition.title)) {
+                        description = propertyDefinition.title;
+                    } else if (notNullOrUndefined(propertyDefinition.description)) {
+                        description = propertyDefinition.description;
+                    }
+
+                    var type = propertyDefinition.type;
+                    if (type === "string" && propertyDefinition.hasOwnProperty('xtype') && propertyDefinition.xtype !== "") {
+                        type = propertyDefinition.xtype;
+                        if (type.indexOf('-') != -1) {
+                            var startIndex = type.indexOf('-');
+                            codeMode = type.substring(startIndex + 1);
+                            type = type.substring(0, startIndex);
+
+                            // mappings for code-* are
+                            // code-html -> htmlmixed
+                            // code-css -> text/css
+                            // code-javascript -> javascript
+                            // code-json -> application/json
+                            // code-sql -> sql
+                            // code-xml -> xml
+                            switch (codeMode) {
+                                case "html":
+                                    codeMode = 'htmlmixed';
+                                    break;
+                                case "css":
+                                    codeMode = 'text/css';
+                                    break;
+                                case "javascript":
+                                    codeMode = 'javascript';
+                                    break;
+                                case "json":
+                                    codeMode = 'application/json';
+                                    break;
+                                case "sql":
+                                    codeMode = 'sql';
+                                    break;
+                                case "xml":
+                                    codeMode = 'xml';
+                                    break;
+                            }
+                        }
+                    }
+
+                    // *ma* if type === string and xtype === '' but "enum": ["value1", "value2"] exists than
+                    // type === enum and xvaluelist = value list
+                    if (type === "string" && (!propertyDefinition.hasOwnProperty('xtype') || propertyDefinition.xtype === '') && propertyDefinition.hasOwnProperty('enum') && Object.prototype.toString.apply(propertyDefinition.enum) === "[object Array]") {
+                        type = "enum";
+                        propertyDefinition.xvaluelist = propertyDefinition.enum.join(',');
+                    }
+
+                    var required = propertyDefinition.required === true || propertyDefinition.required === "true" || (this.schema.required && this.schema.required.indexOf(property) !== -1);
+
+                    // get the default value and regular value
+                    var defaultValue = propertyDefinition.default;
+                    var value = this.data[property];
+                    // if default value is not null or undefined and regular value is null or undefined
+                    if (notNullOrUndefined(defaultValue) && !notNullOrUndefined(value)) {
+                        // make the default value regular value
+                        this.data[property] = defaultValue;
+                    }
+
+                    var disabledValue = propertyDefinition.disabled !== undefined ? propertyDefinition.disabled : false;
+                    if (disabledValue === "true") {
+                        disabledValue = true;
+                    }
+                    if (disabledValue === "false") {
+                        disabledValue = false;
+                    }
+
+                    var xgridcols = 6;
+                    if (notNullUndefinedOrEmpty(propertyDefinition.xgridcols)) {
+                        xgridcols = parseInt(propertyDefinition.xgridcols);
+                    }
+
+                    var paperElement = undefined;
+                    var divElem = document.createElement('div');
+                    divElem.classList.add("field");
+                    divElem.classList.add("col-" + xgridcols);
+
+                    divElem.setAttribute('style-scope', 'at-core-form');
+
+                    if (notNullUndefinedOrEmpty(type)) {
+                        switch (type) {
+                            case "code":
+                                paperElement = document.createElement('at-form-codemirror');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+
+                                paperElement.mode = codeMode;
+
+                                break;
+                            case "number":
+                            case "string":
+                                // create paper-input
+                                paperElement = document.createElement('at-form-input');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                if (type === "number") {
+                                    paperElement.type = type;
+                                }
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                if (this.data.hasOwnProperty(property) && this.data[property] !== '') {
+                                    paperElement.value = new String(this.data[property] ? this.data[property] : '');
+                                }
+
+                                break;
+                            case "password":
+                                paperElement = document.createElement('at-form-password');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = new String(this.data[property] ? this.data[property] : '');
+
+                                break;
+                            case "bool":
+                            case "boolean":
+                                // create at-form-checkbox
+                                paperElement = document.createElement('at-form-checkbox');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                if (propertyDefinition['xtype'] === 'toggle') {
+                                    paperElement.toggle = true;
+                                }
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+
+                                break;
+                            case "enum":
+                                paperElement = document.createElement('at-form-lookup');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+                                paperElement.$.content.classList.add("field");
+                                paperElement.available = propertyDefinition['xvaluelist'];
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+
+                                break;
+                            case "lookup":
+                                paperElement = document.createElement('at-form-lookup');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+                                paperElement.$.content.classList.add("field");
+                                paperElement.url = propertyDefinition['xurl'];
+                                if (paperElement.url !== undefined) {
+                                    paperElement.setAttribute('params', '{"query":""}');
+                                }
+
+                                if (propertyDefinition['noCredentials'] !== undefined) {
+                                    paperElement.setAttribute('noCredentials', true);
+                                }
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+
+                                break;
+                            case "marked":
+                                paperElement = document.createElement('at-form-markdown');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+
+                                break;
+                            case "file":
+                                paperElement = document.createElement('at-form-file');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "image":
+                                paperElement = document.createElement('at-form-image');
+                                // *ij* name is required here so when value-changed event is first fired element has its name set
+                                paperElement.id = property;
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "object":
+                                paperElement = document.createElement('at-form-complex');
+
+                                paperElement.id = property;
+                                if (propertyDefinition.properties) {
+                                    var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
+                                    paperElement.schema = convertionResult.schema;
+                                    paperElement.value = convertionResult.values;
+                                }
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "date":
+                                paperElement = document.createElement('at-form-date');
+                                paperElement.format = 'YYYY-MM-DD';
+
+                                paperElement.id = property;
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "time":
+                                paperElement = document.createElement('at-form-date');
+                                paperElement.format = 'hh:mm:ss';
+
+                                paperElement.id = property;
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "datetime":
+                                paperElement = document.createElement('at-form-date');
+                                paperElement.format = 'YY-MM-DD hh:mm:ss';
+
+                                paperElement.id = property;
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "daterange":
+                                paperElement = document.createElement('at-form-daterange');
+
+                                paperElement.id = property;
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                break;
+                            case "radio":
+                                paperElement = document.createElement('at-form-radio');
+                                paperElement.id = property;
+                                if (propertyDefinition['xvaluelist'] !== undefined) {
+                                    var radioValueList = propertyDefinition['xvaluelist'];
+                                    paperElement.valuelist = radioValueList;
+                                }
+
+                                paperElement.addEventListener('value-changed', function (event) {
+                                    self._updateDataObject(event.target.id, event.detail.value);
+                                });
+                                paperElement.value = this.data[property] ? this.data[property] : '';
+                                break;
+                        }
+
+                        // assign all commmon attributes to all elements
+                        var classesToAdd = property.split(' ');
+                        for (var classesToAddIndex = 0; classesToAddIndex < classesToAdd.length; classesToAddIndex += 1) {
+                            if (classesToAdd[classesToAddIndex] !== '') {
+                                paperElement.classList.add(classesToAdd[classesToAddIndex]);
+                            }
+                        }
+
+                        paperElement.label = description;
+                        paperElement.disabled = disabledValue;
+                        paperElement.required = required;
+                        if (required) {
+                            this.elementsToValidate.push(paperElement);
+                        }
+                        // append paper element to its container
+                        divElem.appendChild(paperElement);
+                        // add container to as child to insertPoint
+                        this.$.insertPoint.appendChild(divElem);
+
+                        this.data[property] = paperElement.value;
+                    } else {
+                        console.log("Property " + property + " doens't have defined type. Skipping ...");
+                    }
+                }
+            }
+        },
+        /* *ij*
+         OK. Imperative data binding doesn't work in polymer anymore.
+         It may happen in the future but not in near future.
+         Using at-core-form.data[field] = 'newValue' doesn't work. Its not possible to bind to at-core-form.data[field] to update field value automatically
+         Explained in https://github.com/Polymer/polymer/issues/1778 and https://github.com/Polymer/polymer/issues/1796
+
+         So, to solve this shortcoming a updateFormElementData function is introduced
+         The purpose of this function is, obviously, to update a value of the specific field.
+         This function will update the .data object and .value of the field with provided elementId.
+         If the field with provided elementId doesn't exist a debug message will be loged in the console
+
+         Alternative to this approach is to create a completely new object each time you want to update the .data property
+         IMO, this approach is a waste of time. An updateFormElementData function is much more efficient
+
+         Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
+         not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
+         */
+        updateFormElementData: function (elementId, data) {
+            if (this.data.hasOwnProperty(elementId)) {
+                // if element exists update its value
+                this.data[elementId] = data;
+                var element = this.$.insertPoint.querySelector('#' + elementId)
+                if (element) {
+                    element.value = data;
+                }
+            } else {
+                // if not log the debug message
+                console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+            }
+        },
+
+        setElementState: function (elementId, state, value) {
+            var element = this.$.insertPoint.querySelector('#' + elementId);
+            if (element) {
+                element.setAttribute(state, value);
+            } else {
+                // if not log the debug message
+                console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+            }
+        },
+
+        dataChanged: function (newValue, oldValue) {
+            var oldValueEntry,
+              entry,
+              element;
+
+            if (isNullOrUndefined(this.data)) {
+                this.data = JSON.parse('{}');
+                oldValue = JSON.parse('{}');
+            }
+
+            for (oldValueEntry in oldValue) {
+                if (isNullOrUndefined(this.data[oldValueEntry])) {
+                    this.data[oldValueEntry] = oldValue[oldValueEntry];
+                }
+            }
+
+
+            for (entry in this.data) {
+                element = Polymer.dom(this.$.insertPoint).querySelector('#' + entry);
+                if (element) {
+                    if (notNullOrUndefined(this.data[entry])) {
+                        try {
+                            element.value = this.data[entry];
+                        } catch (event) {
+                            console.log(event);
+                        }
+                    }
+                }
+            }
+
+            //this.validate(); // this was commented out for #621; it is unclear if this line should be deleted right now (19.05.2015)
+
+            if (notNullOrUndefined(oldValue) && Object.keys(oldValue).length > 0) {
+                this.fire('data-changed', {
+                    value: this.data
+                });
+            }
+        },
+
+        /*
+         * This function is called on value-changed event for each element on the form
+         * property is property name
+         * value is the new value to be set
+         */
+        _updateDataObject: function (property, value) {
+            this.data[property] = value;
+            this.validate();
+            this.fire('data-changed', {
+                value: this.data
+            });
+        },
+
+        /*
+         * Validates the form
+         * It calls validate method of each element in elementsToValidate array
+         * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
+         */
+        validate: function () {
+            var isValid = true;
+
+            for (var i = 0; i < this.elementsToValidate.length; i++) {
+                var element = this.elementsToValidate[i];
+                if (isFunction(element.validate)) {
+                    var elementValid = element.validate();
+                    isValid = isValid && elementValid;
+                }
+            }
+
+            this._setValid(isValid);
+
+            return isValid;
+        },
+        disabledChanged: function () {
+            for (var property in this.schema.properties) {
+                var element = this.querySelector('#' + property);
+                var disabledValue = this.disabled;
+                if (this.disabled === false) {
+                    var elemDisabledValue = this.schema.properties[element.id].disabled;
+                    if (elemDisabledValue !== undefined && (elemDisabledValue === "true" || elemDisabledValue === true)) {
+                        disabledValue = true;
+                    }
+                }
+                element.disabled = disabledValue; // setAttribute('disabled', disabledValue);
+                var childInput = element.querySelector('input');
+                if (notNullOrUndefined(childInput)) {
+                    if (disabledValue === false) {
+                        childInput.removeAttribute('disabled');
+                    } else {
+                        childInput.setAttribute('disabled', true);
+                    }
+                }
+            }
+        },
+        layoutChanged: function (newValue, oldValue) {
+            this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
+        },
+        removableChanged: function (newValue, oldValue) {
+            var btnTrash = this.$.insertPoint.childNodes["btnTrash"];
+            if (newValue) {
+                if (!btnTrash) {
+                    btnTrash = document.createElement('at-carbon-icon');
+                    btnTrash.setAttribute('class', 'field col-1');
+                    btnTrash.setAttribute('style-scope', 'at-core-form');
+                    btnTrash.id = "btnTrash";
+                    btnTrash.icon = "trash";
+                    btnTrash.onclick = this.btnTrashClickHandler;
+
+                    this.$.insertPoint.appendChild(btnTrash);
+                }
+            }
+            else if (btnTrash) {
+                this.$.insertPoint.removeChild(btnTrash);
+            }
+        },
+        btnTrashClickHandler: function () {
+            var atCoreForm = this.parentNode.parentNode;
+            atCoreForm.remove();
+            atCoreForm.fire('at-core-form-removed');
+        },
+        _convertPropertiesToSchemaValues: function (properties) {
+            var result = {
+                schema: {
+                    properties: {}
+                },
+                values: {}
+            },
+            property,
+            propDef,
+            innerProp,
+            propObj;
+
+            for (property in properties) {
+                propObj = result.schema.properties[property] = {};
+                propDef = properties[property];
+                for (innerProp in propDef) {
+                    if (innerProp === 'value') {
+                        result.values[property] = propDef[innerProp];
+                    } else {
+                        propObj[innerProp] = propDef[innerProp];
+                    }
+                }
+            }
+
+            return result;
         }
-      }
+    });
 
-      return result;
+    function isFunction(obj) {
+        return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function () { });
     }
-  });
 
-  function isFunction(obj) {
-    return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function() {});
-  }
-
-  function notNullOrUndefined(param) {
-    return (param !== null) && (param !== undefined);
-  }
-
-  function isNullOrUndefined(param) {
-    return param === null || param === undefined;
-  }
-
-  function notNullUndefinedOrEmpty(param) {
-    return notNullOrUndefined(param) && (param !== '');
-  }
-
-  function isObject(obj) {
-    return Object.prototype.toString.call(obj) === Object.prototype.toString.call({});
-  }
-
-  function copyPropertyValues(from, to) {
-    if (isObject(from) && isObject(to)) {
-      for (var property in from) {
-        to[property] = from[property];
-      }
+    function notNullOrUndefined(param) {
+        return (param !== null) && (param !== undefined);
     }
-  }
+
+    function isNullOrUndefined(param) {
+        return param === null || param === undefined;
+    }
+
+    function notNullUndefinedOrEmpty(param) {
+        return notNullOrUndefined(param) && (param !== '');
+    }
+
+    function isObject(obj) {
+        return Object.prototype.toString.call(obj) === Object.prototype.toString.call({});
+    }
+
+    function copyPropertyValues(from, to) {
+        if (isObject(from) && isObject(to)) {
+            for (var property in from) {
+                to[property] = from[property];
+            }
+        }
+    }
 </script>
