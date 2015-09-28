@@ -281,7 +281,7 @@
                     divElem.setAttribute('style-scope', 'at-core-form');
 
                     if (notNullUndefinedOrEmpty(type)) {
-                        switch (type) {
+                        switch (type.toLowerCase()) {
                             case "code":
                                 paperElement = document.createElement('at-form-codemirror');
                                 // *ij* name is required here so when value-changed event is first fired element has its name set
