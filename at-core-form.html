@@ -113,9 +113,13 @@
         #insertPoint {
             position: relative;
         }
+        .clearfix {
+          clear: both;
+        }
     </style>
     <template>
-        <div id="insertPoint" class="clearfix"></div>
+        <div id="insertPoint"></div>
+        <div class="clearfix"></div>
         <content></content>
     </template>
 </dom-module>
