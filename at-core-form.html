@@ -529,7 +529,11 @@
         setElementState: function (elementId, state, value) {
             var element = this.$.insertPoint.querySelector('#' + elementId);
             if (element) {
+              if (value) {
                 element.setAttribute(state, value);
+              } else {
+                element.removeAttribute(state);
+              }
             } else {
                 // if not log the debug message
                 console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
