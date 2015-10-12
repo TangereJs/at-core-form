@@ -1,7 +1,7 @@
 {
   "name": "at-core-form",
   "private": true,
-  "version": "1.0.0.11",
+  "version": "1.0.0.49",
   "dependencies": {
     "at-form-input": "TangereJs/at-form-input#0.8-preview",
     "at-form-checkbox": "TangereJs/at-form-checkbox#0.8-preview",

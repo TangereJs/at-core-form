@@ -107,19 +107,24 @@
 
         #btnTrash {
             cursor: pointer;
-            position: absolute;
-            bottom: 0.8em;
         }
 
         #insertPoint {
             position: relative;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: flex-end;
         }
         .clearfix {
           clear: both;
         }
+
+        at-carbon-icon{
+            margin-bottom:6px;
+        }
     </style>
     <template>
-        <div id="insertPoint"></div>
+        <div id="insertPoint" class="clearfix"></div>
         <div class="clearfix"></div>
         <content></content>
     </template>
@@ -640,12 +645,17 @@
             var btnTrash = this.$.insertPoint.childNodes["btnTrash"];
             if (newValue) {
                 if (!btnTrash) {
-                    btnTrash = document.createElement('at-carbon-icon');
+                    btnTrash = document.createElement('div');
                     btnTrash.setAttribute('class', 'field col-1');
                     btnTrash.setAttribute('style-scope', 'at-core-form');
                     btnTrash.id = "btnTrash";
-                    btnTrash.icon = "trash";
-                    btnTrash.onclick = this.btnTrashClickHandler;
+
+                    var btnTrashIcon = document.createElement('at-carbon-icon');
+                    btnTrashIcon.icon = "trash";
+                    btnTrashIcon.setAttribute('style-scope', 'at-core-form');
+                    btnTrashIcon.onclick = this.btnTrashClickHandler;
+    
+                    btnTrash.appendChild(btnTrashIcon);
 
                     this.$.insertPoint.appendChild(btnTrash);
                 }
@@ -655,7 +665,7 @@
             }
         },
         btnTrashClickHandler: function () {
-            var atCoreForm = this.parentNode.parentNode;
+            var atCoreForm = this.parentNode.parentNode.parentNode;
             atCoreForm.remove();
             atCoreForm.fire('at-core-form-removed');
         },
