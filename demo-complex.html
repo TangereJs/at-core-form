@@ -63,13 +63,7 @@
 <body unresolved>
   <div class="container">
     <div class="row">
-      <div>
-        <!-- test fields for required, all failing right now  -->
-        <paper-input label="Type something" required error="This input requires a value!"></paper-input>
-        <paper-input label="Type something..." willvalidate required id="paper_input1"></paper-input>
-        <paper-input label="Type something..." willvalidate validationmessage="Please fill out this field." required invalid id="paper_input" class="invalid"></paper-input>
-        <at-core-form id="coreFormDemo"></at-core-form>
-      </div>
+      <at-core-form id="coreFormDemo"></at-core-form>
     </div>
   </div>
   <script>
@@ -79,8 +73,9 @@
       demoForm.schema = {
         'properties': {
           'id': {
-            'description': 'The unique identifier for a product',
-            'type': 'number'
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
           'name': {
             'type': 'string',
@@ -88,26 +83,26 @@
           },
           'city': {
             'type': 'string',
-            'value': 'Default city name'
+            'value': 'Default city name',
+            'required': true
           },
           'complexDemo': {
             'type': 'object',
-            'description': 'Object typed field',
+            'title': 'Object typed field',
             'properties': {
               'Name': {
                 'type': 'string',
-                'description': 'This is lorem ipsum description',
+                'title': 'This is lorem ipsum description',
                 'value': 'This is name value'
               },
               'active': {
                 'type': 'boolean',
-                'description': 'This is active description',
+                'title': 'This is active description',
                 'value': true
               }
             }
           },
-        },
-        'required': ['id', 'city']
+        }
       };
 
       demoForm.data = {

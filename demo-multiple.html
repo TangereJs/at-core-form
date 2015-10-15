@@ -81,8 +81,9 @@
       demoForm1.schema = {
         'properties': {
           'id': {
-            'description': 'The unique identifier for a product',
-            'type': 'number'
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
           'name': {
             'type': 'string',
@@ -90,22 +91,23 @@
           },
           'city': {
             'type': 'string',
-            'default': 'Default city name'
+            'default': 'Default city name',
+            'required': true
           },
           'active': {
             'type': 'boolean'
           },
           'activePera': {
             'type': 'boolean',
-            'description': 'This is description for pera'
+            'title': 'This is description for pera'
           },
           'dropdownDemo': {
             'title': 'Name',
-            'type': 'enum',
+            'type': 'string',
+            'xtype': 'enum',
             'xvaluelist': 'XML,JSON'
           }
-        },
-        'required': ['id', 'city']
+        }
       };
       demoForm1.data = {
         'id': 0,
@@ -118,8 +120,9 @@
       demoForm2.schema = {
         'properties': {
           'id': {
-            'description': 'The unique identifier for a product',
-            'type': 'number'
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
           'name': {
             'type': 'string',
@@ -127,22 +130,23 @@
           },
           'city': {
             'type': 'string',
-            'default': 'Default city name'
+            'default': 'Default city name',
+            'required': true
           },
           'active': {
             'type': 'boolean'
           },
           'activePera': {
             'type': 'boolean',
-            'description': 'This is description for pera'
+            'title': 'This is description for pera'
           },
           'dropdownDemo': {
             'title': 'Name',
-            'type': 'enum',
+            'type': 'string',
+            'xtype': 'enum',
             'xvaluelist': 'XML,JSON'
           }
-        },
-        'required': ['id', 'city']
+        }
       };
       demoForm2.data = {
         'id': 1648,

@@ -54,8 +54,9 @@
       demoForm.schema = {
         'properties': {
           'id': {
-            'description': 'The unique identifier for a product',
-            'type': 'number'
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
           'name': {
             'type': 'string',
@@ -66,22 +67,22 @@
           },
           'city': {
             'type': 'string',
-            'value': 'Default city name'
+            'default': 'Default city name',
+            'required': true
           },
-
           'activeDemo2': {
             'type': 'boolean',
-            'description': 'This is description for pera'
+            'title': 'This is description for pera'
           },
           'activeToggle': {
             "type": "boolean",
             "xtype": "toggle",
-            "description": "This is description for active toggle"
+            "title": "This is description for active toggle"
           },
           'dropdownDemo': {
             'title': 'Name',
-            'type': 'enum',
-            'xvaluelist': 'XML,JSON'
+            'type': 'string',
+            'enum': 'XML,JSON'
           },
           'codeMirrorDemo': {
             "title": "Code Mirror",
@@ -127,8 +128,7 @@
             "title": "Daterange demo",
             "type": "daterange"
           }
-        },
-        'required': ['id', 'city']
+        }
       };
       demoForm.data = {
         'id': 3213,

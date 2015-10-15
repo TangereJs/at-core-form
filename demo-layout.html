@@ -63,7 +63,7 @@
       var formSchema = {
         'properties': {
           'id': {
-            'description': 'The unique identifier for a product',
+            'title': 'The unique identifier for a product',
             'type': 'number'
           },
           'name': {
@@ -80,16 +80,17 @@
           },
           'activePera': {
             'type': 'boolean',
-            'description': 'This is description for pera'
+            'title': 'This is description for pera'
           },
           'activeToggle': {
             "type": "boolean",
             "xtype": "toggle",
-            "description": "This is description for active toggle"
+            "title": "This is description for active toggle"
           },
           'dropdownDemo': {
             'title': 'Name',
-            'type': 'enum',
+            'type': 'string',
+            'xtype': 'enum',
             'xvaluelist': 'XML,JSON'
           },
           'codeMirrorDemo': {
