@@ -67,7 +67,8 @@
         "properties": {
           "id": {
             "title": "The unique identifier for a product",
-            "type": "number"
+            "type": "number",
+            "required": "true"
           },
           "name": {
             "type": "string",
@@ -75,7 +76,8 @@
           },
           "city": {
             "type": "string",
-            "default": "Default city name"
+            "default": "Default city name",
+            "required": "true"
           },
           "password": {
             "type": "string",
@@ -152,7 +154,8 @@
           "markdownDemo": {
             "title": "Markdown",
             "type": "string",
-            "xtype": "marked"
+            "xtype": "marked",
+            "required": "true"            
           },
           "dateDemo": {
             "title": "Date demo",
@@ -173,8 +176,7 @@
             "title": "Daterange demo",
             "type": "daterange"
           }
-        },
-        "required": ["id", "city", "markdownDemo"]
+        }
       };
 
       var initialData = {

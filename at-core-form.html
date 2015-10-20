@@ -388,7 +388,7 @@
           if (schemaHelpers.isNullOrEmpty(this.data[propertyName])) {
             // at-core-form.data doesn't contain an entry for the current property
             // add initial value of the formElement to the at-core-form.data
-              this.data[propertyName] = formElement.value;
+            this.data[propertyName] = formElement.value;
           } else {
             // else set initial value from at-core-form.data to fromElement
             if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
@@ -441,7 +441,7 @@
         // if element exists update its value
         this.data[elementId] = data;
         var element = Polymer.dom(this.$.insertPoint).querySelector('#' + elementId);
-        if (element) {
+        if (element && element.is && element.is !== 'at-form-file' && element.is !== 'at-form-image' && element.is !== 'at-form-daterange') {
           element.value = data;
         }
       } else {
@@ -475,7 +475,7 @@
       this._isBatchUpdate = true;
 
       for (elementId in oldValue) {
-        if (!this.data.hasOwnProperty(elementId)){
+        if (!this.data.hasOwnProperty(elementId)) {
           this.data[elementId] = oldValue[elementId];
         }
       }
@@ -483,7 +483,7 @@
       for (elementId in newValue) {
         selector = '#' + elementId;
         element = fieldsContainer.querySelector(selector);
-        if (element) {
+        if (element && element.is && element.is !== 'at-form-file' && element.is !== 'at-form-image' && element.is !== 'at-form-daterange') {
           element.value = newValue[elementId];
         }
       }
