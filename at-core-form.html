@@ -385,6 +385,19 @@
               break;
           }
 
+          var
+            classes = propertyName.split(' '),
+            classesIndex,
+            classesLength = classes.length,
+            cssClass;
+
+          for (classesIndex = 0; classesIndex < classesLength; classesIndex += 1) {
+            cssClass = classes[classesIndex];
+            if (schemaHelpers.notNullOrEmpty(cssClass)) {
+              Polymer.dom(formElement).classList.add(cssClass);
+            }
+          }
+
           if (schemaHelpers.isNullOrEmpty(this.data[propertyName])) {
             // at-core-form.data doesn't contain an entry for the current property
             // add initial value of the formElement to the at-core-form.data
