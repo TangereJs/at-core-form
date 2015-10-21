@@ -213,202 +213,52 @@
         var
           propertyDefinitions = newValue.properties,
           propertyDefinition,
-          propertyName,
-          title,
-          description,
-          required,
-          disabled,
           defaultValue,
           value,
           xgridcols,
+          gridColsCssName,
           fieldContainer,
           formElement,
-          gridColsCssName,
-          displayType,
-          placeholder;
+          displayType;
 
-        for (propertyName in propertyDefinitions) {
-          propertyDefinition = propertyDefinitions[propertyName];
+        Object.keys(propertyDefinitions).forEach(function(propertyName) {
+          if (schemaHelpers.isPropertyNameValid(propertyName)) {
+            propertyDefinition = propertyDefinitions[propertyName];
 
-          // find what the title is
-          title = schemaHelpers.capitalize(propertyName);
-          if (schemaHelpers.notNullOrEmpty(propertyDefinition.title)) {
-            title = propertyDefinition.title;
-          }
-
-          // find what description is
-          description = propertyDefinition.description;
-
-          required = Boolean(propertyDefinition.required);
-          disabled = Boolean(propertyDefinition.disabled);
-
-          // handle default value
-          defaultValue = propertyDefinition.default;
-          value = this.data[propertyName];
-          // if default value is not null or undefined and regular value is null or undefined
-          if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
-            // make the default value regular value
-            this.data[propertyName] = defaultValue;
-          }
-
-          // handle xgridcols
-          xgridcols = 6;
-          if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
-            xgridcols = parseInt(propertyDefinition.xgridcols);
-          }
-
-          // create the field container
-          fieldContainer = document.createElement('div');
-          Polymer.dom(fieldContainer).classList.add('field');
-          gridColsCssName = "col-" + xgridcols;
-          Polymer.dom(fieldContainer).classList.add(gridColsCssName);
-
-          // find the display type
-          displayType = schemaHelpers.getDisplayType(propertyDefinition);
-          switch (displayType) {
-            case "string":
-              // create at-form-input
-              formElement = document.createElement('at-form-input');
-
-              // handle placeholder property
-              placeholder = propertyDefinition.placeholder;
-              if (schemaHelpers.notNullOrEmpty(placeholder)) {
-                formElement.placeholder = placeholder;
-              }
-              break;
-            case "number":
-              // create at-form-input
-              formElement = document.createElement('at-form-input');
-              formElement.type = displayType;
-
-              // handle placeholder property
-              placeholder = propertyDefinition.placeholder;
-              if (schemaHelpers.notNullOrEmpty(placeholder)) {
-                formElement.placeholder = placeholder;
-              }
-              break;
-            case "password":
-              formElement = document.createElement('at-form-password');
-
-              // handle placeholder property
-              placeholder = propertyDefinition.placeholder;
-              if (schemaHelpers.notNullOrEmpty(placeholder)) {
-                formElement.placeholder = placeholder;
-              }
-              break;
-            case "boolean":
-              // create at-form-checkbox
-              formElement = document.createElement('at-form-checkbox');
-              break;
-            case "toggle":
-              // create at-form-checkbox
-              formElement = document.createElement('at-form-checkbox');
-              formElement.toggle = true;
-              break;
-            case "enum":
-              formElement = document.createElement('at-form-lookup');
-              // handle enum and xvaluelist properties
-              if (schemaHelpers.notNullOrEmpty(propertyDefinition.enum)) {
-                formElement.available = propertyDefinition.enum;
-              } else if (schemaHelpers.notNullOrEmpty(propertyDefinition.xvaluelist)) {
-                formElement.available = propertyDefinition.xvaluelist;
-              }
-              break;
-            case "lookup":
-              formElement = document.createElement('at-form-lookup');
-              // handle xurl property
-              if (schemaHelpers.notNullOrEmpty(propertyDefinition.xurl)) {
-                formElement.url = propertyDefinition.xurl;
-                // handle params property
-                formElement.params = !!propertyDefinition.params ? propertyDefinition.params : formElement.params;
-              }
-              // handle noCredentials property
-              formElement.noCredentials = Boolean(propertyDefinition.noCredentials);
-              break;
-            case "code":
-              formElement = document.createElement('at-form-codemirror');
-              formElement.mode = !!propertyDefinition.mode ? propertyDefinition.mode : formElement.mode;
-              break;
-            case "marked":
-              formElement = document.createElement('at-form-markdown');
-
-              break;
-            case "file":
-              formElement = document.createElement('at-form-file');
-              formElement.icon = !!propertyDefinition.icon ? propertyDefinition.icon : formElement.icon;
-              formElement.accept = !!propertyDefinition.accept ? propertyDefinition.accept : formElement.accept;
-              formElement.directory = !!propertyDefinition.directory ? propertyDefinition.directory : formElement.directory;
-              formElement.extensions = !!propertyDefinition.extensions ? propertyDefinition.extensions : formElement.extensions;
-              formElement.maxFiles = !!propertyDefinition.maxFiles ? propertyDefinition.maxFiles : formElement.maxFiles;
-              formElement.maxSize = !!propertyDefinition.maxSize ? propertyDefinition.maxSize : formElement.maxSize;
-              formElement.minSize = !!propertyDefinition.minSize ? propertyDefinition.minSize : formElement.minSize;
-              break;
-            case "image":
-              formElement = document.createElement('at-form-image');
-              formElement.icon = !!propertyDefinition.icon ? propertyDefinition.icon : formElement.icon;
-              formElement.accept = !!propertyDefinition.accept ? propertyDefinition.accept : formElement.accept;
-              formElement.directory = !!propertyDefinition.directory ? propertyDefinition.directory : formElement.directory;
-              formElement.extensions = !!propertyDefinition.extensions ? propertyDefinition.extensions : formElement.extensions;
-              formElement.maxFiles = !!propertyDefinition.maxFiles ? propertyDefinition.maxFiles : formElement.maxFiles;
-              formElement.maxSize = !!propertyDefinition.maxSize ? propertyDefinition.maxSize : formElement.maxSize;
-              formElement.minSize = !!propertyDefinition.minSize ? propertyDefinition.minSize : formElement.minSize;
-              break;
-            case "object":
-              formElement = document.createElement('at-form-complex');
-              if (propertyDefinition.properties) {
-                var convertionResult = this._convertPropertiesToSchemaValues(propertyDefinition.properties);
-                formElement.schema = convertionResult.schema;
-                formElement.value = convertionResult.values;
-              }
-              break;
-            case "date":
-              formElement = document.createElement('at-form-date');
-              formElement.format = 'YYYY-MM-DD';
-              break;
-            case "time":
-              formElement = document.createElement('at-form-date');
-              formElement.format = 'hh:mm:ss';
-              break;
-            case "datetime":
-              formElement = document.createElement('at-form-date');
-              formElement.format = 'YY-MM-DD hh:mm:ss';
-              break;
-            case "daterange":
-              formElement = document.createElement('at-form-daterange');
-              break;
-            case "radio":
-              formElement = document.createElement('at-form-radio');
-              if (schemaHelpers.notNullOrEmpty(propertyDefinition.xvaluelist)) {
-                var radioValueList = propertyDefinition.xvaluelist;
-                formElement.valuelist = radioValueList;
-              }
-              break;
-          }
-
-          var
-            classes = propertyName.split(' '),
-            classesIndex,
-            classesLength = classes.length,
-            cssClass;
-
-          for (classesIndex = 0; classesIndex < classesLength; classesIndex += 1) {
-            cssClass = classes[classesIndex];
-            if (schemaHelpers.notNullOrEmpty(cssClass)) {
-              Polymer.dom(formElement).classList.add(cssClass);
+            // handle default value
+            defaultValue = propertyDefinition.default;
+            value = self.data[propertyName];
+            // if default value is not null or undefined and regular value is null or undefined
+            if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
+              // make the default value regular value
+              self.data[propertyName] = defaultValue;
             }
-          }
 
-          if (schemaHelpers.isNullOrEmpty(this.data[propertyName])) {
-            // at-core-form.data doesn't contain an entry for the current property
-            // add initial value of the formElement to the at-core-form.data
-            this.data[propertyName] = formElement.value;
-          } else {
-            // else set initial value from at-core-form.data to fromElement
-            if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
-              formElement.value = this.data[propertyName];
+            // handle xgridcols
+            xgridcols = 6;
+            if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
+              xgridcols = parseInt(propertyDefinition.xgridcols);
             }
-          }
 
+            // create the field container
+            fieldContainer = document.createElement('div');
+            Polymer.dom(fieldContainer).classList.add('field');
+            gridColsCssName = "col-" + xgridcols;
+            Polymer.dom(fieldContainer).classList.add(gridColsCssName);
+
+            displayType = schemaHelpers.getDisplayType(propertyDefinition);
+            formElement = schemaHelpers.AtFormFactory.createElement(propertyName, displayType, propertyDefinition);
+
+            if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
+              // at-core-form.data doesn't contain an entry for the current property
+              // add initial value of the formElement to the at-core-form.data
+              self.data[propertyName] = formElement.value;
+            } else {
+              // else set initial value from at-core-form.data to fromElement
+              if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
+                formElement.value = self.data[propertyName];
+              }
+            }
           formElement.addEventListener('value-changed', function(event) {
             if (!self._isBatchUpdate) {
               self._updateDataObject(event.target.id, event.detail.value);
@@ -416,11 +266,8 @@
           });
 
           Polymer.dom(formElement).setAttribute('id', propertyName);
-          formElement.label = title;
-          formElement.disabled = disabled;
-          formElement.required = required;
-          if (required) {
-            this.elementsToValidate.push(formElement);
+          if (formElement.required) {
+            self.elementsToValidate.push(formElement);
           }
           // append paper element to its container
           Polymer.dom(fieldContainer).appendChild(formElement);
@@ -428,8 +275,12 @@
           // add container to as child to insertPoint
           Polymer.dom(fieldsContainer).appendChild(fieldContainer);
 
-          this.data[propertyName] = formElement.value;
-        }
+          self.data[propertyName] = formElement.value;
+          } else {
+            console.log('Property name is invalid. Skipping ' + propertyName + ' property');
+            console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+          }
+        });
       }
     },
     /* *ij*
