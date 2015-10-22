@@ -259,23 +259,25 @@
                 formElement.value = self.data[propertyName];
               }
             }
-          formElement.addEventListener('value-changed', function(event) {
-            if (!self._isBatchUpdate) {
-              self._updateDataObject(event.target.id, event.detail.value);
+            formElement.addEventListener('value-changed', function(event) {
+              event.stopPropagation();
+              if (!self._isBatchUpdate) {
+                self._updateDataObject(event.target.id, event.detail.value);
+              }
+            });
+
+            Polymer.dom(formElement).setAttribute('id', propertyName);
+            if (formElement.required) {
+              self.elementsToValidate.push(formElement);
             }
-          });
+            // append paper element to its container
+            Polymer.dom(fieldContainer).appendChild(formElement);
 
-          Polymer.dom(formElement).setAttribute('id', propertyName);
-          if (formElement.required) {
-            self.elementsToValidate.push(formElement);
-          }
-          // append paper element to its container
-          Polymer.dom(fieldContainer).appendChild(formElement);
+            // add container to as child to insertPoint
+            Polymer.dom(fieldsContainer).appendChild(fieldContainer);
 
-          // add container to as child to insertPoint
-          Polymer.dom(fieldsContainer).appendChild(fieldContainer);
-
-          self.data[propertyName] = formElement.value;
+            // udpate the disabled status
+            self.disabledChanged(self.disabled, self.disabled);
           } else {
             console.log('Property name is invalid. Skipping ' + propertyName + ' property');
             console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
@@ -300,14 +302,13 @@
      Another alternative to this approach is to have a function that will return the element itself. Than the client can do whatever he likes with the element
      not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
      */
-    updateFormElementData: function(elementId, data) {
-      if (this.data.hasOwnProperty(elementId)) {
-        // if element exists update its value
-        this.data[elementId] = data;
-        var element = Polymer.dom(this.$.insertPoint).querySelector('#' + elementId);
-        if (element && element.is && element.is !== 'at-form-file' && element.is !== 'at-form-image' && element.is !== 'at-form-daterange') {
-          element.value = data;
-        }
+    updateFormElementData: function(elementId, value) {
+      var fieldsContainer = this.$.insertPoint,
+        fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + elementId);
+
+      this.value[elementId] = value;
+      if (schemaHelpers.valueNotReadOnly(fieldElement)) {
+        fieldElement.value = value;
       } else {
         // if not log the debug message
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
@@ -317,11 +318,7 @@
     setElementState: function(elementId, state, value) {
       var element = Polymer.dom(this.$.insertPoint).querySelector('#' + elementId);
       if (element) {
-        if (value) {
-          Polymer.dom(element).setAttribute(state, value);
-        } else {
-          Polymer.dom(element).removeAttribute(state);
-        }
+        element[state] = value;
       } else {
         // if not log the debug message
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
@@ -330,26 +327,28 @@
 
     dataChanged: function(newValue, oldValue) {
       var
-        schemaHelpers = window.schemaHelpers,
-        elementId,
-        selector,
-        element,
-        fieldsContainer = Polymer.dom(this.$.insertPoint);
+        fieldsContainer = Polymer.dom(this.$.insertPoint),
+        fieldElement;
 
       this._isBatchUpdate = true;
 
-      for (elementId in oldValue) {
-        if (!this.data.hasOwnProperty(elementId)) {
-          this.data[elementId] = oldValue[elementId];
-        }
+      if (schemaHelpers.isObject(oldValue)) {
+        Object.keys(oldValue).forEach(function(propertyName) {
+          if (!newValue.hasOwnProperty(propertyName)) {
+            newValue[propertyName] = oldValue[propertyName];
+          }
+        });
       }
 
-      for (elementId in newValue) {
-        selector = '#' + elementId;
-        element = fieldsContainer.querySelector(selector);
-        if (element && element.is && element.is !== 'at-form-file' && element.is !== 'at-form-image' && element.is !== 'at-form-daterange') {
-          element.value = newValue[elementId];
-        }
+      if (schemaHelpers.isObject(newValue)) {
+        Object.keys(newValue).forEach(function(propertyName) {
+          fieldElement = fieldsContainer.querySelector('#' + propertyName);
+          if (schemaHelpers.valueNotReadOnly(fieldElement)) {
+            fieldElement.value = newValue[propertyName];
+          }
+        });
+      } else {
+        console.log('at-core-form expects objects as new value, but got ' + schemaHelpers.formatJson(newValue) + ' instead');
       }
 
       this._isBatchUpdate = false;
@@ -380,27 +379,32 @@
     validate: function() {
       var isValid = true;
 
-      for (var i = 0; i < this.elementsToValidate.length; i++) {
-        var element = this.elementsToValidate[i];
+      this.elementsToValidate.forEach(function(element){
         if (isFunction(element.validate)) {
           var elementValid = element.validate();
           isValid = isValid && elementValid;
         }
-      }
+      });
 
       this._setValid(isValid);
 
       return isValid;
     },
-    disabledChanged: function() {
-      for (var property in this.schema.properties) {
-        var element = this.querySelector('#' + property);
-        var disabledValue = this.disabled;
-        if (this.disabled === false) {
-          disabledValue = Boolean(this.schema.properties[element.id].disabled);
+    disabledChanged: function(newValue, oldValue) {
+      var fieldsContainer = this.$.insertPoint,
+        fieldElement,
+        properties = this.schema.properties;
+
+      Object.keys(properties).forEach(function(propertyName) {
+        fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
+        if (fieldElement) {
+          if (newValue) {
+            fieldElement.disabled = newValue;
+          } else {
+            fieldElement.disabled = Boolean(properties[propertyName].disabled);
+          }
         }
-        element.disabled = disabledValue; // setAttribute('disabled', disabledValue);
-      }
+      });
     },
     layoutChanged: function(newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);

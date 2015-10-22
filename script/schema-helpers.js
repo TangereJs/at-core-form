@@ -47,6 +47,12 @@
     return Object.prototype.toString.call(obj) === "[object String]";
   }
 
+  function isObject(obj) {
+    return Object.prototype.toString.call(obj) === "[object Object]";
+  }
+
+  schemaHelpers.isObject = isObject;
+
   schemaHelpers.isNull = isNull;
   schemaHelpers.isNullOrEmpty = isNullOrEmpty;
   schemaHelpers.notNull = notNull;
@@ -69,6 +75,11 @@
   }
   schemaHelpers.isPropertyNameValid = isPropertyNameValid;
 
+  var valueNotReadOnly = function(element) {
+    return element && element.properties && element.properties.value && !element.properties.value.readOnly;
+  }
+
+  schemaHelpers.valueNotReadOnly = valueNotReadOnly;
   /**
    * For the given property definition it returns display type for that property
    * @param {Object} propertyDefinition - property definition
