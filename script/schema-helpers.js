@@ -60,7 +60,7 @@
   schemaHelpers.formatJson = formatJson;
   schemaHelpers.capitalize = capitalize;
 
-  var g_supported_types = ["string", "number", "daterange", "boolean", "object"];
+  var g_supported_types = ["string", "number", "daterange", "boolean", "object", "radio"];
   var g_supported_xtypes = ["password", "radio", "toggle", "enum", "lookup", "file", "image", "code", "marked", "date", "time", "datetime"];
 
   var isPropertyNameValid = function(propertyName) {
@@ -254,7 +254,18 @@
         result.valuelist = propertyDefinition.xvaluelist;
       }
       return result;
+    },
+        array: function (propertyDefinition) {
+      var result = document.createElement('at-form-array');
+      if (notNullOrEmpty(propertyDefinition.schema)){
+        result.schema = propertyDefinition.schema;
+      }
+      if (notNullOrEmpty(propertyDefinition.layout)) {
+        result.layout = propertyDefinition.layout;
+      }
+      return result;
     }
+
   };
 
   var convertPropertiesToSchemaValues = function(properties) {
