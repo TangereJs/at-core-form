@@ -60,7 +60,7 @@
   schemaHelpers.formatJson = formatJson;
   schemaHelpers.capitalize = capitalize;
 
-  var g_supported_types = ["string", "number", "daterange", "boolean", "object", "radio"];
+  var g_supported_types = ["string", "number", "daterange", "boolean", "object", "array"];
   var g_supported_xtypes = ["password", "radio", "toggle", "enum", "lookup", "file", "image", "code", "marked", "date", "time", "datetime"];
 
   var isPropertyNameValid = function(propertyName) {
