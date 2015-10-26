@@ -306,7 +306,7 @@
       var fieldsContainer = this.$.insertPoint,
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + elementId);
 
-      this.value[elementId] = value;
+      this.data[elementId] = value;
       if (schemaHelpers.valueNotReadOnly(fieldElement)) {
         fieldElement.value = value;
       } else {
