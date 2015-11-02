@@ -11,6 +11,7 @@
 <link rel="import" href="../at-form-daterange/at-form-daterange.html">
 <link rel="import" href="../at-form-radio/at-form-radio.html">
 <link rel="import" href="../at-carbon-icon/at-carbon-icon.html">
+<link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
 
 <link rel="import" href="schema-helpers-import.html">
 
@@ -122,10 +123,17 @@
     at-carbon-icon {
       margin-bottom: 6px;
     }
+
+    .wrapper {
+      position: relative;
+    }
   </style>
   <template>
-    <div id="insertPoint" class="clearfix"></div>
-    <div class="clearfix"></div>
+    <div class="wrapper">
+      <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
+      <div class="clearfix"></div>
+      <div id="insertPoint"></div>
+    </div>
     <content></content>
   </template>
 </dom-module>
@@ -187,6 +195,17 @@
       this.elementsToValidate = [];
       this._isReady = true;
       this.removableChanged(this.removable, this.removable);
+      var resizeSensor = this.$.resizeSensor;
+      var coreForm = this;
+      resizeSensor.addEventListener('resize-sensed', function(event){
+        var newWidth = event.detail.value.width;
+        console.log('at-core-form new width: ' + newWidth + 'px');
+        if (newWidth < 600) {
+          coreForm.layout = "vertical";
+        } else {
+          coreForm.layout = "horizontal";
+        }
+      });
     },
     schemaChanged: function(newValue, oldValue) {
       if (this._isReady) {
@@ -271,6 +290,11 @@
             console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
           }
         });
+
+        // add div class="clearfix"
+        var clearfixDiv = document.createElement('div');
+        Polymer.dom(clearfixDiv).classList.add('clearfix');
+        Polymer.dom(fieldsContainer).appendChild(clearfixDiv);
       }
     },
     /* *ij*
