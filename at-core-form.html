@@ -197,15 +197,21 @@
       this.removableChanged(this.removable, this.removable);
       var resizeSensor = this.$.resizeSensor;
       var coreForm = this;
+      var currWidth = resizeSensor.queryWidth();
+      coreForm.updateLayout(currWidth);
       resizeSensor.addEventListener('resize-sensed', function(event){
         var newWidth = event.detail.value.width;
-        console.log('at-core-form new width: ' + newWidth + 'px');
-        if (newWidth < 600) {
-          coreForm.layout = "vertical";
-        } else {
-          coreForm.layout = "horizontal";
-        }
+        // console.log('at-core-form new width: ' + newWidth + 'px');
+        coreForm.updateLayout(newWidth);
       });
+    },
+    updateLayout: function (newWidth, oldWidth) {
+        // 377 is from fibonacci sequence; it should do just fine
+        if (newWidth < 377) {
+          this.layout = "vertical";
+        } else {
+          this.layout = "horizontal";
+        }
     },
     schemaChanged: function(newValue, oldValue) {
       if (this._isReady) {
@@ -296,6 +302,8 @@
         Polymer.dom(clearfixDiv).classList.add('clearfix');
         Polymer.dom(fieldsContainer).appendChild(clearfixDiv);
       }
+
+      this.$.resizeSensor.reset();
     },
     /* *ij*
      OK. Imperative data binding doesn't work in polymer anymore.
