@@ -61,7 +61,7 @@
   schemaHelpers.capitalize = capitalize;
 
   var g_supported_types = ["string", "number", "daterange", "boolean", "object", "array"];
-  var g_supported_xtypes = ["password", "radio", "toggle", "enum", "lookup", "file", "image", "code", "marked", "date", "time", "datetime"];
+  var g_supported_xtypes = ["password", "radio", "toggle", "enum", "lookup", "file", "image", "code", "marked", "date", "time", "datetime", "textarea"];
 
   var isPropertyNameValid = function(propertyName) {
     // propertyName should contain only lowercase letters, numbers and underscores. It should start with underscore or lowercase letter
@@ -255,17 +255,22 @@
       }
       return result;
     },
-        array: function (propertyDefinition) {
+    array: function(propertyDefinition) {
       var result = document.createElement('at-form-array');
-      if (notNullOrEmpty(propertyDefinition.schema)){
+      if (notNullOrEmpty(propertyDefinition.schema)) {
         result.schema = propertyDefinition.schema;
       }
       if (notNullOrEmpty(propertyDefinition.layout)) {
         result.layout = propertyDefinition.layout;
       }
       return result;
+    },
+    textarea: function (propertyDefinition) {
+      var result = document.createElement('at-form-textarea');
+      result.maxChars = !!propertyDefinition.maxlen ? propertyDefinition.maxlen : result.maxChars;
+      result.maxLines = !!propertyDefinition.maxlines ? propertyDefinition.maxlines : result.maxLines;
+      return result;
     }
-
   };
 
   var convertPropertiesToSchemaValues = function(properties) {
