@@ -195,8 +195,11 @@
       this.elementsToValidate = [];
       this._isReady = true;
       this.removableChanged(this.removable, this.removable);
+    },
+    attached: function () {
       var resizeSensor = this.$.resizeSensor;
       var coreForm = this;
+      resizeSensor.reset();
       var currWidth = resizeSensor.queryWidth();
       coreForm.updateLayout(currWidth);
       resizeSensor.addEventListener('resize-sensed', function(event){
@@ -213,6 +216,19 @@
           this.layout = "horizontal";
         }
     },
+    // ------------------------------
+    // *ij* maybe one day when we have HTML7 and resize event for elements this function will not be necessary
+    // this function is here to solve the problem in at-form-designer
+    // when user switches to field settings tab, resize sensor is incorrectly initialized
+    // so this function needs to be called to reinitialize the sensor
+    resetResizeSensor: function () {
+      var resizeSensor = this.$.resizeSensor;
+      var coreForm = this;
+      resizeSensor.reset();
+      var currWidth = resizeSensor.queryWidth();
+      coreForm.updateLayout(currWidth);
+    },
+    // ------------------------------
     schemaChanged: function(newValue, oldValue) {
       if (this._isReady) {
         var self = this;
