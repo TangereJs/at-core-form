@@ -3,7 +3,8 @@
   "private": true,
   "version": "1.0.0.62",
   "dependencies": {
-    "at-form-input": "TangereJs/at-form-input#0.8-preview",
+    "at-form-text": "TangereJs/at-form-text#0.8-preview",
+    "at-form-number": "TangereJs/at-form-number#0.8-preview",
     "at-form-checkbox": "TangereJs/at-form-checkbox#0.8-preview",
     "at-form-lookup": "TangereJs/at-form-lookup#0.8-preview",
     "at-form-markdown": "TangereJs/at-form-markdown#0.8-preview",

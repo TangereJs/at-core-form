@@ -140,15 +140,17 @@
       return element;
     },
     string: function(propertyDefinition) {
-      var result = document.createElement('at-form-input');
+      var result = document.createElement('at-form-text');
       if (notNull(propertyDefinition.placeholder)) {
         result.placeholder = propertyDefinition.placeholder;
       }
       return result;
     },
     number: function(propertyDefinition) {
-      var result = AtFormFactory['string'](propertyDefinition);
-      result.type = 'number';
+      var result = document.createElement('at-form-number');
+      if (notNull(propertyDefinition.placeholder)) {
+        result.placeholder = propertyDefinition.placeholder;
+      }
       return result;
     },
     password: function(propertyDefinition) {
