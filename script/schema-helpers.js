@@ -55,6 +55,10 @@
     return Object.prototype.toString.call(obj) === "[object Function]";
   }
 
+  function isArray(obj) {
+    return Object.prototype.toString.call(obj) === "[object Array]";
+  }
+
   schemaHelpers.isObject = isObject;
 
   schemaHelpers.isNull = isNull;
@@ -342,6 +346,11 @@
     propSchemaDef.title = propName;
     // convert type function to type string
     var computedType = typeof tmpDef.type();
+    if (computedType === "object") {
+      if (isArray(tmpDef.type())) {
+        computedType = "array";
+      }
+    }
     propSchemaDef.type = computedType;
     // convert value or value function to default
     var computedValue = tmpDef.value;
