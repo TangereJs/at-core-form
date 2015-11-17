@@ -51,6 +51,10 @@
     return Object.prototype.toString.call(obj) === "[object Object]";
   }
 
+  function isFunction(obj) {
+    return Object.prototype.toString.call(obj) === "[object Function]";
+  }
+
   schemaHelpers.isObject = isObject;
 
   schemaHelpers.isNull = isNull;
@@ -267,7 +271,7 @@
       }
       return result;
     },
-    textarea: function (propertyDefinition) {
+    textarea: function(propertyDefinition) {
       var result = document.createElement('at-form-textarea');
       result.maxChars = !!propertyDefinition.maxlen ? propertyDefinition.maxlen : result.maxChars;
       result.maxLines = !!propertyDefinition.maxlines ? propertyDefinition.maxlines : result.maxLines;
@@ -301,5 +305,65 @@
   };
 
   schemaHelpers.AtFormFactory = AtFormFactory;
+
+  var convertPolymerElementPropertyToAtCoreFormSchema = function(polymerElementPropertyName, polymerElementPropertyDefinition) {
+    var
+      propName = polymerElementPropertyName,
+      propDef = polymerElementPropertyDefinition,
+      schema = {
+        title: propName,
+        description: 'Settings for ' + propName,
+        properties: {}
+      },
+      tmpDef,
+      propSchemaDef = {
+        type: '',
+        xtype: '',
+        title: '',
+        required: false,
+        disabled: false,
+        default: ''
+      },
+      propertyNameIgnoreList = ["type", "value", "reflectToAttribute", "readOnly", "notify", "computed", "observer", "defined"];
+
+    // polymer project property definition is found here
+    // https://www.polymer-project.org/1.0/docs/devguide/properties.html
+    // propDef can be a function or a object
+    // if its a function create a tmpDef with propDef.type = propDef
+    if (isFunction(propDef)) {
+      tmpDef = {
+        type: propDef
+      };
+    } else {
+      // else work with tmpDef = propDef
+      tmpDef = propDef;
+    }
+    // set title to be property name
+    propSchemaDef.title = propName;
+    // convert type function to type string
+    var computedType = typeof tmpDef.type();
+    propSchemaDef.type = computedType;
+    // convert value or value function to default
+    var computedValue = tmpDef.value;
+    if (notNull(tmpDef.value)) {
+      if (isFunction(tmpDef.value)) {
+        computedValue = tmpDef.value();
+      }
+      propSchemaDef.default = computedValue;
+    }
+
+    // copy over everything else, but ignore property names in propertyNameIgnoreList becase they do not make sense in at json schema
+    var propertyNames = Object.keys(tmpDef);
+
+    propertyNames.forEach(function(propName, index) {
+      if (propertyNameIgnoreList.indexOf(propName) === -1) {
+        propSchemaDef[propName] = tmpDef[propName];
+      }
+    });
+
+    return propSchemaDef;
+  };
+
+  schemaHelpers.convertPolymerElementPropertyToAtCoreFormSchema = convertPolymerElementPropertyToAtCoreFormSchema;
 
 }(window.schemaHelpers = window.schemaHelpers || {}));
