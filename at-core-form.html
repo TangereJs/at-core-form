@@ -274,7 +274,7 @@
               }
             }
             formElement.addEventListener('value-changed', function(event) {
-              event.stopPropagation();
+              // event.stopPropagation();
               if (!self._isBatchUpdate) {
                 self._updateDataObject(event.target.id, event.detail.value);
               }
