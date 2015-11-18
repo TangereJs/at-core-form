@@ -68,8 +68,86 @@
   schemaHelpers.formatJson = formatJson;
   schemaHelpers.capitalize = capitalize;
 
-  var g_supported_types = ["string", "number", "daterange", "boolean", "object", "array"];
-  var g_supported_xtypes = ["password", "radio", "toggle", "enum", "lookup", "file", "image", "code", "marked", "date", "time", "datetime", "textarea"];
+  // ------------------------------------------------------------
+  // initialize central array of components
+  // ------------------------------------------------------------
+  var centralArrayOfComponents = [];
+  var initializeCentralArrayOfComponents = function() {
+    var result = [];
+    var registrations = Polymer.telemetry.registrations;
+    registrations.forEach(function(registration, index) {
+      if (registration.$meta) {
+        var
+          is = registration.is,
+          meta = registration.$meta,
+          entry;
+
+        // console.log(JSON.stringify(registration.$meta, null, ' '));
+        if (isNull(meta.form.xtype)) {
+          entry = {
+            elementName: is,
+            type: meta.form.type,
+            title: meta.title
+          };
+          result.push(entry);
+        } else if (isString(meta.form.xtype)) {
+          entry = {
+            elementName: is,
+            type: meta.form.type,
+            xtype: meta.form.xtype,
+            title: meta.title
+          };
+          result.push(entry);
+        } else if (isArray(meta.form.xtype)) {
+          meta.form.xtype.forEach(function (name, index) {
+            entry = {
+              elementName: is,
+              type: meta.form.type,
+              xtype: name,
+              title: meta.title
+            };
+            result.push(entry);
+          });
+        }
+      }
+    });
+
+    schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;
+  };
+
+  schemaHelpers.initializeCentralArrayOfComponents = initializeCentralArrayOfComponents;
+  initializeCentralArrayOfComponents();
+
+  /**
+   * Searches the central array of components for the mapping that has type === propertyType or xtype === propertyType
+   * @function findMapping
+   * @return {false|Object} false if mapping is not found; mapping object if mapping is found
+   */
+  var findMapping = function(propertyType) {
+    var
+      result = false,
+      index,
+      length = centralArrayOfComponents.length,
+      mapping;
+
+    for (index = 0; index < length; index++) {
+      var mapping = centralArrayOfComponents[index];
+      if (Boolean(mapping.xtype)) {
+        if (mapping.xtype === propertyType) {
+          result = mapping;
+          break;
+        }
+      } else {
+        if (mapping.type === propertyType) {
+          result = mapping;
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+  schemaHelpers.findMapping = findMapping;
 
   var isPropertyNameValid = function(propertyName) {
     // propertyName should contain only lowercase letters, numbers and underscores. It should start with underscore or lowercase letter
@@ -90,10 +168,13 @@
   schemaHelpers.valueNotReadOnly = valueNotReadOnly;
   /**
    * For the given property definition it returns display type for that property
+   * at-core-form, at-form-complex, at-form-array and form designer share getDisplayType function
+   * since each of these elements has different unsupportedTypes list it is passed as a parameter into this function
    * @param {Object} propertyDefinition - property definition
-   * @return {String} display type
+   * @param {Array} unsupportedTypes - list of types that should be reported as unsupported and default result returned
+   * @return {String} "string" if propertyDefinition contains an unsupported type, or (type, xtype) -> result otherwise
    */
-  var getDisplayType = function(propertyDefinition) {
+  var getDisplayType = function(propertyDefinition, unsupportedTypes) {
     var
       displayType = "string",
       type = propertyDefinition.type,
@@ -104,184 +185,69 @@
       console.log("Type not declared or type is empty for property definition. Type string assigned by default.");
       console.log("Property definition: " + formatJson(propertyDefinition));
     } else {
-      if (g_supported_types.indexOf(type) === -1) {
-        console.log("Value " + type + " is not supported type value. Supported values are " + formatJson(g_supported_types) + ". Type string assigned by default.");
+      displayType = type;
+      if (hasEnum) {
+        displayType = "enum";
+      } else if (notNullOrEmpty(xtype)) {
+        displayType = propertyDefinition.xtype;
+      }
+
+      if (unsupportedTypes.indexOf(displayType) !== -1) {
+        console.log("Type " + displayType + " is not supported.");
         console.log("Property definition: " + formatJson(propertyDefinition));
-      } else {
-        displayType = type;
-        if (hasEnum) {
-          displayType = "enum";
-        } else if (notNullOrEmpty(xtype)) {
-          if (g_supported_xtypes.indexOf(xtype) === -1) {
-            console.log("Value " + xtype + " is not supported xtype value. Supported values are " + formatJson(g_supported_xtypes) + ". xtype is ignored.");
-            console.log("Property definition: " + formatJson(propertyDefinition));
-          } else {
-            displayType = propertyDefinition.xtype;
-          }
-        }
+        console.log("Using type string as default");
+        displayType = "string";
       }
     }
-
     return displayType;
   }
 
   schemaHelpers.getDisplayType = getDisplayType;
 
-  var AtFormFactory = {
-    // creates an at-form-element based on property definition in schema.properties
-    createElement: function(propertyName, displayType, propertyDefinition) {
-      var
-        element = AtFormFactory[displayType](propertyDefinition),
-        label = notNull(propertyDefinition.title) ? propertyDefinition.title : capitalize(propertyName),
-        required = Boolean(propertyDefinition.required),
-        disabled = Boolean(propertyDefinition.disabled),
-        description = notNull(propertyDefinition.description) ? propertyDefinition.description : ' ';
+  var createElement = function(propertyName, displayType, propertyDefinition) {
+    var
+      element,
+      label = notNull(propertyDefinition.title) ? propertyDefinition.title : capitalize(propertyName),
+      required = Boolean(propertyDefinition.required),
+      disabled = Boolean(propertyDefinition.disabled),
+      description = notNull(propertyDefinition.description) ? propertyDefinition.description : ' ',
+      mapping = findMapping(displayType);
 
-      if (propertyName.indexOf(' ') === -1) {
-        Polymer.dom(element).classList.add(propertyName);
-      }
-
-      element.label = label;
-      element.required = required;
-      element.disabled = disabled;
-
-      return element;
-    },
-    string: function(propertyDefinition) {
-      var result = document.createElement('at-form-text');
-      if (notNull(propertyDefinition.placeholder)) {
-        result.placeholder = propertyDefinition.placeholder;
-      }
-      return result;
-    },
-    number: function(propertyDefinition) {
-      var result = document.createElement('at-form-number');
-      if (notNull(propertyDefinition.placeholder)) {
-        result.placeholder = propertyDefinition.placeholder;
-      }
-      return result;
-    },
-    password: function(propertyDefinition) {
-      var result = document.createElement('at-form-password');
-      if (notNull(propertyDefinition.placeholder)) {
-        result.placeholder = propertyDefinition.placeholder;
-      }
-      return result;
-    },
-    boolean: function(propertyDefinition) {
-      var result = document.createElement('at-form-checkbox');
-      return result;
-    },
-    toggle: function(propertyDefinition) {
-      var result = document.createElement('at-form-checkbox');
-      result.toggle = true;
-      return result;
-    },
-    enum: function(propertyDefinition) {
-      var result = document.createElement('at-form-lookup');
-      if (notNull(propertyDefinition.enum)) {
-        result.available = propertyDefinition.enum;
-      } else if (notNull(propertyDefinition.xvaluelist)) {
-        result.available = propertyDefinition.xvaluelist;
-      }
-      return result;
-    },
-    lookup: function(propertyDefinition) {
-      var result = document.createElement('at-form-lookup');
-      if (notNullOrEmpty(propertyDefinition.xurl)) {
-        result.url = propertyDefinition.xurl;
-      }
-      if (notNullOrEmpty(propertyDefinition.params)) {
-        result.params = propertyDefinition.params;
-      }
-      result.noCredentials = Boolean(propertyDefinition.noCredentials);
-      result.noPreload = Boolean(propertyDefinition.noPreload);
-      return result;
-    },
-    code: function(propertyDefinition) {
-      var result = document.createElement('at-form-codemirror');
-      if (notNullOrEmpty(propertyDefinition.mode)) {
-        result.mode = propertyDefinition.mode;
-      }
-      return result;
-    },
-    marked: function(propertyDefinition) {
-      var result = document.createElement('at-form-markdown');
-      return result;
-    },
-    file: function(propertyDefinition) {
-      var result = document.createElement('at-form-file');
-      result.icon = !!propertyDefinition.icon ? propertyDefinition.icon : result.icon;
-      result.accept = !!propertyDefinition.accept ? propertyDefinition.accept : result.accept;
-      result.directory = !!propertyDefinition.directory ? propertyDefinition.directory : result.directory;
-      result.extensions = !!propertyDefinition.extensions ? propertyDefinition.extensions : result.extensions;
-      result.maxFiles = !!propertyDefinition.maxFiles ? propertyDefinition.maxFiles : result.maxFiles;
-      result.maxSize = !!propertyDefinition.maxSize ? propertyDefinition.maxSize : result.maxSize;
-      result.minSize = !!propertyDefinition.minSize ? propertyDefinition.minSize : result.minSize;
-      return result;
-    },
-    image: function(propertyDefinition) {
-      var result = document.createElement('at-form-image');
-      result.accept = !!propertyDefinition.accept ? propertyDefinition.accept : result.accept;
-      result.directory = !!propertyDefinition.directory ? propertyDefinition.directory : result.directory;
-      result.extensions = !!propertyDefinition.extensions ? propertyDefinition.extensions : result.extensions;
-      result.maxFiles = !!propertyDefinition.maxFiles ? propertyDefinition.maxFiles : result.maxFiles;
-      result.maxSize = !!propertyDefinition.maxSize ? propertyDefinition.maxSize : result.maxSize;
-      result.minSize = !!propertyDefinition.minSize ? propertyDefinition.minSize : result.minSize;
-      return result;
-    },
-    object: function(propertyDefinition) {
-      var result = document.createElement('at-form-complex');
-      if (notNull(propertyDefinition.properties)) {
-        var schemaValues = convertPropertiesToSchemaValues(propertyDefinition.properties);
-        result.schema = schemaValues.schema;
-        result.value = schemaValues.values;
-      }
-      return result;
-    },
-    date: function(propertyDefinition) {
-      var result = document.createElement('at-form-date');
-      result.format = 'YYYY-MM-DD';
-      return result;
-    },
-    time: function(propertyDefinition) {
-      var result = document.createElement('at-form-date');
-      result.format = 'hh:mm:ss';
-      return result;
-    },
-    datetime: function(propertyDefinition) {
-      var result = document.createElement('at-form-date');
-      result.format = 'YY-MM-DD hh:mm:ss';
-      return result;
-    },
-    daterange: function(propertyDefinition) {
-      var result = document.createElement('at-form-daterange');
-      return result;
-    },
-    radio: function(propertyDefinition) {
-      var result = document.createElement('at-form-radio');
-      if (notNull(propertyDefinition.xvaluelist)) {
-        result.valuelist = propertyDefinition.xvaluelist;
-      }
-      return result;
-    },
-    array: function(propertyDefinition) {
-      var result = document.createElement('at-form-array');
-      if (notNullOrEmpty(propertyDefinition.schema)) {
-        result.schema = propertyDefinition.schema;
-      }
-      if (notNullOrEmpty(propertyDefinition.layout)) {
-        result.layout = propertyDefinition.layout;
-      }
-      return result;
-    },
-    textarea: function(propertyDefinition) {
-      var result = document.createElement('at-form-textarea');
-      result.maxChars = !!propertyDefinition.maxlen ? propertyDefinition.maxlen : result.maxChars;
-      result.maxLines = !!propertyDefinition.maxlines ? propertyDefinition.maxlines : result.maxLines;
-      return result;
+    if (!mapping) {
+      console.log("Central array of components doesn't contain mapping for type " + displayType);
+      console.log("Property name " + propertyName);
+      console.log("Property definition: " + formatJson(propertyDefinition));
+      console.log("Using mapping for type string instead");
+      mapping = findMapping('string');
     }
+
+    element = document.createElement(mapping.elementName);
+
+    if (propertyName.indexOf(' ') === -1) {
+      Polymer.dom(element).classList.add(propertyName);
+    }
+
+    element.label = label;
+    element.required = required;
+    element.disabled = disabled;
+
+    var
+      propertyNames = Object.keys(element.properties),
+      ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "xtype", "default"];
+    copyProperties(propertyNames, ignoreList, propertyDefinition, element);
+    if (displayType === "toggle") {
+      element.toggle = true;
+    }
+    if (displayType === "object") {
+      var schemaValues = convertPropertiesToSchemaValues(propertyDefinition.properties);
+      element.schema = schemaValues.schema;
+      element.value = schemaValues.values;
+    }
+
+    return element;
   };
+
+  schemaHelpers.createElement = createElement;
 
   var convertPropertiesToSchemaValues = function(properties) {
     var result = {
@@ -306,9 +272,7 @@
     });
 
     return result;
-  };
-
-  schemaHelpers.AtFormFactory = AtFormFactory;
+  }
 
   var convertPolymerElementPropertyToAtCoreFormSchema = function(polymerElementPropertyName, polymerElementPropertyDefinition) {
     var
@@ -363,15 +327,32 @@
 
     // copy over everything else, but ignore property names in propertyNameIgnoreList becase they do not make sense in at json schema
     var propertyNames = Object.keys(tmpDef);
-
-    propertyNames.forEach(function(propName, index) {
-      if (propertyNameIgnoreList.indexOf(propName) === -1) {
-        propSchemaDef[propName] = tmpDef[propName];
-      }
-    });
+    copyProperties(propertyNames, propertyNameIgnoreList, tmpDef, propSchemaDef);
 
     return propSchemaDef;
   };
+
+  var copyProperties = function(propertyNames, ignoreList, source, destination) {
+    propertyNames.forEach(function(propName, index) {
+      if (ignoreList.indexOf(propName) === -1) {
+        if (propName === 'valuelist') {
+          // if propName is valuelist that means that destination is at-form-radio and source has xvaluelist property
+          if (notNull(source.xvaluelist)) {
+            destination.valuelist = source.xvaluelist;
+          }
+        } else if (propName === 'available') {
+          // if propName is available that means that destination is at-form-lookup and source has xvaluelist property or enum property
+          if (isNull(source.enum)) {
+            destination.available = source.xvaluelist;
+          } else {
+            destination.available = source.enum;
+          }
+        } else if (notNull(source[propName])) {
+          destination[propName] = source[propName];
+        }
+      }
+    });
+  }
 
   schemaHelpers.convertPolymerElementPropertyToAtCoreFormSchema = convertPolymerElementPropertyToAtCoreFormSchema;
 
