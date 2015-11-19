@@ -335,21 +335,9 @@
   var copyProperties = function(propertyNames, ignoreList, source, destination) {
     propertyNames.forEach(function(propName, index) {
       if (ignoreList.indexOf(propName) === -1) {
-        if (propName === 'valuelist') {
-          // if propName is valuelist that means that destination is at-form-radio and source has xvaluelist property
-          if (notNull(source.xvaluelist)) {
-            destination.valuelist = source.xvaluelist;
+          if (notNull(source[propName])) {
+            destination[propName] = source[propName];
           }
-        } else if (propName === 'available') {
-          // if propName is available that means that destination is at-form-lookup and source has xvaluelist property or enum property
-          if (isNull(source.enum)) {
-            destination.available = source.xvaluelist;
-          } else {
-            destination.available = source.enum;
-          }
-        } else if (notNull(source[propName])) {
-          destination[propName] = source[propName];
-        }
       }
     });
   }
