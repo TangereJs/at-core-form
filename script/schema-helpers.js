@@ -239,9 +239,13 @@
       element.toggle = true;
     }
     if (displayType === "object") {
-      var schemaValues = convertPropertiesToSchemaValues(propertyDefinition.properties);
-      element.schema = schemaValues.schema;
-      element.value = schemaValues.values;
+      if (isNull(propertyDefinition.properties)) {
+        console.log('For ' + propertyName + ' property of type ' + propertyDefinition.type + ' properties property is undefined.');
+      } else {
+        var schemaValues = convertPropertiesToSchemaValues(propertyDefinition.properties);
+        element.schema = schemaValues.schema;
+        element.value = schemaValues.values;
+      }
     }
 
     return element;
@@ -341,7 +345,7 @@
       }
     });
   }
-
+  schemaHelpers.copyProperties = copyProperties;
   schemaHelpers.convertPolymerElementPropertyToAtCoreFormSchema = convertPolymerElementPropertyToAtCoreFormSchema;
 
 }(window.schemaHelpers = window.schemaHelpers || {}));
