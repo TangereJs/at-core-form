@@ -175,6 +175,7 @@
      * from updating data property when element's value is supplied from data property
      */
     _isBatchUpdate: false,
+    _unsupported_types: [],
     elementsToValidate: [],
     ready: function() {
       this.elementsToValidate = [];
@@ -261,8 +262,8 @@
                     gridColsCssName = "col-" + xgridcols;
                     Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
-                    displayType = schemaHelpers.getDisplayType(propertyDefinition);
-                    formElement = schemaHelpers.AtFormFactory.createElement(propertyName, displayType, propertyDefinition);
+                    displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
+                    formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
 
                     if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
                         // at-core-form.data doesn't contain an entry for the current property

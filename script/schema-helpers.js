@@ -76,39 +76,30 @@
     var result = [];
     var registrations = Polymer.telemetry.registrations;
     registrations.forEach(function(registration, index) {
-      if (registration.$meta) {
+      if (registration.$meta && isArray(registration.$meta)) {
         var
           is = registration.is,
           meta = registration.$meta,
-          entry;
+          newEntry;
 
-        // console.log(JSON.stringify(registration.$meta, null, ' '));
-        if (isNull(meta.form.xtype)) {
-          entry = {
-            elementName: is,
-            type: meta.form.type,
-            title: meta.title
-          };
-          result.push(entry);
-        } else if (isString(meta.form.xtype)) {
-          entry = {
-            elementName: is,
-            type: meta.form.type,
-            xtype: meta.form.xtype,
-            title: meta.title
-          };
-          result.push(entry);
-        } else if (isArray(meta.form.xtype)) {
-          meta.form.xtype.forEach(function(name, index) {
-            entry = {
+        meta.forEach(function(entry, index) {
+          if (isNull(entry.xtype)) {
+            newEntry = {
               elementName: is,
-              type: meta.form.type,
-              xtype: name,
-              title: meta.title
+              type: entry.type,
+              title: entry.title
             };
-            result.push(entry);
-          });
-        }
+            result.push(newEntry);
+          } else {
+            newEntry = {
+              elementName: is,
+              type: entry.type,
+              xtype: entry.xtype,
+              title: entry.title
+            };
+            result.push(newEntry);
+          }
+        });
       }
     });
 
