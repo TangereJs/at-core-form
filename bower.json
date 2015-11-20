@@ -1,7 +1,7 @@
 {
   "name": "at-core-form",
   "private": true,
-  "version": "1.0.0.62",
+  "version": "1.0.0.71",
   "dependencies": {
     "at-form-text": "TangereJs/at-form-text#0.8-preview",
     "at-form-number": "TangereJs/at-form-number#0.8-preview",

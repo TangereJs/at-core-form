@@ -175,7 +175,6 @@
      * from updating data property when element's value is supplied from data property
      */
     _isBatchUpdate: false,
-    _unsupported_types: [],
     elementsToValidate: [],
     ready: function() {
       this.elementsToValidate = [];
@@ -236,68 +235,72 @@
           formElement,
           displayType;
 
-        Object.keys(propertyDefinitions).forEach(function(propertyName) {
-          if (schemaHelpers.isPropertyNameValid(propertyName)) {
-            propertyDefinition = propertyDefinitions[propertyName];
+        if (propertyDefinitions) {
+            Object.keys(propertyDefinitions).forEach(function (propertyName) {
+                if (schemaHelpers.isPropertyNameValid(propertyName)) {
+                    propertyDefinition = propertyDefinitions[propertyName];
 
-            // handle default value
-            defaultValue = propertyDefinition.default;
-            value = self.data[propertyName];
-            // if default value is not null or undefined and regular value is null or undefined
-            if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
-              // make the default value regular value
-              self.data[propertyName] = defaultValue;
-            }
+                    // handle default value
+                    defaultValue = propertyDefinition.default;
+                    value = self.data[propertyName];
+                    // if default value is not null or undefined and regular value is null or undefined
+                    if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
+                        // make the default value regular value
+                        self.data[propertyName] = defaultValue;
+                    }
 
-            // handle xgridcols
-            xgridcols = 6;
-            if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
-              xgridcols = parseInt(propertyDefinition.xgridcols);
-            }
+                    // handle xgridcols
+                    xgridcols = 6;
+                    if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
+                        xgridcols = parseInt(propertyDefinition.xgridcols);
+                    }
 
-            // create the field container
-            fieldContainer = document.createElement('div');
-            Polymer.dom(fieldContainer).classList.add('field');
-            gridColsCssName = "col-" + xgridcols;
-            Polymer.dom(fieldContainer).classList.add(gridColsCssName);
+                    // create the field container
+                    fieldContainer = document.createElement('div');
+                    Polymer.dom(fieldContainer).classList.add('field');
+                    gridColsCssName = "col-" + xgridcols;
+                    Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
-            displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
-            formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+                    displayType = schemaHelpers.getDisplayType(propertyDefinition);
+                    formElement = schemaHelpers.AtFormFactory.createElement(propertyName, displayType, propertyDefinition);
 
-            if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
-              // at-core-form.data doesn't contain an entry for the current property
-              // add initial value of the formElement to the at-core-form.data
-              self.data[propertyName] = formElement.value;
-            } else {
-              // else set initial value from at-core-form.data to fromElement
-              if (schemaHelpers.valueNotReadOnly(formElement)) {
-                formElement.value = self.data[propertyName];
-              }
-            }
-            formElement.addEventListener('value-changed', function(event) {
-              // event.stopPropagation();
-              if (!self._isBatchUpdate) {
-                self._updateDataObject(event.target.id, event.detail.value);
-              }
+                    if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
+                        // at-core-form.data doesn't contain an entry for the current property
+                        // add initial value of the formElement to the at-core-form.data
+                        self.data[propertyName] = formElement.value;
+                    } else {
+                        // else set initial value from at-core-form.data to fromElement
+                        if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
+                            formElement.value = self.data[propertyName];
+                        }
+                    }
+                    formElement.addEventListener('value-changed', function (event) {
+                        // event.stopPropagation();
+                        if (!self._isBatchUpdate) {
+                            self._updateDataObject(event.target.id, event.detail.value);
+                        }
+                    });
+
+                    Polymer.dom(formElement).setAttribute('id', propertyName);
+                    if (formElement.required) {
+                        self.elementsToValidate.push(formElement);
+                    }
+                    // append paper element to its container
+                    Polymer.dom(fieldContainer).appendChild(formElement);
+
+                    // add container to as child to insertPoint
+                    Polymer.dom(fieldsContainer).appendChild(fieldContainer);
+
+                    // udpate the disabled status
+                    self.disabledChanged(self.disabled, self.disabled);
+                } else {
+                    console.log('Property name is invalid. Skipping ' + propertyName + ' property');
+                    console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+                }
             });
-
-            Polymer.dom(formElement).setAttribute('id', propertyName);
-            if (formElement.required) {
-              self.elementsToValidate.push(formElement);
-            }
-            // append paper element to its container
-            Polymer.dom(fieldContainer).appendChild(formElement);
-
-            // add container to as child to insertPoint
-            Polymer.dom(fieldsContainer).appendChild(fieldContainer);
-
-            // udpate the disabled status
-            self.disabledChanged(self.disabled, self.disabled);
-          } else {
-            console.log('Property name is invalid. Skipping ' + propertyName + ' property');
-            console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
-          }
-        });
+        } else {
+            //TODO Implement clear of data property
+        }
 
         // add div class="clearfix"
         var clearfixDiv = document.createElement('div');
