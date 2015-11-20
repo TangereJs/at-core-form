@@ -99,7 +99,7 @@
           };
           result.push(entry);
         } else if (isArray(meta.form.xtype)) {
-          meta.form.xtype.forEach(function (name, index) {
+          meta.form.xtype.forEach(function(name, index) {
             entry = {
               elementName: is,
               type: meta.form.type,
@@ -231,9 +231,12 @@
     element.required = required;
     element.disabled = disabled;
 
-    var
-      propertyNames = Object.keys(element.properties),
-      ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "xtype", "default"];
+    var propertyNames = Object.keys(element.properties);
+    // ignore list is a list of properties that should not be copied using copy properties because they are
+    // either already set in code above [ label,  required, disabled, title ]
+    // should not be copied to element [ type, xtype, default ]
+    // or never present in json schema [ value, valid ]
+    var ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "xtype", "default"];
     copyProperties(propertyNames, ignoreList, propertyDefinition, element);
     if (displayType === "toggle") {
       element.toggle = true;
@@ -339,9 +342,9 @@
   var copyProperties = function(propertyNames, ignoreList, source, destination) {
     propertyNames.forEach(function(propName, index) {
       if (ignoreList.indexOf(propName) === -1) {
-          if (notNull(source[propName])) {
-            destination[propName] = source[propName];
-          }
+        if (notNull(source[propName])) {
+          destination[propName] = source[propName];
+        }
       }
     });
   }
