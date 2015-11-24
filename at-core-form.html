@@ -278,7 +278,7 @@
                     formElement.addEventListener('value-changed', function (event) {
                         // event.stopPropagation();
                         if (!self._isBatchUpdate) {
-                            self._updateDataObject(event.target.id, event.detail.value);
+                            self._updateDataObject(event.target.id, event.target.value);
                         }
                     });
 
