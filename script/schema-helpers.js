@@ -67,6 +67,7 @@
   schemaHelpers.notNullOrEmpty = notNullOrEmpty;
   schemaHelpers.formatJson = formatJson;
   schemaHelpers.capitalize = capitalize;
+  schemaHelpers.isFunction = isFunction;
 
   // ------------------------------------------------------------
   // initialize central array of components
@@ -344,6 +345,5 @@
     });
   }
   schemaHelpers.copyProperties = copyProperties;
-  schemaHelpers.convertPolymerElementPropertyToAtCoreFormSchema = convertPolymerElementPropertyToAtCoreFormSchema;
 
 }(window.schemaHelpers = window.schemaHelpers || {}));
