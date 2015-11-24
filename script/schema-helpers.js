@@ -334,7 +334,11 @@
     propertyNames.forEach(function(propName, index) {
       if (ignoreList.indexOf(propName) === -1) {
         if (notNull(source[propName])) {
-          destination[propName] = source[propName];
+          try {
+            destination[propName] = source[propName];
+          } catch (e) {
+            console.log(e);
+          }
         }
       }
     });
