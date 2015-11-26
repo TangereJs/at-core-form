@@ -228,7 +228,7 @@
     // either already set in code above [ label,  required, disabled, title ]
     // should not be copied to element [ type, xtype, default ]
     // or never present in json schema [ value, valid ]
-    var ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "xtype", "default"];
+    var ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "default"];
     copyProperties(propertyNames, ignoreList, propertyDefinition, element);
     if (displayType === "toggle") {
       element.toggle = true;
