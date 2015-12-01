@@ -252,8 +252,10 @@
                 self.data[propertyName] = defaultValue;
               }
 
+              displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
+
               // handle xgridcols
-              xgridcols = 6;
+              xgridcols = displayType === "section" ? 12 : 6;
               if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
                 xgridcols = parseInt(propertyDefinition.xgridcols);
               }
@@ -264,7 +266,6 @@
               gridColsCssName = "col-" + xgridcols;
               Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
-              displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
               formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
 
               if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
