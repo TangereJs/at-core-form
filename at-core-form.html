@@ -184,32 +184,32 @@
       this._isReady = true;
       this.removableChanged(this.removable, this.removable);
     },
-    attached: function () {
+    attached: function() {
       var resizeSensor = this.$.resizeSensor;
       var coreForm = this;
       resizeSensor.reset();
       var currWidth = resizeSensor.queryWidth();
       coreForm.updateLayout(currWidth);
-      resizeSensor.addEventListener('resize-sensed', function(event){
+      resizeSensor.addEventListener('resize-sensed', function(event) {
         var newWidth = event.detail.value.width;
         // console.log('at-core-form new width: ' + newWidth + 'px');
         coreForm.updateLayout(newWidth);
       });
     },
-    updateLayout: function (newWidth, oldWidth) {
-        // 377 is from fibonacci sequence; it should do just fine
-        if (newWidth < 600) {
-          this.layout = "vertical";
-        } else {
-          this.layout = "horizontal";
-        }
+    updateLayout: function(newWidth, oldWidth) {
+      // 377 is from fibonacci sequence; it should do just fine
+      if (newWidth < 600) {
+        this.layout = "vertical";
+      } else {
+        this.layout = "horizontal";
+      }
     },
     // ------------------------------
     // *ij* maybe one day when we have HTML7 and resize event for elements this function will not be necessary
     // this function is here to solve the problem in at-form-designer
     // when user switches to field settings tab, resize sensor is incorrectly initialized
     // so this function needs to be called to reinitialize the sensor
-    resetResizeSensor: function () {
+    resetResizeSensor: function() {
       var resizeSensor = this.$.resizeSensor;
       var coreForm = this;
       resizeSensor.reset();
@@ -239,70 +239,70 @@
           displayType;
 
         if (propertyDefinitions) {
-            Object.keys(propertyDefinitions).forEach(function (propertyName) {
-                if (schemaHelpers.isPropertyNameValid(propertyName)) {
-                    propertyDefinition = propertyDefinitions[propertyName];
+          Object.keys(propertyDefinitions).forEach(function(propertyName) {
+            if (schemaHelpers.isPropertyNameValid(propertyName)) {
+              propertyDefinition = propertyDefinitions[propertyName];
 
-                    // handle default value
-                    defaultValue = propertyDefinition.default;
-                    value = self.data[propertyName];
-                    // if default value is not null or undefined and regular value is null or undefined
-                    if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
-                        // make the default value regular value
-                        self.data[propertyName] = defaultValue;
-                    }
+              // handle default value
+              defaultValue = propertyDefinition.default;
+              value = self.data[propertyName];
+              // if default value is not null or undefined and regular value is null or undefined
+              if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
+                // make the default value regular value
+                self.data[propertyName] = defaultValue;
+              }
 
-                    // handle xgridcols
-                    xgridcols = 6;
-                    if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
-                        xgridcols = parseInt(propertyDefinition.xgridcols);
-                    }
+              // handle xgridcols
+              xgridcols = 6;
+              if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
+                xgridcols = parseInt(propertyDefinition.xgridcols);
+              }
 
-                    // create the field container
-                    fieldContainer = document.createElement('div');
-                    Polymer.dom(fieldContainer).classList.add('field');
-                    gridColsCssName = "col-" + xgridcols;
-                    Polymer.dom(fieldContainer).classList.add(gridColsCssName);
+              // create the field container
+              fieldContainer = document.createElement('div');
+              Polymer.dom(fieldContainer).classList.add('field');
+              gridColsCssName = "col-" + xgridcols;
+              Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
-                    displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
-                    formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+              displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
+              formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
 
-                    if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
-                        // at-core-form.data doesn't contain an entry for the current property
-                        // add initial value of the formElement to the at-core-form.data
-                        self.data[propertyName] = formElement.value;
-                    } else {
-                        // else set initial value from at-core-form.data to fromElement
-                        if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
-                            formElement.value = self.data[propertyName];
-                        }
-                    }
-                    formElement.addEventListener('value-changed', function (event) {
-                        // event.stopPropagation();
-                        if (!self._isBatchUpdate) {
-                            self._updateDataObject(event.target.id, event.detail.value);
-                        }
-                    });
-
-                    Polymer.dom(formElement).setAttribute('id', propertyName);
-                    if (formElement.required) {
-                        self.elementsToValidate.push(formElement);
-                    }
-                    // append paper element to its container
-                    Polymer.dom(fieldContainer).appendChild(formElement);
-
-                    // add container to as child to insertPoint
-                    Polymer.dom(fieldsContainer).appendChild(fieldContainer);
-
-                    // udpate the disabled status
-                    self.disabledChanged(self.disabled, self.disabled);
-                } else {
-                    console.log('Property name is invalid. Skipping ' + propertyName + ' property');
-                    console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+              if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
+                // at-core-form.data doesn't contain an entry for the current property
+                // add initial value of the formElement to the at-core-form.data
+                self.data[propertyName] = formElement.value;
+              } else {
+                // else set initial value from at-core-form.data to fromElement
+                if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
+                  formElement.value = self.data[propertyName];
                 }
-            });
+              }
+              formElement.addEventListener('value-changed', function(event) {
+                // event.stopPropagation();
+                if (!self._isBatchUpdate) {
+                  self._updateDataObject(event.target.id, event.detail.value);
+                }
+              });
+
+              Polymer.dom(formElement).setAttribute('id', propertyName);
+              if (formElement.required) {
+                self.elementsToValidate.push(formElement);
+              }
+              // append paper element to its container
+              Polymer.dom(fieldContainer).appendChild(formElement);
+
+              // add container to as child to insertPoint
+              Polymer.dom(fieldsContainer).appendChild(fieldContainer);
+
+              // udpate the disabled status
+              self.disabledChanged(self.disabled, self.disabled);
+            } else {
+              console.log('Property name is invalid. Skipping ' + propertyName + ' property');
+              console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+            }
+          });
         } else {
-            //TODO Implement clear of data property
+          //TODO Implement clear of data property
         }
 
         // add div class="clearfix"
@@ -354,16 +354,16 @@
     },
 
     dataChanged: function(newValue, oldValue) {
-      var
-        fieldsContainer = Polymer.dom(this.$.insertPoint),
-        fieldElement;
+      var fieldsContainer = Polymer.dom(this.$.insertPoint);
+      var fieldElement;
+      var initialData = this._calculateInitialDataFromSchemaProperties(this.schema.properties);
 
       this._isBatchUpdate = true;
 
       if (schemaHelpers.isObject(oldValue)) {
-        Object.keys(oldValue).forEach(function(propertyName) {
+        Object.keys(initialData).forEach(function(propertyName) {
           if (!newValue.hasOwnProperty(propertyName)) {
-            newValue[propertyName] = oldValue[propertyName];
+            newValue[propertyName] = initialData[propertyName];
           }
         });
       }
@@ -407,7 +407,7 @@
     validate: function() {
       var isValid = true;
 
-      this.elementsToValidate.forEach(function(element){
+      this.elementsToValidate.forEach(function(element) {
         if (isFunction(element.validate)) {
           var elementValid = element.validate();
           isValid = isValid && elementValid;
@@ -487,6 +487,36 @@
           }
         }
       }
+
+      return result;
+    },
+    /**
+     * This function is created for task #773 at-core-form .data handling
+     * this function creates initial data object from schema properties
+     * value for each entry is either default value from element or default value from schema (specified with default: '<value>')
+     * dataChanged function calls this function
+     */
+    _calculateInitialDataFromSchemaProperties: function(properties) {
+      var insertPoint = this.$.insertPoint;
+      var result = {};
+      var propertyNames = Object.keys(properties);
+      var propSchemaDef;
+      var calculatedValue;
+
+      propertyNames.forEach(function(propName, index) {
+        propSchemaDef = properties[propName];
+
+        // if .default exists in propSchemaDef that is the calculatedValue
+        if (propSchemaDef.default !== undefined) {
+          calculatedValue = propSchemaDef.default;
+        } else {
+          // form is already created; query the self.$.insertPoint and get default value from element.properties.value.value
+          var element = Polymer.dom(insertPoint).querySelector('#'+propName);
+          calculatedValue = element.properties.value.value;
+        }
+
+        result[propName] = calculatedValue;
+      });
 
       return result;
     }
