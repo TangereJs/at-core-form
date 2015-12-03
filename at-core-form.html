@@ -111,7 +111,7 @@
       margin-bottom: 6px;
     }
 
-    : host > .at-core-form-wrapper {
+    .at-core-form-wrapper {
       position: relative;
     }
   </style>
@@ -512,7 +512,7 @@
           calculatedValue = propSchemaDef.default;
         } else {
           // form is already created; query the self.$.insertPoint and get default value from element.properties.value.value
-          var element = Polymer.dom(insertPoint).querySelector('#'+propName);
+          var element = Polymer.dom(insertPoint).querySelector('#' + propName);
           calculatedValue = element.properties.value.value;
         }
 
