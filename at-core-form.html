@@ -168,6 +168,17 @@
         type: String,
         value: "vertical",
         observer: 'layoutChanged'
+      },
+      /**
+       * When true hides all elements.
+       * @property hide
+       * @type Boolean
+       * @default false
+       */
+      hide: {
+        type: Boolean,
+        value: false,
+        observer: 'hideChanged'
       }
     },
     _isReady: false,
@@ -202,6 +213,21 @@
         this.layout = "vertical";
       } else {
         this.layout = "horizontal";
+      }
+    },
+    hideChanged: function (newValue, oldValue) {
+      var self = this;
+      var insertPoint = this.$.insertPoint;
+
+      if (this.schema && this.schema.properties) {
+        var properties = this.schema.properties;
+        var propNames = Object.keys(properties);
+        propNames.forEach(function (propName, index) {
+          var formElement = Polymer.dom(insertPoint).querySelector('#'+propName);
+          if (formElement) {
+            formElement.hide = newValue;
+          }
+        });
       }
     },
     // ------------------------------
@@ -289,6 +315,11 @@
               if (formElement.required) {
                 self.elementsToValidate.push(formElement);
               }
+              // if at-core-form is hidden, element should be hidden as well
+              if (self.hide) {
+                formElement.hide = true;
+              }
+
               // append paper element to its container
               Polymer.dom(fieldContainer).appendChild(formElement);
 
