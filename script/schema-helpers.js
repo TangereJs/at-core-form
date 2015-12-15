@@ -60,6 +60,7 @@
   }
 
   schemaHelpers.isObject = isObject;
+  schemaHelpers.isString = isString;
 
   schemaHelpers.isNull = isNull;
   schemaHelpers.isNullOrEmpty = isNullOrEmpty;

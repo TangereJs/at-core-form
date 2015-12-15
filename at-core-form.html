@@ -114,11 +114,23 @@
     .at-core-form-wrapper {
       position: relative;
     }
+
+    .hidden {
+      display: none;
+    }
+
+    #btnTrash {
+      text-align: right;
+    }
+
   </style>
   <template>
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
       <div class="clearfix"></div>
+      <div id="btnTrash" class="field col-12 hidden">
+        <at-carbon-icon icon="trash" on-click="btnTrashClickHandler" class="button-trash"></at-carbon-icon>
+      </div>
       <div id="insertPoint"></div>
     </div>
     <content></content>
@@ -130,6 +142,15 @@
   Polymer({
     is: 'at-core-form',
     properties: {
+      /**
+       * Specification of elements that should appear on the form.<br/>
+       * Provide either an object or string.<br/>
+       * List property definitions inside properties object.<br/>
+       *
+       * @property schema
+       * @type Stirng or Object
+       * @default { properties: {} }
+       */
       schema: {
         type: Object,
         value: function() {
@@ -158,21 +179,37 @@
         value: false,
         observer: 'disabledChanged'
       },
+      /**
+       * removable = true displays a button. <br/>
+       * Clicking this button removes all elements from the form and hides the button <br/>
+       *
+       * @property removable
+       * @type Boolean
+       * @default false
+       */
       removable: {
         type: Boolean,
         notify: true,
         value: false,
         observer: 'removableChanged'
       },
+      /**
+       * at-core-form can now have a one column or two column layout <br/>
+       * by default a one column layout is used but a two column layout can be specified <br/>
+       * layout = 'horizontal' renders the two column layout <br/>
+       * layout = 'vertical' renders the single column layout <br/>
+       *
+       * @property layout
+       * @type string
+       * @default vertical
+       */
       // added for #684
-      // at-core-form can now have a one column or two column layout
-      // by default a two column layout is used but a single column layout can be specified
-      // layout === 'horizontal' renders the default two column layout
-      // layout === 'vertical' renders the single column layout
       layout: {
         type: String,
         value: "vertical",
-        observer: 'layoutChanged'
+        observer: 'layoutChanged',
+        xtype: "enum",
+        xvaluelist: "horizontal,vertical"
       },
       /**
        * When true hides all elements.
@@ -252,6 +289,16 @@
       if (this._isReady) {
         var self = this;
         var schemaHelpers = window.schemaHelpers;
+        if (schemaHelpers.isString(newValue)) {
+          try {
+            newValue = JSON.parse(newValue);
+            this.schema = newValue;
+            return;
+          } catch (e) {
+            console.log(e);
+          }
+        }
+
         self.elementsToValidate = [];
 
         var fieldsContainer = this.$.insertPoint;
@@ -395,6 +442,16 @@
       var fieldElement;
       var initialData = this._calculateInitialDataFromSchemaProperties(this.schema.properties);
 
+      if (schemaHelpers.isString(newValue)) {
+        try {
+          newValue = JSON.parse(newValue);
+          this.data = newValue;
+          return;
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
       this._isBatchUpdate = true;
 
       if (schemaHelpers.isObject(oldValue)) {
@@ -475,31 +532,19 @@
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
     },
     removableChanged: function(newValue, oldValue) {
-      var btnTrash = this.$.insertPoint.childNodes["btnTrash"];
-      if (newValue) {
-        if (!btnTrash) {
-          btnTrash = document.createElement('div');
-          btnTrash.setAttribute('class', 'field col-1');
-          btnTrash.setAttribute('style-scope', 'at-core-form');
-          btnTrash.id = "btnTrash";
-
-          var btnTrashIcon = document.createElement('at-carbon-icon');
-          btnTrashIcon.icon = "trash";
-          btnTrashIcon.setAttribute('style-scope', 'at-core-form');
-          btnTrashIcon.onclick = this.btnTrashClickHandler;
-
-          btnTrash.appendChild(btnTrashIcon);
-
-          this.$.insertPoint.appendChild(btnTrash);
-        }
-      } else if (btnTrash) {
-        this.$.insertPoint.removeChild(btnTrash);
-      }
+      var btnTrash = this.$.btnTrash;
+      var newValue = Boolean(newValue);
+      this.toggleClass('hidden', !newValue, btnTrash);
     },
     btnTrashClickHandler: function() {
-      var atCoreForm = this.parentNode.parentNode.parentNode;
-      atCoreForm.remove();
-      atCoreForm.fire('at-core-form-removed');
+      // hide the trash button
+      var btnTrash = this.$.btnTrash;
+      this.toggleClass('hidden', true, btnTrash);
+      // clear the form html
+      var insertPoint = this.$.insertPoint;
+      Polymer.dom(insertPoint).innerHTML = '';
+      // fire the removed event
+      this.fire('at-core-form-removed');
     },
     _convertPropertiesToSchemaValues: function(properties) {
       var result = {
