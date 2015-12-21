@@ -421,6 +421,11 @@
       this.data[elementId] = value;
       if (schemaHelpers.valueNotReadOnly(fieldElement)) {
         fieldElement.value = value;
+        // *ij* polymer js doesn't call valueChanged if value is of type array or object
+        // we check for this situation and call valueChanged by hand
+        if (schemaHelpers.isObject(fieldElement.value) || schemaHelpers.isArray(fieldElement.value)) {
+          fieldElement.valueChanged(value, undefined);
+        }
       } else {
         // if not log the debug message
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
