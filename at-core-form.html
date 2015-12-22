@@ -127,9 +127,6 @@
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
       <div class="clearfix"></div>
-      <div id="btnTrash" class="field col-12 hidden">
-        <at-carbon-icon icon="trash" on-click="btnTrashClickHandler" class="button-trash"></at-carbon-icon>
-      </div>
       <div id="insertPoint"></div>
     </div>
     <content></content>
@@ -177,20 +174,6 @@
         type: Boolean,
         value: false,
         observer: 'disabledChanged'
-      },
-      /**
-       * removable = true displays a button. <br/>
-       * Clicking this button removes all elements from the form and hides the button <br/>
-       *
-       * @property removable
-       * @type Boolean
-       * @default false
-       */
-      removable: {
-        type: Boolean,
-        notify: true,
-        value: false,
-        observer: 'removableChanged'
       },
       /**
        * at-core-form can now have a one column or two column layout <br/>
@@ -533,21 +516,6 @@
     },
     layoutChanged: function(newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
-    },
-    removableChanged: function(newValue, oldValue) {
-      var btnTrash = this.$.btnTrash;
-      var newValue = Boolean(newValue);
-      this.toggleClass('hidden', !newValue, btnTrash);
-    },
-    btnTrashClickHandler: function() {
-      // hide the trash button
-      var btnTrash = this.$.btnTrash;
-      this.toggleClass('hidden', true, btnTrash);
-      // clear the form html
-      var insertPoint = this.$.insertPoint;
-      Polymer.dom(insertPoint).innerHTML = '';
-      // fire the removed event
-      this.fire('at-core-form-removed');
     },
     _convertPropertiesToSchemaValues: function(properties) {
       var result = {
