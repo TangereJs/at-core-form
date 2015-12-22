@@ -64,117 +64,119 @@
       var _isUserInput = false;
 
       var initialSchema = {
-        "properties": {
-          "id": {
-            "title": "The unique identifier for a product",
-            "type": "number",
-            "required": "true"
-          },
-          "name": {
-            "type": "string",
-            "required": "true"
-          },
-          "city": {
-            "type": "string",
-            "default": "Default city name",
-            "required": "true"
-          },
-          "password": {
-            "type": "string",
-            "xtype": "password",
-            "title": "Password",
-            "placeholder": "Type your password"
-          },
-          "mahradio": {
-            "type": "string",
-            "xtype": "radio",
-            "title": "Choose a fruit",
-            "xvaluelist": [{
-              "title": "Apple",
-              "value": "apple"
-            }, {
-              "title": "Peach",
-              "value": "peach"
-            }, {
-              "title": "Plum",
-              "value": "plum"
-            }]
-          },
-          "mahradio2": {
-            "type": "string",
-            "xtype": "radio",
-            "title": "Choose a tool",
-            "xvaluelist": "javascript,C#,Java,D"
-          },
-          "active": {
-            "type": "string"
-          },
-          "activePera": {
-            "type": "boolean",
-            "title": "This is description for pera"
-          },
-          "activeToggle": {
-            "type": "boolean",
-            "xtype": "toggle",
-            "title": "This is description for active toggle"
-          },
-          "dropdownDemo": {
-            "title": "Name",
-            "type": "string",
-            "xtype": "enum",
-            "xvaluelist": "XML,JSON"
-          },
-          "dropdownEnumDemo": {
-            "title": "Name",
-            "type": "string",
-            "enum": ["XML", "JSON"]
-          },
-          "card": {
-            "title": "Card",
-            "type": "string",
-            "xtype": "lookup",
-            "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
-          },
-          "file": {
-            "title": "at-form-file demo",
-            "type": "string",
-            "xtype": "file"
-          },
-          "image": {
-            "title": "at-form-image demo",
-            "type": "string",
-            "xtype": "image"
-          },
-          "codeMirrorDemo": {
-            "title": "Code Mirror",
-            "type": "string",
-            "xtype": "code",
-            "mode": "markdown"
-          },
-          "markdownDemo": {
-            "title": "Markdown",
-            "type": "string",
-            "xtype": "marked",
-            "required": "true"            
-          },
-          "dateDemo": {
-            "title": "Date demo",
-            "type": "string",
-            "xtype": "date"
-          },
-          "timeDemo": {
-            "title": "Time demo",
-            "type": "string",
-            "xtype": "time"
-          },
-          "dateTimeDemo": {
-            "title": "Datetime demo",
-            "type": "string",
-            "xtype": "datetime"
-          },
-          "dateRangeDemo": {
-            "title": "Daterange demo",
-            "type": "daterange"
+        "schema": {
+          "properties": {
+            "id": {
+              "title": "The unique identifier for a product",
+              "type": "number",
+              "required": "true"
+            },
+            "name": {
+              "type": "string",
+              "required": "true"
+            },
+            "city": {
+              "type": "string",
+              "default": "Default city name",
+              "required": "true"
+            },
+            "password": {
+              "type": "string",
+              "xtype": "password",
+              "title": "Password",
+              "placeholder": "Type your password"
+            },
+            "mahradio": {
+              "type": "string",
+              "xtype": "radio",
+              "title": "Choose a fruit",
+              "xvaluelist": [{
+                "title": "Apple",
+                "value": "apple"
+              }, {
+                "title": "Peach",
+                "value": "peach"
+              }, {
+                "title": "Plum",
+                "value": "plum"
+              }]
+            },
+            "mahradio2": {
+              "type": "string",
+              "xtype": "radio",
+              "title": "Choose a tool",
+              "xvaluelist": "javascript,C#,Java,D"
+            },
+            "active": {
+              "type": "string"
+            },
+            "activePera": {
+              "type": "boolean",
+              "title": "This is description for pera"
+            },
+            "activeToggle": {
+              "type": "boolean",
+              "xtype": "toggle",
+              "title": "This is description for active toggle"
+            },
+            "dropdownDemo": {
+              "title": "Name",
+              "type": "string",
+              "xtype": "enum",
+              "xvaluelist": "XML,JSON"
+            },
+            "dropdownEnumDemo": {
+              "title": "Name",
+              "type": "string",
+              "enum": ["XML", "JSON"]
+            },
+            "card": {
+              "title": "Card",
+              "type": "string",
+              "xtype": "lookup",
+              "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
+            },
+            "file": {
+              "title": "at-form-file demo",
+              "type": "string",
+              "xtype": "file"
+            },
+            "image": {
+              "title": "at-form-image demo",
+              "type": "string",
+              "xtype": "image"
+            },
+            "codeMirrorDemo": {
+              "title": "Code Mirror",
+              "type": "string",
+              "xtype": "code",
+              "mode": "markdown"
+            },
+            "markdownDemo": {
+              "title": "Markdown",
+              "type": "string",
+              "xtype": "marked",
+              "required": "true"
+            },
+            "dateDemo": {
+              "title": "Date demo",
+              "type": "string",
+              "xtype": "date"
+            },
+            "timeDemo": {
+              "title": "Time demo",
+              "type": "string",
+              "xtype": "time"
+            },
+            "dateTimeDemo": {
+              "title": "Datetime demo",
+              "type": "string",
+              "xtype": "datetime"
+            },
+            "dateRangeDemo": {
+              "title": "Daterange demo",
+              "type": "daterange"
+            }
           }
         }
       };

@@ -122,7 +122,6 @@
     #btnTrash {
       text-align: right;
     }
-
   </style>
   <template>
     <div class="at-core-form-wrapper">
@@ -163,7 +162,7 @@
       },
       data: {
         type: Object,
-        value: function () {
+        value: function() {
           return {};
         },
         observer: 'dataChanged'
@@ -305,16 +304,15 @@
         // clear the previous html content in the container
         Polymer.dom(fieldsContainer).innerHTML = '';
 
-        var
-          propertyDefinitions = newValue.properties,
-          propertyDefinition,
-          defaultValue,
-          value,
-          xgridcols,
-          gridColsCssName,
-          fieldContainer,
-          formElement,
-          displayType;
+        var propertyDefinitions = newValue.schema ? newValue.schema.properties : newValue.properties;
+        var propertyDefinition;
+        var defaultValue;
+        var value;
+        var xgridcols;
+        var gridColsCssName;
+        var fieldContainer;
+        var formElement;
+        var displayType;
 
         if (propertyDefinitions) {
           Object.keys(propertyDefinitions).forEach(function(propertyName) {
