@@ -571,7 +571,31 @@
       });
 
       return result;
-    }
+    },
+
+    // This function is created for AT-21
+    /**
+     * @function applyRuleset
+     * @param {Array} - ruleset an array of rules as specified by at-form-ruleset and at-rule-edit
+     */
+     applyRuleset:function (ruleset) {
+       var ruleEdit = document.createElement('at-rule-edit');
+       ruleEdit.schema = this.schema;
+
+       var ruleIndex = 0;
+       var rulesLength = ruleset.length;
+       var rule;
+       for (ruleIndex = 0; ruleIndex < rulesLength; ruleIndex++) {
+         rule = ruleset[ruleIndex].rule;
+         var tmpRule = {
+           conditions: rule.conditions,
+           actions: rule.actions
+         }
+         ruleEdit.value = tmpRule;
+         ruleEdit.checkAgainst(this);
+       }
+     }
+
   });
 
   function isFunction(obj) {
