@@ -385,7 +385,14 @@
         var clearfixDiv = document.createElement('div');
         Polymer.dom(clearfixDiv).classList.add('clearfix');
         Polymer.dom(fieldsContainer).appendChild(clearfixDiv);
+
+        // if any element is required in schema its valid state is updated after creation
+        // at-core-form needs to reflect that state
+        if (self.elementsToValidate.length > 0) {
+          self.validate();
+        }
       }
+
 
       this.$.resizeSensor.reset();
     },
