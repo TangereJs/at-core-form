@@ -283,6 +283,15 @@
           }
         }
 
+        if (schemaHelpers.isString(self.data)) {
+          try {
+            var dataObj =  JSON.parse(self.data);
+            self.data = dataObj;
+          } catch (e) {
+            console.log(e);
+          }
+        }
+
         self.elementsToValidate = [];
 
         var fieldsContainer = this.$.insertPoint;
