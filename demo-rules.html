@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>Automatic validation demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../layout/layout.html">
+  <link rel="import" href="at-core-form.html">
+  <link rel="import" href="../at-rule-edit/at-rule-edit.html">
+
+  <style>
+    .light-padding {
+      padding-left: 6px;
+      padding-right: 6px;
+      margin: 2px;
+      border: 1px solid #bbb;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="vertical layout">
+    <div class="vertical layout">
+      <h2>at-core-form automatic business rules validation</h2>
+      <p>
+        This demo shows the automatic business rules validation.<br>
+        On the left is the at-core-form. It has schema assigned as schema = { schema: { properties: { ... } }, rules: [ ... ]} <br>
+        On the right is the at-rule-edit. It shows conditions and actions as assigned in schema.rules <br>
+        On at-core-form.data-changed, rule-engine validates business rules and executes actions if necessary <br>
+        Right now, <i>Update Field</i> action and <i>Copy Field Value</i> action trigger at-core-form.data-changed. <br>
+        As a consequence, business rules are validated once + once for each <i>Update Field</i> and <i>Copy Field Value</i> actions.
+      </p>
+    </div>
+    <div class="horizontal layout">
+      <div class="flex-6 light-padding">
+        <at-core-form id="coreForm"></at-core-form>
+      </div>
+      <div class="flex-6 light-padding">
+        <at-rule-edit id="ruleEdit"></at-rule-edit>
+      </div>
+    </div>
+    <div class="horizontal center-justified layout light-padding">
+      <button id="submit">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+
+      var jsonSchema = {
+        "properties": {
+          "id": {
+            "title": "The unique identifier for a product",
+            "type": "number",
+            "required": true
+          },
+          "name": {
+            "type": "string",
+            "required": "true",
+            "xinputmode": "required"
+          },
+          "city": {
+            "type": "string",
+            "default": "Default city name",
+            "required": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "activeDemo": {
+            "type": "boolean",
+            "default": true,
+            "title": "This is description for active demo"
+          },
+          "dropdownDemo": {
+            "title": "Drop down demo",
+            "type": "string",
+            "xtype": "enum",
+            "xvaluelist": "XML,JSON",
+            "default": "XML"
+          }
+        }
+      };
+
+      var conditionsAndActionsData = {
+        conditions: {
+          kind: "all",
+          conditions: [{
+            name: "id",
+            operator: "equalTo",
+            compareTo: "text",
+            value: "50"
+          }, {
+            name: "name",
+            operator: "equalTo",
+            compareTo: "text",
+            value: "demo value"
+          }, {
+            name: "activeDemo",
+            operator: "equalTo",
+            compareTo: "static",
+            value: true
+          }]
+        },
+        actions: [{
+          actionName: "alert",
+          message: "This is alert text!"
+        }, {
+          actionName: "updateField",
+          fieldName: "city",
+          updateTo: "Athens"
+        }, {
+          actionName: "setFieldState",
+          fieldName: "dropdownDemo",
+          state: "disabled"
+        }, {
+          actionName: "copyFieldValue",
+          fieldName: "activeDemo",
+          copyTo: "active"
+        }]
+      };
+
+      var combinedSchema = {
+        schema: jsonSchema,
+        rules: [{
+          rule: conditionsAndActionsData
+        }]
+      }
+
+      var coreForm = document.getElementById('coreForm');
+      coreForm.schema = combinedSchema;
+      var ruleEdit = document.getElementById('ruleEdit');
+      ruleEdit.schema = jsonSchema;
+      ruleEdit.value = conditionsAndActionsData;
+
+      var submit = document.getElementById('submit');
+
+      submit.addEventListener('click', function(e) {
+        e.preventDefault();
+        ruleEdit.checkAgainst(coreForm);
+      });
+
+      ruleEdit.addEventListener('value-changed', function(event){
+        var _combinedSchema = {
+          schema: jsonSchema,
+          rules: [{
+            rule: ruleEdit.value
+          }]
+        };
+        coreForm.schema = _combinedSchema;
+      });
+    });
+  </script>
+</body>
+
+</html>
