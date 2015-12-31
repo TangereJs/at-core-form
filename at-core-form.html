@@ -444,7 +444,8 @@
     dataChanged: function(newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
-      var initialData = this._calculateInitialDataFromSchemaProperties(this.schema.properties);
+      var properties = this.schema.schema ? this.schema.schema.properties : this.schema.properties;
+      var initialData = this._calculateInitialDataFromSchemaProperties(properties);
 
       if (schemaHelpers.isString(newValue)) {
         try {
