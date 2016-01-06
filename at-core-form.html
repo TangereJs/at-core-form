@@ -378,6 +378,7 @@
               console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
             }
           });
+          self.fire('at-core-form-rendered');
         } else {
           //TODO Implement clear of data property
         }
