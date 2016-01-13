@@ -299,7 +299,7 @@
         // clear the previous html content in the container
         Polymer.dom(fieldsContainer).innerHTML = '';
 
-        var propertyDefinitions = newValue.schema ? newValue.schema.properties : newValue.properties;
+        var propertyDefinitions = newValue.properties;
         var propertyDefinition;
         var defaultValue;
         var value;
@@ -446,7 +446,7 @@
     dataChanged: function(newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
-      var properties = this.schema.schema ? this.schema.schema.properties : this.schema.properties;
+      var properties = this.schema.properties;
       var initialData = this._calculateInitialDataFromSchemaProperties(properties);
 
       if (schemaHelpers.isString(newValue)) {
@@ -522,7 +522,7 @@
     disabledChanged: function(newValue, oldValue) {
       var fieldsContainer = this.$.insertPoint;
       var fieldElement;
-      var properties = this.schema.properties || this.schema.schema.properties;
+      var properties = this.schema.properties;
 
       Object.keys(properties).forEach(function(propertyName) {
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
@@ -551,7 +551,7 @@
         propObj;
 
       for (property in properties) {
-        propObj = result.schema.properties[property] = {};
+        propObj = result.properties[property] = {};
         propDef = properties[property];
         for (innerProp in propDef) {
           if (innerProp === 'value') {

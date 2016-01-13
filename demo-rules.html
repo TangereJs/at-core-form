@@ -26,12 +26,12 @@
     <div class="vertical layout">
       <h2>at-core-form automatic business rules validation</h2>
       <p>
-        This demo shows the automatic business rules validation.<br>
-        On the left is the at-core-form. It has schema assigned as schema = { schema: { properties: { ... } }, rules: [ ... ]} <br>
-        On the right is the at-rule-edit. It shows conditions and actions as assigned in schema.rules <br>
-        On at-core-form.data-changed, rule-engine validates business rules and executes actions if necessary <br>
-        Right now, <i>Update Field</i> action and <i>Copy Field Value</i> action trigger at-core-form.data-changed. <br>
-        As a consequence, business rules are validated once + once for each <i>Update Field</i> and <i>Copy Field Value</i> actions.
+        This demo shows the automatic business rules validation.
+        <br> On the left is the at-core-form. It has schema assigned as schema = { properties: { ... }, rules: [ ... ] }
+        <br> On the right is the at-rule-edit. It shows conditions and actions as assigned in schema.rules
+        <br> On at-core-form.data-changed, rule-engine validates business rules and executes actions if necessary
+        <br> Right now, <i>Update Field</i> action and <i>Copy Field Value</i> action trigger at-core-form.data-changed.
+        <br> As a consequence, business rules are validated once + once for each <i>Update Field</i> and <i>Copy Field Value</i> actions.
       </p>
     </div>
     <div class="horizontal layout">
@@ -123,15 +123,12 @@
         }]
       };
 
-      var combinedSchema = {
-        schema: jsonSchema,
-        rules: [{
-          rule: conditionsAndActionsData
-        }]
-      }
+      jsonSchema.rules = [{
+        rule: conditionsAndActionsData
+      }];
 
       var coreForm = document.getElementById('coreForm');
-      coreForm.schema = combinedSchema;
+      coreForm.schema = jsonSchema;
       var ruleEdit = document.getElementById('ruleEdit');
       ruleEdit.schema = jsonSchema;
       ruleEdit.value = conditionsAndActionsData;
@@ -143,14 +140,11 @@
         ruleEdit.checkAgainst(coreForm);
       });
 
-      ruleEdit.addEventListener('value-changed', function(event){
-        var _combinedSchema = {
-          schema: jsonSchema,
-          rules: [{
-            rule: ruleEdit.value
-          }]
-        };
-        coreForm.schema = _combinedSchema;
+      ruleEdit.addEventListener('value-changed', function(event) {
+        jsonSchema.rules = [{
+          rule: ruleEdit.value
+        }];
+        coreForm.schema = jsonSchema;
       });
     });
   </script>
