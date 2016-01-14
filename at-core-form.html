@@ -207,6 +207,7 @@
         observer: 'hideChanged'
       }
     },
+    set valid(newValue) {},
     _isReady: false,
     _scopeCssViaAttr: true,
     /**
@@ -252,8 +253,8 @@
         propNames.forEach(function(propName, index) {
           var formElement = Polymer.dom(insertPoint).querySelector('#' + propName);
           if (formElement) {
-            formElement.hide = newValue;
             Polymer.dom(formElement.parentElement).classList.remove('hidden');
+            formElement.hide = newValue;
           }
         });
       }
