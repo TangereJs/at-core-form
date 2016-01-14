@@ -253,6 +253,7 @@
           var formElement = Polymer.dom(insertPoint).querySelector('#' + propName);
           if (formElement) {
             formElement.hide = newValue;
+            Polymer.dom(formElement.parentElement).classList.remove('hidden');
           }
         });
       }
