@@ -397,10 +397,9 @@
         // if any element is required in schema its valid state is updated after creation
         // at-core-form needs to reflect that state
         if (self.elementsToValidate.length > 0) {
-          self.validate();
+          self.validate(true);
         }
       }
-
 
       this.$.resizeSensor.reset();
     },
@@ -511,13 +510,15 @@
      * Validates the form
      * It calls validate method of each element in elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
+     * clearUIValidState flag use case
+     * when schema is set valid state should be correctly updated but no validation errors should be displayed
      */
-    validate: function() {
+    validate: function(clearUIValidState) {
       var isValid = true;
 
       this.elementsToValidate.forEach(function(element) {
         if (isFunction(element.validate)) {
-          var elementValid = element.validate();
+          var elementValid = element.validate(clearUIValidState);
           isValid = isValid && elementValid;
         }
       });
