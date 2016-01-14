@@ -73,11 +73,13 @@
           'city': {
             'type': 'string',
             'default': 'Default city name',
-            'required': true
+            'required': true,
+            'value': 'Boston'
           },
           'activeDemo2': {
             'type': 'boolean',
-            'title': 'This is description for pera'
+            'title': 'This is description for pera',
+            'value': '1'
           },
           'activeToggle': {
             "type": "boolean",
@@ -87,7 +89,27 @@
           'dropdownDemo': {
             'title': 'Name',
             'type': 'string',
-            'enum': 'XML,JSON'
+            'enum': 'XML,JSON',
+            'value': 'JSON'
+          },
+           "Reason": {
+            "description": "Reason",
+            "type": "string",
+            "xtype": "radio",
+            "maxChars": "2",            
+            "required": "1",
+            "value": "10",
+            "title": "Reason",
+            "xvaluelist": [
+              {
+                "title": "Annual",
+                "value": "10"
+              },
+              {
+                "title": "Sick",
+                "value": "20"
+              }
+            ]
           },
           'codeMirrorDemo': {
             "title": "Code Mirror",
