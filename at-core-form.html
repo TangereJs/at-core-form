@@ -498,6 +498,7 @@
       this.data[property] = value;
       this.validate();
       this.fire('data-changed', {
+        property: property,
         value: this.data
       });
     },
