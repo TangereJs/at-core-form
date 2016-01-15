@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>At-Core-Form demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/polymer.html" />
+  <link rel="import" href="at-core-form.html" />
+
+  <style>
+  .container-w {
+    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-m {
+    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-s {
+    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo"></at-core-form>
+  </div>
+  <script>
+    window.addEventListener('WebComponentsReady', function (e) {
+      var demoForm = document.getElementById("coreFormDemo");
+      demoForm.schema = {
+        'properties': {
+          'name1': {
+            'type': 'string',
+            'title': 'Name 1',
+            'required': true
+          },
+          'date1': {
+            'type': 'date',
+            'title': 'Date 1',
+            'required': true
+          },
+          'name2': {
+            'type': 'string',
+            'title': 'Name 2',
+            'required': true
+          },
+          'date2': {
+            'type': 'date',
+            'title': 'Date 2',
+            'required': true
+          },
+          'name3': {
+            'type': 'string',
+            'title': 'Name 3',
+            'required': true
+          }
+        }
+      };
+      demoForm.data = {};
+    });
+  </script>
+</body>
+
+</html>
