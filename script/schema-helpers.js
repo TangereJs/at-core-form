@@ -199,13 +199,16 @@
   schemaHelpers.getDisplayType = getDisplayType;
 
   var createElement = function(propertyName, displayType, propertyDefinition) {
-    var
-      element,
-      label = notNull(propertyDefinition.title) ? propertyDefinition.title : capitalize(propertyName),
-      required = Boolean(propertyDefinition.required),
-      disabled = Boolean(propertyDefinition.disabled),
-      description = notNull(propertyDefinition.description) ? propertyDefinition.description : ' ',
-      mapping = findMapping(displayType);
+    var element;
+    var label = notNull(propertyDefinition.title) ? propertyDefinition.title : capitalize(propertyName);
+    var required = Boolean(propertyDefinition.required);
+    var disabled = Boolean(propertyDefinition.disabled);
+    var description = notNull(propertyDefinition.description) ? propertyDefinition.description : ' ';
+    var mapping = findMapping(displayType);
+
+    if (!propertyDefinition.title && propertyDefinition.description) {
+      label = propertyDefinition.description;
+    }
 
     if (!mapping) {
       console.log("Central array of components doesn't contain mapping for type " + displayType);
