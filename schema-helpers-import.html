@@ -1,22 +1,4 @@
-<!--
-  see AT-44 to understand why this happened
-  at-elements import can't be here anymore
-  because at-core-propform imports at-core-form
-  and at-core-form would import all at-elements
-
-  since at-core-propform is used in form designer
-  all elements would be imported everytime
-  this is not acceptable because it incurrs high cost on performance
-
-  The new way this has to be done is
-  1) import the file which lists which elements you want to use on the form
-  2) import the at-core-form
-  3) profit
-  <link rel="import" href="../at-elements/at-elements.html">
-
-  so, each time you import at-core-propform you need to import
-  elements you want at-core-propform to use
--->
+<link rel="import" href="../at-elements/at-designer-elements.html">
 <!--
   *ij* order or statements is important here
   at-elements import needs to happen first
