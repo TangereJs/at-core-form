@@ -289,7 +289,7 @@
 
         if (schemaHelpers.isString(self.data)) {
           try {
-            var dataObj =  JSON.parse(self.data);
+            var dataObj = JSON.parse(self.data);
             self.data = dataObj;
           } catch (e) {
             console.log(e);
@@ -348,10 +348,10 @@
                 self.data[propertyName] = formElement.value;
               } else {
                 // else set initial value from at-core-form.data to fromElement
-                if (displayType !== 'file' && displayType !== 'image' && displayType !== 'daterange') {
-                  formElement.value = self.data[propertyName];
-                }
+                formElement.value = self.data[propertyName];
               }
+              formElement.clearUIValidState();
+
               formElement.addEventListener('value-changed', function(event) {
                 // event.stopPropagation();
                 if (!self._isBatchUpdate) {
@@ -398,7 +398,7 @@
         // if any element is required in schema its valid state is updated after creation
         // at-core-form needs to reflect that state
         if (self.elementsToValidate.length > 0) {
-          self.validate(true);
+          self.validate();
         }
       }
 
@@ -487,7 +487,7 @@
       }
 
       this._isBatchUpdate = false;
-
+      this.validate();
       this.fire('data-changed', {
         value: this.data
       });
@@ -500,47 +500,31 @@
      */
     _updateDataObject: function(property, value) {
       this.data[property] = value;
-      this._updateValidState();
+      this.validate();
       this.fire('data-changed', {
         property: property,
         value: this.data
       });
     },
 
-    _updateValidState: function () {
-      var isValid = true;
-
-      this.elementsToValidate.forEach(function(element) {
-        if (isFunction(element.validate)) {
-          var elementValid = element.validate(true);
-          isValid = isValid && elementValid;
-        }
-      });
-
-      this._setValid(isValid);
-    },
-
     /*
      * Validates the form
      * It calls validate method of each element in elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
-     * skipUIValidStateUpdate flag use case
-     * when schema is set valid state should be correctly updated but no validation errors should be displayed
      */
-    validate: function(skipUIValidStateUpdate) {
+    validate: function() {
       var isValid = true;
 
       this.elementsToValidate.forEach(function(element) {
-        if (isFunction(element.validate)) {
-          var elementValid = element.validate(skipUIValidStateUpdate);
-          isValid = isValid && elementValid;
-        }
+        var elementValid = element.valid;
+        isValid = isValid && elementValid;
       });
 
       this._setValid(isValid);
 
       return isValid;
     },
+
     disabledChanged: function(newValue, oldValue) {
       var fieldsContainer = this.$.insertPoint;
       var fieldElement;
