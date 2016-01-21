@@ -449,6 +449,14 @@
       }
     },
 
+    getElement: function (elementId) {
+      var insertPoint = this.$.insertPoint;
+      var selector = '#' + elementId;
+      var element = Polymer.dom(insertPoint).querySelector(selector);
+
+      return element;
+    },
+
     dataChanged: function(newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
