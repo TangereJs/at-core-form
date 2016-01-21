@@ -303,6 +303,7 @@
         Polymer.dom(fieldsContainer).innerHTML = '';
 
         var propertyDefinitions = newValue.properties;
+        var propertyNames = [];
         var propertyDefinition;
         var defaultValue;
         var value;
@@ -313,7 +314,8 @@
         var displayType;
 
         if (propertyDefinitions) {
-          Object.keys(propertyDefinitions).forEach(function(propertyName) {
+          propertyNames = Object.keys(propertyDefinitions);
+          propertyNames.forEach(function(propertyName) {
             if (schemaHelpers.isPropertyNameValid(propertyName)) {
               propertyDefinition = propertyDefinitions[propertyName];
 
@@ -399,6 +401,15 @@
         // at-core-form needs to reflect that state
         if (self.elementsToValidate.length > 0) {
           self.validate();
+        }
+
+        if (propertyDefinitions && propertyNames.length > 0) {
+          // focus frist element
+          var propertyName = propertyNames[0];
+          var element = self.getElement(propertyName);
+          if (element.focus) {
+            element.focus();
+          }
         }
       }
 
