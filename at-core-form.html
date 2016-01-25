@@ -400,7 +400,7 @@
         // if any element is required in schema its valid state is updated after creation
         // at-core-form needs to reflect that state
         if (self.elementsToValidate.length > 0) {
-          self.validate();
+          self._calculateFormValidState();
         }
 
         if (propertyDefinitions && propertyNames.length > 0) {
@@ -506,7 +506,7 @@
       }
 
       this._isBatchUpdate = false;
-      this.validate();
+      this._calculateFormValidState();
       this.fire('data-changed', {
         value: this.data
       });
@@ -519,11 +519,24 @@
      */
     _updateDataObject: function(property, value) {
       this.data[property] = value;
-      this.validate();
+      this._calculateFormValidState();
       this.fire('data-changed', {
         property: property,
         value: this.data
       });
+    },
+
+    _calculateFormValidState: function () {
+      var isValid = true;
+
+      this.elementsToValidate.forEach(function(element) {
+        var elementValid = element.valid;
+        isValid = isValid && elementValid;
+      });
+
+      this._setValid(isValid);
+
+      return isValid;
     },
 
     /*
@@ -535,7 +548,7 @@
       var isValid = true;
 
       this.elementsToValidate.forEach(function(element) {
-        var elementValid = element.valid;
+        var elementValid = element.validate();
         isValid = isValid && elementValid;
       });
 
