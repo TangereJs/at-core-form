@@ -3,130 +3,130 @@
 <link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
 
 <dom-module id="at-core-form">
-  <style>
-    [class*='col-'] {
-      /*float: left;*/
-      display: inline-block;
-      vertical-align: top;
-      position: relative;
-      min-height: 1px;
-      padding-left: 15px;
-      padding-right: 15px;
-      box-sizing: border-box;
-    }
-
-    [class*='col-'].col-center {
-      float: none;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .col-12 {
-      width: 100%;
-    }
-
-    .col-9 {
-      width: 75%;
-    }
-
-    .col-8 {
-      width: 66.6666%;
-    }
-
-    .col-6 {
-      width: 50%;
-    }
-
-    .col-5 {
-      width: 41.66%;
-    }
-
-    .col-4 {
-      width: 33.3333%;
-    }
-
-    .col-3 {
-      width: 25%;
-    }
-
-    .col-2 {
-      width: 16.6667%;
-    }
-
-    .col-1 {
-      width: 8%;
-    }
-
-    .vertical .col-12 {
-      width: 100%;
-    }
-
-    .vertical .col-9 {
-      width: 100%;
-    }
-
-    .vertical .col-8 {
-      width: 100%;
-    }
-
-    .vertical .col-6 {
-      width: 100%;
-    }
-
-    .vertical .col-5 {
-      width: 41.66%;
-    }
-
-    .vertical .col-4 {
-      width: 100%;
-    }
-
-    .vertical .col-3 {
-      width: 50%;
-    }
-
-    .vertical .col-2 {
-      width: 16.6667%;
-    }
-
-    .vertical .col-1 {
-      width: 8%;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    #btnTrash {
-      cursor: pointer;
-    }
-
-    #insertPoint {
-      position: relative;
-    }
-
-    .clearfix {
-      clear: both;
-    }
-
-    at-carbon-icon {
-      margin-bottom: 6px;
-    }
-
-    .at-core-form-wrapper {
-      position: relative;
-      margin-top: 16px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #btnTrash {
-      text-align: right;
-    }
-  </style>
   <template>
+    <style>
+      [class*='col-'] {
+        /*float: left;*/
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        min-height: 1px;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+      }
+
+      [class*='col-'].col-center {
+        float: none;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .col-12 {
+        width: 100%;
+      }
+
+      .col-9 {
+        width: 75%;
+      }
+
+      .col-8 {
+        width: 66.6666%;
+      }
+
+      .col-6 {
+        width: 50%;
+      }
+
+      .col-5 {
+        width: 41.66%;
+      }
+
+      .col-4 {
+        width: 33.3333%;
+      }
+
+      .col-3 {
+        width: 25%;
+      }
+
+      .col-2 {
+        width: 16.6667%;
+      }
+
+      .col-1 {
+        width: 8%;
+      }
+
+      .vertical .col-12 {
+        width: 100%;
+      }
+
+      .vertical .col-9 {
+        width: 100%;
+      }
+
+      .vertical .col-8 {
+        width: 100%;
+      }
+
+      .vertical .col-6 {
+        width: 100%;
+      }
+
+      .vertical .col-5 {
+        width: 41.66%;
+      }
+
+      .vertical .col-4 {
+        width: 100%;
+      }
+
+      .vertical .col-3 {
+        width: 50%;
+      }
+
+      .vertical .col-2 {
+        width: 16.6667%;
+      }
+
+      .vertical .col-1 {
+        width: 8%;
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+
+      #btnTrash {
+        cursor: pointer;
+      }
+
+      #insertPoint {
+        position: relative;
+      }
+
+      .clearfix {
+        clear: both;
+      }
+
+      at-carbon-icon {
+        margin-bottom: 6px;
+      }
+
+      .at-core-form-wrapper {
+        position: relative;
+        margin-top: 16px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #btnTrash {
+        text-align: right;
+      }
+    </style>
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
       <div class="clearfix"></div>
@@ -140,6 +140,9 @@
   'use strict';
   Polymer({
     is: 'at-core-form',
+    hostAttributes: {
+      tabindex: 0
+    },
     properties: {
       /**
        * Specification of elements that should appear on the form.<br/>
@@ -223,6 +226,20 @@
       this._isReady = true;
       this._dataValidator = new DataValidator();
       this._dataValidator.observeDataFor(this);
+
+      var self = this;
+      this.addEventListener('focus', function(event) {
+        var propertyDefinitions = self.schema.properties;
+        var propertyNames = propertyDefinitions ? Object.keys(propertyDefinitions) : [];
+        if (propertyDefinitions && propertyNames.length > 0) {
+          // focus frist element
+          var propertyName = propertyNames[0];
+          var element = self.getElement(propertyName);
+          if (element.focus) {
+            element.focus();
+          }
+        }
+      });
     },
     attached: function() {
       var resizeSensor = this.$.resizeSensor;
@@ -402,15 +419,6 @@
         if (self.elementsToValidate.length > 0) {
           self._calculateFormValidState();
         }
-
-        if (propertyDefinitions && propertyNames.length > 0) {
-          // focus frist element
-          var propertyName = propertyNames[0];
-          var element = self.getElement(propertyName);
-          if (element.focus) {
-            element.focus();
-          }
-        }
       }
 
       this.$.resizeSensor.reset();
@@ -460,7 +468,7 @@
       }
     },
 
-    getElement: function (elementId) {
+    getElement: function(elementId) {
       var insertPoint = this.$.insertPoint;
       var selector = '#' + elementId;
       var element = Polymer.dom(insertPoint).querySelector(selector);
@@ -526,7 +534,7 @@
       });
     },
 
-    _calculateFormValidState: function () {
+    _calculateFormValidState: function() {
       var isValid = true;
 
       this.elementsToValidate.forEach(function(element) {
