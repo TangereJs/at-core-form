@@ -2,7 +2,7 @@
  * schemaHelpers namespace contains helper functions for handling json-schema
  *
  */
-(function(schemaHelpers) {
+(function (schemaHelpers) {
   'use strict';
 
   // read this: https://javascriptweblog.wordpress.com/2011/02/07/truth-equality-and-javascript/
@@ -75,17 +75,17 @@
   // initialize central array of components
   // ------------------------------------------------------------
   var centralArrayOfComponents = [];
-  var initializeCentralArrayOfComponents = function() {
+  var initializeCentralArrayOfComponents = function () {
     var result = [];
     var registrations = Polymer.telemetry.registrations;
-    registrations.forEach(function(registration, index) {
+    registrations.forEach(function (registration, index) {
       if (registration.$meta && isArray(registration.$meta)) {
         var
           is = registration.is,
           meta = registration.$meta,
           newEntry;
 
-        meta.forEach(function(entry, index) {
+        meta.forEach(function (entry, index) {
           if (isNull(entry.xtype)) {
             newEntry = {
               elementName: is,
@@ -117,7 +117,7 @@
    * @function findMapping
    * @return {false|Object} false if mapping is not found; mapping object if mapping is found
    */
-  var findMapping = function(propertyType) {
+  var findMapping = function (propertyType) {
     var
       result = false,
       index,
@@ -143,7 +143,7 @@
   }
   schemaHelpers.findMapping = findMapping;
 
-  var isPropertyNameValid = function(propertyName) {
+  var isPropertyNameValid = function (propertyName) {
     // propertyName should contain only lowercase letters, numbers and underscores. It should start with underscore or lowercase letter
     // regex should be used
     var result = isString(propertyName) && propertyName.indexOf(' ') === -1;
@@ -155,7 +155,7 @@
   }
   schemaHelpers.isPropertyNameValid = isPropertyNameValid;
 
-  var valueNotReadOnly = function(element) {
+  var valueNotReadOnly = function (element) {
     return element && element.properties && element.properties.value && !element.properties.value.readOnly;
   }
 
@@ -168,7 +168,7 @@
    * @param {Array} unsupportedTypes - list of types that should be reported as unsupported and default result returned
    * @return {String} "string" if propertyDefinition contains an unsupported type, or (type, xtype) -> result otherwise
    */
-  var getDisplayType = function(propertyDefinition, unsupportedTypes) {
+  var getDisplayType = function (propertyDefinition, unsupportedTypes) {
     var
       displayType = "string",
       type = propertyDefinition.type,
@@ -198,7 +198,7 @@
 
   schemaHelpers.getDisplayType = getDisplayType;
 
-  var createElement = function(propertyName, displayType, propertyDefinition) {
+  var createElement = function (propertyName, displayType, propertyDefinition) {
     var element;
     var label = notNull(propertyDefinition.title) ? propertyDefinition.title : capitalize(propertyName);
     var required = Boolean(propertyDefinition.required);
@@ -233,7 +233,8 @@
     // either already set in code above [ label,  required, disabled, title ]
     // should not be copied to element [ type, xtype, default ]
     // or never present in json schema [ value, valid ]
-    var ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "default"];
+    // MPS-17 when mapping.elementName === 'at-form-lookup' [available, xvaluelist and enum are ignored ]
+    var ignoreList = ["label", "value", "valid", "required", "disabled", "title", "type", "default", "available", "xvaluelist", "enum"];
     copyProperties(propertyNames, ignoreList, propertyDefinition, element);
     if (displayType === "toggle") {
       element.toggle = true;
@@ -248,25 +249,52 @@
       }
     }
 
+    if (displayType === "enum") {
+      var available = propertyDefinition.available;
+      var xvaluelist = propertyDefinition.xvaluelist;
+      var enumVal = propertyDefinition.enum;
+
+      // MPS-17 available is ignored
+      // if both xvaluelist and enum are present and not empty, xvluelist takes precedence
+      var isValueListEmpty = xvaluelist && xvaluelist.length && xvaluelist.length === 0;
+      if (isValueListEmpty === undefined) {
+        isValueListEmpty = true;
+      }
+      var isEnumEmpty = enumVal && enumVal.length && enumVal.length === 0;
+      if (isEnumEmpty === undefined) {
+        isEnumEmpty = true;
+      }
+
+      if (!isValueListEmpty && !isEnumEmpty) {
+        element.xvaluelist = xvaluelist;
+      } else if (!isValueListEmpty) {
+        element.xvaluelist = xvaluelist;
+      } else if (!isEnumEmpty) {
+        element.enum = enumVal;
+      } else {
+        element.available = available;
+      }
+    }
+
     return element;
   };
 
   schemaHelpers.createElement = createElement;
 
-  var convertPropertiesToSchemaValues = function(properties) {
+  var convertPropertiesToSchemaValues = function (properties) {
     var result = {
-        schema: {
-          properties: {}
-        },
-        values: {}
+      schema: {
+        properties: {}
       },
+      values: {}
+    },
       propDef,
       propObj;
 
-    Object.keys(properties).forEach(function(property) {
+    Object.keys(properties).forEach(function (property) {
       propObj = result.schema.properties[property] = {};
       propDef = properties[property];
-      Object.keys(propDef).forEach(function(innerProp) {
+      Object.keys(propDef).forEach(function (innerProp) {
         if (innerProp === 'value') {
           result.values[property] = propDef[innerProp];
         } else {
@@ -278,7 +306,7 @@
     return result;
   }
 
-  var convertPolymerElementPropertyToAtCoreFormSchema = function(polymerElementPropertyName, polymerElementPropertyDefinition) {
+  var convertPolymerElementPropertyToAtCoreFormSchema = function (polymerElementPropertyName, polymerElementPropertyDefinition) {
     var
       propName = polymerElementPropertyName,
       propDef = polymerElementPropertyDefinition,
@@ -336,8 +364,8 @@
     return propSchemaDef;
   };
 
-  var copyProperties = function(propertyNames, ignoreList, source, destination) {
-    propertyNames.forEach(function(propName, index) {
+  var copyProperties = function (propertyNames, ignoreList, source, destination) {
+    propertyNames.forEach(function (propName, index) {
       if (ignoreList.indexOf(propName) === -1) {
         if (notNull(source[propName])) {
           try {

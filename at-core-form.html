@@ -229,6 +229,8 @@
 
       var self = this;
       this.addEventListener('focus', function(event) {
+        if (event.currentTarget.is !== "at-core-form") { return; }
+        if (!event.target.is) { return; }
         var propertyDefinitions = self.schema.properties;
         var propertyNames = propertyDefinitions ? Object.keys(propertyDefinitions) : [];
         if (propertyDefinitions && propertyNames.length > 0) {
