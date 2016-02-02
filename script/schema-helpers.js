@@ -249,21 +249,15 @@
       }
     }
 
-    if (displayType === "enum") {
+    if (displayType === "enum" || displayType === "radio") {
       var available = propertyDefinition.available;
       var xvaluelist = propertyDefinition.xvaluelist;
       var enumVal = propertyDefinition.enum;
 
       // MPS-17 available is ignored
       // if both xvaluelist and enum are present and not empty, xvluelist takes precedence
-      var isValueListEmpty = xvaluelist && xvaluelist.length && xvaluelist.length === 0;
-      if (isValueListEmpty === undefined) {
-        isValueListEmpty = true;
-      }
-      var isEnumEmpty = enumVal && enumVal.length && enumVal.length === 0;
-      if (isEnumEmpty === undefined) {
-        isEnumEmpty = true;
-      }
+      var isValueListEmpty = isArray(xvaluelist) && xvaluelist.length === 0;
+      var isEnumEmpty = isArray(enumVal) && enumVal.length === 0;
 
       if (!isValueListEmpty && !isEnumEmpty) {
         element.xvaluelist = xvaluelist;
@@ -274,7 +268,7 @@
       } else {
         element.available = available;
       }
-    }
+      }
 
     return element;
   };
