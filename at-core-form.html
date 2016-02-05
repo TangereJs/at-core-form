@@ -381,9 +381,8 @@
               });
 
               Polymer.dom(formElement).setAttribute('id', propertyName);
-              if (formElement.required) {
-                self.elementsToValidate.push(formElement);
-              }
+              self.elementsToValidate.push(formElement);
+              
               // if at-core-form is hidden, element should be hidden as well
               if (self.hide) {
                 formElement.hide = true;
