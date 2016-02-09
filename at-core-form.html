@@ -382,7 +382,7 @@
 
               Polymer.dom(formElement).setAttribute('id', propertyName);
               self.elementsToValidate.push(formElement);
-              
+
               // if at-core-form is hidden, element should be hidden as well
               if (self.hide) {
                 formElement.hide = true;
@@ -422,7 +422,10 @@
         }
       }
 
-      this.$.resizeSensor.reset();
+      var resizeSensor = this.$.resizeSensor;
+      resizeSensor.reset();
+      var width = resizeSensor.queryWidth();
+      this.updateLayout(width);
     },
     /* *ij*
      OK. Imperative data binding doesn't work in polymer anymore.
