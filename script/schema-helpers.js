@@ -256,8 +256,14 @@
 
       // MPS-17 available is ignored
       // if both xvaluelist and enum are present and not empty, xvluelist takes precedence
-      var isValueListEmpty = isArray(xvaluelist) && xvaluelist.length === 0;
-      var isEnumEmpty = isArray(enumVal) && enumVal.length === 0;
+      var isValueListEmpty = true;
+      var isEnumEmpty = true;
+      if (xvaluelist !== null && xvaluelist !== undefined) {
+        isValueListEmpty = isArray(xvaluelist) && xvaluelist.length === 0;
+      }
+      if (enumVal !== null && enumVal !== undefined) {
+        isEnumEmpty = isArray(enumVal) && enumVal.length === 0;        
+      }
 
       if (!isValueListEmpty && !isEnumEmpty) {
         element.xvaluelist = xvaluelist;
