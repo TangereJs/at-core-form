@@ -102,6 +102,14 @@
         min-height: 84px;
       }
 
+      /* workaround for IE11 flexbox min-height bug */
+      _:-ms-fullscreen,  at-form-checkbox::before {
+          content: "";
+          display: inline-block;
+          min-height: 42px;
+          visibility: hidden;
+      }
+
       .vertical .col-6.at-form-checkbox {        
         min-height: 40px;
         margin-bottom: 18px;
@@ -111,6 +119,13 @@
         min-height: 40px;
       }
 
+      /* workaround for IE11 flexbox min-height bug */
+      _:-ms-fullscreen,  .vertical .col-6  at-form-checkbox::before {
+          content: "";
+          display: inline-block;
+          min-height: 20px;
+          visibility: hidden;
+      }
 
       #btnTrash {
         cursor: pointer;
