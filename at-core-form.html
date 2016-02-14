@@ -9,11 +9,11 @@
         /*float: left;*/
         display: inline-block;
         vertical-align: top;
-        position: relative;
-        min-height: 1px;
+        position: relative;        
         padding-left: 15px;
         padding-right: 15px;
         box-sizing: border-box;
+        min-height: 84px;
       }
 
       [class*='col-'].col-center {
@@ -95,12 +95,22 @@
       }
 
       .field {
-        min-height: 84px;
+        
       }
 
       at-form-checkbox {
         min-height: 84px;
       }
+
+      .vertical .col-6.at-form-checkbox {        
+        min-height: 40px;
+        margin-bottom: 18px;
+      }
+
+      .vertical .col-6  at-form-checkbox {       
+        min-height: 40px;
+      }
+
 
       #btnTrash {
         cursor: pointer;
@@ -359,13 +369,18 @@
                 xgridcols = parseInt(propertyDefinition.xgridcols);
               }
 
+              // create element for field
+              formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+
               // create the field container
               fieldContainer = document.createElement('div');
               Polymer.dom(fieldContainer).classList.add('field');
               gridColsCssName = "col-" + xgridcols;
               Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
-              formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+              // special container for at-form-toggle to allow smaller height in vertical mode
+              if (formElement.tagName.toLowerCase() == "at-form-checkbox") Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
+              
 
               if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
                 // at-core-form.data doesn't contain an entry for the current property
