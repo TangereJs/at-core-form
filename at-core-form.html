@@ -1,164 +1,56 @@
 <link rel="import" href="schema-helpers-import.html">
 <link rel="import" href="../at-rule-engine/at-rule-engine.html">
 <link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
+<link rel="import" href="../at-theme/at-theme.html">
 
 <dom-module id="at-core-form">
   <template>
+    <style include="at-form-common"></style>
     <style>
-      [class*='col-'] {
-        /*float: left;*/
-        display: inline-block;
-        vertical-align: top;
-        position: relative;        
-        padding-left: 15px;
-        padding-right: 15px;
-        box-sizing: border-box;
-        min-height: 84px;
-      }
-
-      [class*='col-'].col-center {
-        float: none;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .col-12 {
-        width: 100%;
-      }
-
-      .col-9 {
-        width: 75%;
-      }
-
-      .col-8 {
-        width: 66.6666%;
-      }
-
-      .col-6 {
-        width: 50%;
-      }
-
-      .col-5 {
-        width: 41.66%;
-      }
-
-      .col-4 {
-        width: 33.3333%;
-      }
-
-      .col-3 {
-        width: 25%;
-      }
-
-      .col-2 {
-        width: 16.6667%;
-      }
-
-      .col-1 {
-        width: 8%;
-      }
-
-      .vertical .col-12 {
-        width: 100%;
-      }
-
-      .vertical .col-9 {
-        width: 100%;
-      }
-
-      .vertical .col-8 {
-        width: 100%;
-      }
-
-      .vertical .col-6 {
-        width: 100%;
-      }
-
-      .vertical .col-5 {
-        width: 41.66%;
-      }
-
-      .vertical .col-4 {
-        width: 100%;
-      }
-
-      .vertical .col-3 {
-        width: 50%;
-      }
-
-      .vertical .col-2 {
-        width: 16.6667%;
-      }
-
-      .vertical .col-1 {
-        width: 8%;
-      }
-
-      .field {
-        
-      }
-
-      at-form-checkbox {
-        min-height: 84px;
-      }
-
-      /* workaround for IE11 flexbox min-height bug */
-      _:-ms-fullscreen,  at-form-checkbox::before {
-          content: "";
-          display: inline-block;
-          min-height: 42px;
-          visibility: hidden;
-      }
-
-      .vertical .col-6.at-form-checkbox {        
-        min-height: 40px;
-        margin-bottom: 18px;
-      }
-
-      .vertical .col-6  at-form-checkbox {       
-        min-height: 40px;
-      }
-
-      /* workaround for IE11 flexbox min-height bug */
-      _:-ms-fullscreen,  .vertical .col-6  at-form-checkbox::before {
-          content: "";
-          display: inline-block;
-          min-height: 20px;
-          visibility: hidden;
-      }
-
-      #btnTrash {
-        cursor: pointer;
+      .at-core-form-wrapper {
+        position: relative;
+        margin-top: 16px;
       }
 
       #insertPoint {
         position: relative;
       }
 
-      .clearfix {
-        clear: both;
+      at-form-checkbox {
+        min-height: 84px;
+      }
+      /* workaround for IE11 flexbox min-height bug */
+
+      _:-ms-fullscreen,
+      at-form-checkbox::before {
+        content: "";
+        display: inline-block;
+        min-height: 42px;
+        visibility: hidden;
       }
 
-      at-carbon-icon {
-        margin-bottom: 6px;
+      .vertical .col-6.at-form-checkbox {
+        min-height: 40px;
+        margin-bottom: 18px;
       }
 
-      .at-core-form-wrapper {
-        position: relative;
-        margin-top: 16px;
+      .vertical .col-6 at-form-checkbox {
+        min-height: 40px;
+      }
+      /* workaround for IE11 flexbox min-height bug */
+
+      _:-ms-fullscreen,
+      .vertical .col-6 at-form-checkbox::before {
+        content: "";
+        display: inline-block;
+        min-height: 20px;
+        visibility: hidden;
       }
 
-      .hidden {
-        display: none;
-      }
-
-      #btnTrash {
-        text-align: right;
-      }
     </style>
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
-      <div class="clearfix"></div>
+      <div class="clear-float"></div>
       <div id="insertPoint"></div>
     </div>
     <content></content>
@@ -258,8 +150,12 @@
 
       var self = this;
       this.addEventListener('focus', function(event) {
-        if (event.currentTarget.is !== "at-core-form") { return; }
-        if (!event.target.is) { return; }
+        if (event.currentTarget.is !== "at-core-form") {
+          return;
+        }
+        if (!event.target.is) {
+          return;
+        }
         var propertyDefinitions = self.schema.properties;
         var propertyNames = propertyDefinitions ? Object.keys(propertyDefinitions) : [];
         if (propertyDefinitions && propertyNames.length > 0) {
@@ -389,13 +285,12 @@
 
               // create the field container
               fieldContainer = document.createElement('div');
-              Polymer.dom(fieldContainer).classList.add('field');
               gridColsCssName = "col-" + xgridcols;
               Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
               // special container for at-form-toggle to allow smaller height in vertical mode
               if (formElement.tagName.toLowerCase() == "at-form-checkbox") Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
-              
+
 
               if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
                 // at-core-form.data doesn't contain an entry for the current property
