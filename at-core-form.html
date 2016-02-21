@@ -16,12 +16,8 @@
         position: relative;
       }
 
-      :host(:focus) {
-        outline: none;
-      }
-
       at-form-checkbox {
-        min-height: 84px;
+        min-height: 76px;
       }
       /* workaround for IE11 flexbox min-height bug */
 
@@ -29,17 +25,17 @@
       at-form-checkbox::before {
         content: "";
         display: inline-block;
-        min-height: 42px;
+        min-height: 38px;
         visibility: hidden;
       }
 
       .vertical .col-6.at-form-checkbox {
-        min-height: 40px;
+        min-height: 32px;
         margin-bottom: 18px;
       }
 
       .vertical .col-6 at-form-checkbox {
-        min-height: 40px;
+        min-height: 32px;
       }
       /* workaround for IE11 flexbox min-height bug */
 
@@ -47,7 +43,7 @@
       .vertical .col-6 at-form-checkbox::before {
         content: "";
         display: inline-block;
-        min-height: 20px;
+        min-height: 16px;
         visibility: hidden;
       }
 
