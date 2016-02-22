@@ -289,8 +289,9 @@
               Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
               // special container for at-form-toggle to allow smaller height in vertical mode
-              if (formElement.tagName.toLowerCase() == "at-form-checkbox") Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
-
+              if (formElement.tagName.toLowerCase() == "at-form-checkbox") {
+                Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
+              }
 
               if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
                 // at-core-form.data doesn't contain an entry for the current property

@@ -220,10 +220,6 @@
 
     element = document.createElement(mapping.elementName);
 
-    if (propertyName.indexOf(' ') === -1) {
-      Polymer.dom(element).classList.add(propertyName);
-    }
-
     element.label = label;
     element.required = required;
     element.disabled = disabled;
@@ -262,7 +258,7 @@
         isValueListEmpty = isArray(xvaluelist) && xvaluelist.length === 0;
       }
       if (enumVal !== null && enumVal !== undefined) {
-        isEnumEmpty = isArray(enumVal) && enumVal.length === 0;        
+        isEnumEmpty = isArray(enumVal) && enumVal.length === 0;
       }
 
       if (!isValueListEmpty && !isEnumEmpty) {
