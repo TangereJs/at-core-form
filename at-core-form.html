@@ -305,7 +305,10 @@
                 // else set initial value from at-core-form.data to fromElement
                 formElement.value = self.data[propertyName];
               }
-              formElement.clearUIValidState();
+              if (formElement.clearUIValidState !== undefined) {
+                // at-form-section doesn't have clearUIValidState function nor does it need one
+                formElement.clearUIValidState();
+              }
 
               formElement.addEventListener('value-changed', function(event) {
                 // event.stopPropagation();
@@ -570,7 +573,10 @@
         } else {
           // form is already created; query the self.$.insertPoint and get default value from element.properties.value.value
           var element = Polymer.dom(insertPoint).querySelector('#' + propName);
-          calculatedValue = element.properties.value.value;
+          if (element.properties.value !== undefined && element.properties.value.value !== undefined ) {
+            // at-form-section doesn't have value property nor does it need one
+            calculatedValue = element.properties.value.value;
+          }
         }
 
         result[propName] = calculatedValue;
