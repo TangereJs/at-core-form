@@ -95,6 +95,13 @@
         },
         observer: 'dataChanged'
       },
+      files: {
+          type: Object,
+          value: function () {
+              return {};
+          },
+          observer: 'filesChanged'
+      },
       valid: {
         type: Boolean,
         notify: true,
@@ -311,10 +318,14 @@
               }
 
               formElement.addEventListener('value-changed', function(event) {
-                // event.stopPropagation();
-                if (!self._isBatchUpdate) {
-                  self._updateDataObject(event.target.id, event.detail.value);
-                }
+                  // event.stopPropagation();
+                  if (!self._isBatchUpdate) {
+                      if (event.target.files) {
+                          self._updateFilesObject(event.target.id, event.target.files);
+                      }
+
+                      self._updateDataObject(event.target.id, event.detail.value);
+                  }
               });
 
               Polymer.dom(formElement).setAttribute('id', propertyName);
@@ -417,7 +428,7 @@
       return element;
     },
 
-    dataChanged: function(newValue, oldValue) {
+    dataChanged: function (newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
       var properties = this.schema.properties;
@@ -473,6 +484,64 @@
         property: property,
         value: this.data
       });
+    },
+
+    filesChanged: function (newValue, oldValue) {
+        //var fieldsContainer = Polymer.dom(this.$.insertPoint);
+        //var fieldElement;
+        //var properties = this.schema.properties;
+        //var initialData = this._calculateInitialDataFromSchemaProperties(properties);
+
+        //if (schemaHelpers.isString(newValue)) {
+        //    try {
+        //        newValue = JSON.parse(newValue);
+        //        this.data = newValue;
+        //        return;
+        //    } catch (e) {
+        //        console.log(e);
+        //    }
+        //}
+
+        //this._isBatchUpdate = true;
+
+        //if (schemaHelpers.isObject(oldValue)) {
+        //    Object.keys(initialData).forEach(function(propertyName) {
+        //        if (!newValue.hasOwnProperty(propertyName)) {
+        //            newValue[propertyName] = initialData[propertyName];
+        //        }
+        //    });
+        //}
+
+        //if (schemaHelpers.isObject(newdeValue)) {
+        //    Object.keys(newValue).forEach(function(propertyName) {
+        //        fieldElement = fieldsContainer.querySelector('#' + propertyName);
+        //        if (schemaHelpers.valueNotReadOnly(fieldElement)) {
+        //            fieldElement.value = newValue[propertyName];
+        //        }
+        //    });
+        //} else {
+        //    console.log('at-core-form expects objects as new value, but got ' + schemaHelpers.formatJson(newValue) + ' instead');
+        //}
+
+        //this._isBatchUpdate = false;
+        //this._calculateFormValidState();
+        //this.fire('data-changed', {
+        //    value: this.data
+        //});
+    },
+
+      /*
+     * This function is called on value-changed event for each element on the form
+     * property is property name
+     * value is the new value to be set
+     */
+    _updateFilesObject: function (property, value) {
+        this.files[property] = value;
+        this._calculateFormValidState();
+        this.fire('files-changed', {
+            property: property,
+            value: this.files
+        });
     },
 
     _calculateFormValidState: function() {
