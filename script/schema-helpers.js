@@ -76,37 +76,39 @@
   // ------------------------------------------------------------
   var centralArrayOfComponents = [];
   var initializeCentralArrayOfComponents = function () {
-    var result = [];
-    var registrations = Polymer.telemetry.registrations;
-    registrations.forEach(function (registration, index) {
-      if (registration.$meta && isArray(registration.$meta)) {
-        var
+    document.addEventListener('WebComponentsReady', function(event) {
+      var result = [];
+      var registrations = Polymer.telemetry.registrations;
+      registrations.forEach(function (registration, index) {
+        if (registration.$meta && isArray(registration.$meta)) {
+          var
           is = registration.is,
           meta = registration.$meta,
           newEntry;
 
-        meta.forEach(function (entry, index) {
-          if (isNull(entry.xtype)) {
-            newEntry = {
-              elementName: is,
-              type: entry.type,
-              title: entry.title
-            };
-            result.push(newEntry);
-          } else {
-            newEntry = {
-              elementName: is,
-              type: entry.type,
-              xtype: entry.xtype,
-              title: entry.title
-            };
-            result.push(newEntry);
-          }
-        });
-      }
-    });
+          meta.forEach(function (entry, index) {
+            if (isNull(entry.xtype)) {
+              newEntry = {
+                elementName: is,
+                type: entry.type,
+                title: entry.title
+              };
+              result.push(newEntry);
+            } else {
+              newEntry = {
+                elementName: is,
+                type: entry.type,
+                xtype: entry.xtype,
+                title: entry.title
+              };
+              result.push(newEntry);
+            }
+          });
+        }
+      });
 
-    schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;
+      schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;      
+    });
   };
 
   schemaHelpers.initializeCentralArrayOfComponents = initializeCentralArrayOfComponents;
