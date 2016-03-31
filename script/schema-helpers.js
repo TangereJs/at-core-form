@@ -76,7 +76,6 @@
   // ------------------------------------------------------------
   var centralArrayOfComponents = [];
   var initializeCentralArrayOfComponents = function () {
-    document.addEventListener('WebComponentsReady', function(event) {
       var result = [];
       var registrations = Polymer.telemetry.registrations;
       registrations.forEach(function (registration, index) {
@@ -105,14 +104,17 @@
             }
           });
         }
-      });
-
-      schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;      
+      schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;
     });
   };
 
   schemaHelpers.initializeCentralArrayOfComponents = initializeCentralArrayOfComponents;
   initializeCentralArrayOfComponents();
+
+  document.addEventListener('WebComponentsReady', function(event) {
+    initializeCentralArrayOfComponents();    
+  });
+
 
   /**
    * Searches the central array of components for the mapping that has type === propertyType or xtype === propertyType
