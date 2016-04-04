@@ -112,7 +112,7 @@
   initializeCentralArrayOfComponents();
 
   document.addEventListener('WebComponentsReady', function(event) {
-    initializeCentralArrayOfComponents();    
+    initializeCentralArrayOfComponents();
   });
 
 
@@ -228,7 +228,8 @@
     element.required = required;
     element.disabled = disabled;
 
-    var propertyNames = Object.keys(element.properties);
+    var propertyNames = getElementProperties(element);
+
     // ignore list is a list of properties that should not be copied using copy properties because they are
     // either already set in code above [ label,  required, disabled, title ]
     // should not be copied to element [ type, xtype, default ]
@@ -280,6 +281,33 @@
   };
 
   schemaHelpers.createElement = createElement;
+
+  var getElementProperties = function (element) {
+    var propertyNames = Object.keys(element.properties);
+
+    // figure out properties in behaviors
+    if (isArray(element.behaviors)) {
+      var bi;
+      var bLen = element.behaviors.length;
+      var behavior;
+      var bProperties;
+      var bPropertyNames;
+      var propDef;
+      for (bi = 0; bi < bLen; bi += 1) {
+        behavior = element.behaviors[bi];
+        bProperties = behavior.properties;
+        if (bProperties) {
+          bPropertyNames = Object.keys(bProperties);
+          bPropertyNames.forEach(function (bPropName, index) {
+            propertyNames.push(bPropName);
+          });
+        }
+      }
+    }
+
+    return propertyNames;
+  }
+  schemaHelpers.getElementProperties = getElementProperties;
 
   var convertPropertiesToSchemaValues = function (properties) {
     var result = {
