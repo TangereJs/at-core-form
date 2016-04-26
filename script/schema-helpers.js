@@ -104,8 +104,8 @@
             }
           });
         }
-      schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;
     });
+    schemaHelpers.centralArrayOfComponents = centralArrayOfComponents = result;
   };
 
   schemaHelpers.initializeCentralArrayOfComponents = initializeCentralArrayOfComponents;
