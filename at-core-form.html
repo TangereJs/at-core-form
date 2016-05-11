@@ -2,6 +2,7 @@
 <link rel="import" href="../at-rule-engine/at-rule-engine.html">
 <link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
 <link rel="import" href="../at-theme/at-theme.html">
+<link rel="import" href="../at-form-behaviors/at-form-behaviors-rules-evaluation.html">
 
 <dom-module id="at-core-form">
   <template>
@@ -50,7 +51,6 @@
         min-height: 16px;
         visibility: hidden;
       }
-
     </style>
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
@@ -68,6 +68,7 @@
     hostAttributes: {
       tabindex: 0
     },
+    behaviors: [Tangere.behaviors.RulesEvaluation],
     properties: {
       /**
        * Specification of elements that should appear on the form.<br/>
@@ -96,11 +97,11 @@
         observer: 'dataChanged'
       },
       files: {
-          type: Object,
-          value: function () {
-              return {};
-          },
-          observer: 'filesChanged'
+        type: Object,
+        value: function() {
+          return {};
+        },
+        observer: 'filesChanged'
       },
       valid: {
         type: Boolean,
@@ -145,7 +146,6 @@
     },
     set valid(newValue) {},
     _isReady: false,
-    _scopeCssViaAttr: true,
     /**
      * This flag is used to prevent value-changed event listener on form elements
      * from updating data property when element's value is supplied from data property
@@ -156,8 +156,6 @@
     ready: function() {
       this.elementsToValidate = [];
       this._isReady = true;
-      this._dataValidator = new DataValidator();
-      this._dataValidator.observeDataFor(this);
 
       var self = this;
       this.addEventListener('focus', function(event) {
@@ -318,14 +316,14 @@
               }
 
               formElement.addEventListener('value-changed', function(event) {
-                  // event.stopPropagation();
-                  if (!self._isBatchUpdate) {
-                      if (event.target.files) {
-                          self._updateFilesObject(event.target.id, event.target.files);
-                      }
-
-                      self._updateDataObject(event.target.id, event.detail.value);
+                // event.stopPropagation();
+                if (!self._isBatchUpdate) {
+                  if (event.target.files) {
+                    self._updateFilesObject(event.target.id, event.target.files);
                   }
+
+                  self._updateDataObject(event.target.id, event.detail.value);
+                }
               });
 
               Polymer.dom(formElement).setAttribute('id', propertyName);
@@ -428,7 +426,7 @@
       return element;
     },
 
-    dataChanged: function (newValue, oldValue) {
+    dataChanged: function(newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
       var properties = this.schema.properties;
@@ -478,70 +476,80 @@
      * value is the new value to be set
      */
     _updateDataObject: function(property, value) {
-      this.data[property] = value;
-      this._calculateFormValidState();
-      this.fire('data-changed', {
-        property: property,
-        value: this.data
-      });
+      if (this.schema.rules) {
+        if (!this.businessRulesEvaluationInProgress) {
+          this.businessRulesEvaluationInProgress = true;
+          this._evaluateRules(property, value);
+          this.businessRulesEvaluationInProgress = false;
+        } else {
+          return;
+        }
+      } else {
+        this.data[property] = value;
+        this._calculateFormValidState();
+        this.fire('data-changed', {
+          property: property,
+          value: this.data
+        });
+      }
     },
 
-    filesChanged: function (newValue, oldValue) {
-        //var fieldsContainer = Polymer.dom(this.$.insertPoint);
-        //var fieldElement;
-        //var properties = this.schema.properties;
-        //var initialData = this._calculateInitialDataFromSchemaProperties(properties);
+    filesChanged: function(newValue, oldValue) {
+      //var fieldsContainer = Polymer.dom(this.$.insertPoint);
+      //var fieldElement;
+      //var properties = this.schema.properties;
+      //var initialData = this._calculateInitialDataFromSchemaProperties(properties);
 
-        //if (schemaHelpers.isString(newValue)) {
-        //    try {
-        //        newValue = JSON.parse(newValue);
-        //        this.data = newValue;
-        //        return;
-        //    } catch (e) {
-        //        console.log(e);
-        //    }
-        //}
+      //if (schemaHelpers.isString(newValue)) {
+      //    try {
+      //        newValue = JSON.parse(newValue);
+      //        this.data = newValue;
+      //        return;
+      //    } catch (e) {
+      //        console.log(e);
+      //    }
+      //}
 
-        //this._isBatchUpdate = true;
+      //this._isBatchUpdate = true;
 
-        //if (schemaHelpers.isObject(oldValue)) {
-        //    Object.keys(initialData).forEach(function(propertyName) {
-        //        if (!newValue.hasOwnProperty(propertyName)) {
-        //            newValue[propertyName] = initialData[propertyName];
-        //        }
-        //    });
-        //}
+      //if (schemaHelpers.isObject(oldValue)) {
+      //    Object.keys(initialData).forEach(function(propertyName) {
+      //        if (!newValue.hasOwnProperty(propertyName)) {
+      //            newValue[propertyName] = initialData[propertyName];
+      //        }
+      //    });
+      //}
 
-        //if (schemaHelpers.isObject(newdeValue)) {
-        //    Object.keys(newValue).forEach(function(propertyName) {
-        //        fieldElement = fieldsContainer.querySelector('#' + propertyName);
-        //        if (schemaHelpers.valueNotReadOnly(fieldElement)) {
-        //            fieldElement.value = newValue[propertyName];
-        //        }
-        //    });
-        //} else {
-        //    console.log('at-core-form expects objects as new value, but got ' + schemaHelpers.formatJson(newValue) + ' instead');
-        //}
+      //if (schemaHelpers.isObject(newdeValue)) {
+      //    Object.keys(newValue).forEach(function(propertyName) {
+      //        fieldElement = fieldsContainer.querySelector('#' + propertyName);
+      //        if (schemaHelpers.valueNotReadOnly(fieldElement)) {
+      //            fieldElement.value = newValue[propertyName];
+      //        }
+      //    });
+      //} else {
+      //    console.log('at-core-form expects objects as new value, but got ' + schemaHelpers.formatJson(newValue) + ' instead');
+      //}
 
-        //this._isBatchUpdate = false;
-        //this._calculateFormValidState();
-        //this.fire('data-changed', {
-        //    value: this.data
-        //});
+      //this._isBatchUpdate = false;
+      //this._calculateFormValidState();
+      //this.fire('data-changed', {
+      //    value: this.data
+      //});
     },
 
-      /*
+    /*
      * This function is called on value-changed event for each element on the form
      * property is property name
      * value is the new value to be set
      */
-    _updateFilesObject: function (property, value) {
-        this.files[property] = value;
-        this._calculateFormValidState();
-        this.fire('files-changed', {
-            property: property,
-            value: this.files
-        });
+    _updateFilesObject: function(property, value) {
+      this.files[property] = value;
+      this._calculateFormValidState();
+      this.fire('files-changed', {
+        property: property,
+        value: this.files
+      });
     },
 
     _calculateFormValidState: function() {
@@ -642,7 +650,7 @@
         } else {
           // form is already created; query the self.$.insertPoint and get default value from element.properties.value.value
           var element = Polymer.dom(insertPoint).querySelector('#' + propName);
-          if (element.properties.value !== undefined && element.properties.value.value !== undefined ) {
+          if (element.properties.value !== undefined && element.properties.value.value !== undefined) {
             // at-form-section doesn't have value property nor does it need one
             calculatedValue = element.properties.value.value;
           }
