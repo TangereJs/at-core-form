@@ -589,8 +589,9 @@
       var fieldsContainer = this.$.insertPoint;
       var fieldElement;
       var properties = this.schema.properties;
+      var propertyNames = properties ? Object.keys(properties) : [];
 
-      Object.keys(properties).forEach(function(propertyName) {
+      propertyNames.forEach(function(propertyName) {
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
         if (fieldElement) {
           if (newValue) {
@@ -639,7 +640,7 @@
     _calculateInitialDataFromSchemaProperties: function(properties) {
       var insertPoint = this.$.insertPoint;
       var result = {};
-      var propertyNames = Object.keys(properties);
+      var propertyNames = properties ? Object.keys(properties) : [];
       var propSchemaDef;
       var calculatedValue;
 
