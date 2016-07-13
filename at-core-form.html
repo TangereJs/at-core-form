@@ -78,7 +78,7 @@
        * List property definitions inside properties object.<br/>
        *
        * @property schema
-       * @type Stirng or Object
+       * @type Object | Stirng
        * @default { properties: {} }
        */
       schema: {
@@ -89,14 +89,21 @@
           };
           return result;
         },
-        observer: 'schemaChanged'
+        observer: '_schemaChanged'
       },
+      /**
+       * Holds values of the elements on the form
+       *
+       * @property data
+       * @type Object | String
+       * @default {}
+       */
       data: {
         type: Object,
         value: function() {
           return {};
         },
-        observer: 'dataChanged'
+        observer: '_dataChanged'
       },
       files: {
         type: Object,
@@ -105,16 +112,39 @@
         },
         observer: 'filesChanged'
       },
+      /**
+       * When true disables all elements on the form
+       * @property disabled
+       * @type Boolean
+       * @default false
+       */
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged'
+      },
+      /**
+      * When true hides all elements.
+      * @property hide
+      * @type Boolean
+      * @default false
+      */
+      hide: {
+        type: Boolean,
+        value: false,
+        observer: '_hideChanged'
+      },
+      /**
+       * Valid state of the form. When all elements on the form are valid form is valid. If at least one element on the form is invalid, form is invalid
+       * @property valid
+       * @type Boolean
+       * @default true
+       */
       valid: {
         type: Boolean,
         notify: true,
         value: true,
         readOnly: true
-      },
-      disabled: {
-        type: Boolean,
-        value: false,
-        observer: 'disabledChanged'
       },
       /**
        * at-core-form can now have a one column or two column layout <br/>
@@ -130,29 +160,12 @@
       layout: {
         type: String,
         value: "vertical",
-        observer: 'layoutChanged',
+        observer: '_layoutChanged',
         xtype: "enum",
-        xvaluelist: "horizontal,vertical"
-      },
-      /**
-       * When true hides all elements.
-       * @property hide
-       * @type Boolean
-       * @default false
-       */
-      hide: {
-        type: Boolean,
-        value: false,
-        observer: 'hideChanged'
+        available: "horizontal,vertical"
       }
     },
     set valid(newValue) {},
-    _isReady: false,
-    /**
-     * This flag is used to prevent value-changed event listener on form elements
-     * from updating data property when element's value is supplied from data property
-     */
-    _isBatchUpdate: false,
     _unsupported_types: [],
     elementsToValidate: [],
     ready: function() {
@@ -161,12 +174,10 @@
 
       var self = this;
       this.addEventListener('focus', function(event) {
-        if (event.currentTarget.is !== "at-core-form") {
+        if (!event.target.is || event.currentTarget.is !== "at-core-form") {
           return;
         }
-        if (!event.target.is) {
-          return;
-        }
+
         var propertyDefinitions = self.schema.properties;
         var propertyNames = propertyDefinitions ? Object.keys(propertyDefinitions) : [];
         if (propertyDefinitions && propertyNames.length > 0) {
@@ -199,7 +210,7 @@
         this.layout = "horizontal";
       }
     },
-    hideChanged: function(newValue, oldValue) {
+    _hideChanged: function(newValue, oldValue) {
       var self = this;
       var insertPoint = this.$.insertPoint;
 
@@ -228,7 +239,7 @@
       coreForm.updateLayout(currWidth);
     },
     // ------------------------------
-    schemaChanged: function(newValue, oldValue) {
+    _schemaChanged: function(newValue, oldValue) {
       if (this._isReady) {
         var self = this;
         var schemaHelpers = window.schemaHelpers;
@@ -347,7 +358,7 @@
               Polymer.dom(fieldsContainer).appendChild(fieldContainer);
 
               // udpate the disabled status
-              self.disabledChanged(self.disabled, self.disabled);
+              self._disabledChanged(self.disabled, self.disabled);
             } else {
               console.log('Property name is invalid. Skipping ' + propertyName + ' property');
               console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
@@ -428,7 +439,7 @@
       return element;
     },
 
-    dataChanged: function(newValue, oldValue) {
+    _dataChanged: function(newValue, oldValue) {
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
       var properties = this.schema.properties;
@@ -585,7 +596,7 @@
       return isValid;
     },
 
-    disabledChanged: function(newValue, oldValue) {
+    _disabledChanged: function(newValue, oldValue) {
       var fieldsContainer = this.$.insertPoint;
       var fieldElement;
       var properties = this.schema.properties;
@@ -602,7 +613,7 @@
         }
       });
     },
-    layoutChanged: function(newValue, oldValue) {
+    _layoutChanged: function(newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
     },
     _convertPropertiesToSchemaValues: function(properties) {
@@ -635,7 +646,7 @@
      * This function is created for task #773 at-core-form .data handling
      * this function creates initial data object from schema properties
      * value for each entry is either default value from element or default value from schema (specified with default: '<value>')
-     * dataChanged function calls this function
+     * _dataChanged function calls this function
      */
     _calculateInitialDataFromSchemaProperties: function(properties) {
       var insertPoint = this.$.insertPoint;
@@ -666,8 +677,4 @@
     }
 
   });
-
-  function isFunction(obj) {
-    return Object.prototype.toString.apply(obj) === Object.prototype.toString.apply(function() {});
-  }
 </script>
