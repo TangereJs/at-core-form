@@ -124,11 +124,11 @@
         observer: '_disabledChanged'
       },
       /**
-      * When true hides all elements.
-      * @property hide
-      * @type Boolean
-      * @default false
-      */
+       * When true hides all elements.
+       * @property hide
+       * @type Boolean
+       * @default false
+       */
       hide: {
         type: Boolean,
         value: false,
@@ -166,10 +166,9 @@
       }
     },
     set valid(newValue) {},
-    _unsupported_types: [],
-    elementsToValidate: [],
+
     ready: function() {
-      this.elementsToValidate = [];
+      this._elementsToValidate = [];
       this._isReady = true;
 
       var self = this;
@@ -240,151 +239,176 @@
     },
     // ------------------------------
     _schemaChanged: function(newValue, oldValue) {
-      if (this._isReady) {
-        var self = this;
-        var schemaHelpers = window.schemaHelpers;
-        if (schemaHelpers.isString(newValue)) {
-          try {
-            newValue = JSON.parse(newValue);
-            this.schema = newValue;
-            return;
-          } catch (e) {
-            console.log(e);
-          }
+      // cache the reference to at-core-schema.schemaHelpers
+      var _sh = window.schemaHelpers;
+
+      if (_sh.isString(newValue)) {
+        /*
+          if newValue for schema is given as json string, parse it and assign it to this.schema
+          if newValue is a valid json string this.schema will trigger _schemaChanged again so we return to prevent schema changes being applied twice
+          if newValue is an invalid json string just return. Whatever the previous schema was that remains visible to the user
+        */
+        try {
+          newValue = JSON.parse(newValue);
+          this.schema = newValue;
+        } catch (e) {
+          console.log(e);
         }
-
-        if (schemaHelpers.isString(self.data)) {
-          try {
-            var dataObj = JSON.parse(self.data);
-            self.data = dataObj;
-          } catch (e) {
-            console.log(e);
-          }
-        }
-
-        self.elementsToValidate = [];
-
-        var fieldsContainer = this.$.insertPoint;
-        // clear the previous html content in the container
-        Polymer.dom(fieldsContainer).innerHTML = '';
-
-        var propertyDefinitions = newValue.properties;
-        var propertyNames = [];
-        var propertyDefinition;
-        var defaultValue;
-        var value;
-        var xgridcols;
-        var gridColsCssName;
-        var fieldContainer;
-        var formElement;
-        var displayType;
-
-        if (propertyDefinitions) {
-          propertyNames = Object.keys(propertyDefinitions);
-          propertyNames.forEach(function(propertyName) {
-            if (schemaHelpers.isPropertyNameValid(propertyName)) {
-              propertyDefinition = propertyDefinitions[propertyName];
-
-              // handle default value
-              defaultValue = propertyDefinition.default;
-              value = self.data[propertyName];
-              // if default value is not null or undefined and regular value is null or undefined
-              if (schemaHelpers.notNullOrEmpty(defaultValue) && schemaHelpers.isNullOrEmpty(value)) {
-                // make the default value regular value
-                self.data[propertyName] = defaultValue;
-              }
-
-              displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
-
-              // handle xgridcols
-              xgridcols = displayType === "section" ? 12 : 6;
-              if (schemaHelpers.notNullOrEmpty(propertyDefinition.xgridcols)) {
-                xgridcols = parseInt(propertyDefinition.xgridcols);
-              }
-
-              // create element for field
-              formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
-
-              // create the field container
-              fieldContainer = document.createElement('div');
-              gridColsCssName = "col-" + xgridcols;
-              Polymer.dom(fieldContainer).classList.add(gridColsCssName);
-
-              // special container for at-form-toggle to allow smaller height in vertical mode
-              if (formElement.tagName.toLowerCase() == "at-form-checkbox") {
-                Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
-              }
-
-              if (schemaHelpers.isNullOrEmpty(self.data[propertyName])) {
-                // at-core-form.data doesn't contain an entry for the current property
-                // add initial value of the formElement to the at-core-form.data
-                self.data[propertyName] = formElement.value;
-              } else {
-                // else set initial value from at-core-form.data to fromElement
-                formElement.value = self.data[propertyName];
-              }
-              if (formElement.clearUIValidState !== undefined) {
-                // at-form-section doesn't have clearUIValidState function nor does it need one
-                formElement.clearUIValidState();
-              }
-
-              formElement.addEventListener('value-changed', function(event) {
-                // event.stopPropagation();
-                if (!self._isBatchUpdate) {
-                  if (event.target.files) {
-                    self._updateFilesObject(event.target.id, event.target.files);
-                  }
-
-                  self._updateDataObject(event.target.id, event.detail.value);
-                }
-              });
-
-              Polymer.dom(formElement).setAttribute('id', propertyName);
-              self.elementsToValidate.push(formElement);
-
-              // if at-core-form is hidden, element should be hidden as well
-              if (self.hide) {
-                formElement.hide = true;
-              }
-
-              // append paper element to its container
-              Polymer.dom(fieldContainer).appendChild(formElement);
-
-              if (formElement.hide) {
-                Polymer.dom(fieldContainer).classList.add('hidden');
-              }
-
-              // add container to as child to insertPoint
-              Polymer.dom(fieldsContainer).appendChild(fieldContainer);
-
-              // udpate the disabled status
-              self._disabledChanged(self.disabled, self.disabled);
-            } else {
-              console.log('Property name is invalid. Skipping ' + propertyName + ' property');
-              console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
-            }
-          });
-          self.fire('at-core-form-rendered');
-        } else {
-          //TODO Implement clear of data property
-        }
-
-        // add div class="clearfix"
-        var clearfixDiv = document.createElement('div');
-        Polymer.dom(clearfixDiv).classList.add('clearfix');
-        Polymer.dom(fieldsContainer).appendChild(clearfixDiv);
-
-        // if any element is required in schema its valid state is updated after creation
-        // at-core-form needs to reflect that state
-        if (self.elementsToValidate.length > 0) {
-          self._calculateFormValidState();
-        }
+        return;
       }
 
+
+      // check if newValue is valid schema object
+      // if its invalid whatever the previous schema was that remains visible to the user
+      // during initialization if schema is set before data, data is undefined. When this happens return
+      if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
+        return;
+      }
+      // if data is set before schema, this._internalData is already updated
+      // if schema is set first this._internalData is undefined so its initialized to empty object
+      if (!this._internalData) {
+        this._internalData = {};
+      }
+
+      var self = this;
+      // calculating valid state for the form is faster if we cache references to each element on the form
+      // its even faster if we exclude elements that do not have valid property
+      self._elementsToValidate = [];
+
+      // right now at-core-form supports all elements
+      if (!_sh.isArray(self._unsupported_types)) {
+        self._unsupported_types = [];
+      }
+
+      var fieldsContainer = this.$.insertPoint;
+      // clear the previous html content in the container
+      // we do not use Polymer.dom(fieldsContainer).innerHTML = "" because innerHTML invokes browser's html parser which is more expensive than removing nodes
+      while (Polymer.dom(fieldsContainer).firstChild) {
+        Polymer.dom(fieldsContainer).removeChild(Polymer.dom(fieldsContainer).firstChild);
+      }
+
+      var fieldsFragment = document.createDocumentFragment();
+      var divPrototype = document.createElement('div');
+      var propertyNames = Object.keys(newValue.properties);
+      var propertyDefinition;
+      var defaultValue;
+      var containsProperty;
+      var displayType;
+      var xgridcols;
+      var gridColsCssName;
+      var fieldContainer;
+      var formElement;
+
+      propertyNames.forEach(function(propertyName) {
+        if (schemaHelpers.isPropertyNameValid(propertyName)) {
+          propertyDefinition = newValue.properties[propertyName];
+
+          // handle default value
+          defaultValue = propertyDefinition.default;
+          containsProperty = self._internalData.hasOwnProperty(propertyName);
+          // if default value is defined and _internalData[propertyName] value is undefiend put default value into self._internalData
+          if (defaultValue !== undefined && !containsProperty) {
+            self._internalData[propertyName] = defaultValue;
+          }
+
+          displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
+
+          // handle xgridcols
+          xgridcols = displayType === "section" ? 12 : 6;
+          if (_sh.isNumber(propertyDefinition.xgridcols)) {
+            xgridcols = parseInt(propertyDefinition.xgridcols);
+          }
+
+          // create element for field
+          formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+
+          // create the field container
+          fieldContainer = divPrototype.cloneNode(true);
+          gridColsCssName = "col-" + xgridcols;
+          Polymer.dom(fieldContainer).classList.add(gridColsCssName);
+
+          // special container for at-form-toggle to allow smaller height in vertical mode
+          if (formElement.tagName.toLowerCase() == "at-form-checkbox") {
+            Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
+          }
+
+          if (!self._internalData.hasOwnProperty(propertyName)) {
+            // at-core-form._internalData doesn't contain an entry for the current property
+            // add initial value of the formElement to the at-core-form.data
+            self._internalData[propertyName] = formElement.value;
+          } else {
+            // else set initial value from at-core-form.data to fromElement
+            formElement.value = self._internalData[propertyName];
+          }
+
+          if (_sh.isFunction(formElement.clearUIValidState)) {
+            // at-form-section doesn't have clearUIValidState function nor does it need one
+            formElement.clearUIValidState();
+          }
+
+          formElement.addEventListener('value-changed', function(event) {
+
+            if (event.target.files) {
+              self._updateFilesObject(event.target.id, event.target.files);
+            }
+
+            var id = event.target.id;
+            var newValue = event.detail.value;
+            var currentValue = self._internalData[id];
+            if (!_sh.areEqual(currentValue, newValue)) {
+              self._updateDataObject(id, newValue);
+            }
+
+          });
+
+          Polymer.dom(formElement).setAttribute('id', propertyName);
+          self._elementsToValidate.push(formElement);
+
+          // if at-core-form is initially hidden, element should be hidden as well
+          formElement.hide = self.hide;
+
+          // if at-core-form is initially disabled, element should be disabled as well
+          formElement.disabled = self.disabled;
+
+          // append element to its container
+          Polymer.dom(fieldContainer).appendChild(formElement);
+
+          // add container to as child to insertPoint
+          Polymer.dom(fieldsFragment).appendChild(fieldContainer);
+        } else {
+          console.log('Property name is invalid. Skipping ' + propertyName + ' property');
+          console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+        }
+      });
+      // if data was set first there is a chance that some properties form this._internalData are missing in this.data
+      // this.data must be updated with missing properties
+      var internalDataKeys = Object.keys(this._internalData);
+      internalDataKeys.forEach(function (key, index) {
+        // self.data[key] === undefined means that the key is missing from self.data
+        if (!self.data.hasOwnProperty(key)) {
+          self.data[key] = self._internalData[key];
+        }
+      });
+
+      // add div class="clearfix"
+      var clearfixDiv = divPrototype.cloneNode(true);
+      Polymer.dom(clearfixDiv).classList.add('clearfix');
+      Polymer.dom(fieldsFragment).appendChild(clearfixDiv);
+
+      Polymer.dom(fieldsContainer).appendChild(fieldsFragment);
+
+      // if any element is required in schema its valid state is updated after creation
+      // at-core-form needs to reflect that state
+      self._calculateFormValidState();
+
+      // since elements are added to at-core-form html, reset resize sensor so that it picks up new at-core-form width and height
       var resizeSensor = this.$.resizeSensor;
       resizeSensor.reset();
+
       var width = resizeSensor.queryWidth();
-      this.updateLayout(width);
+      self.updateLayout(width);
+
+      self.fire('at-core-form-rendered');
     },
     /* *ij*
      OK. Imperative data binding doesn't work in polymer anymore.
@@ -404,31 +428,31 @@
      not just update value. This approach seems reasonable for setFieldState action in at-form-rule-edit
      */
     updateFormElementData: function(elementId, value) {
-      var fieldsContainer = this.$.insertPoint,
-        fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + elementId);
-
-      this.data[elementId] = value;
-      if (schemaHelpers.valueNotReadOnly(fieldElement)) {
-        fieldElement.value = value;
-        // *ij* polymer js doesn't call valueChanged if value is of type array or object
-        // we check for this situation and call valueChanged by hand
-        if (schemaHelpers.isObject(fieldElement.value) || schemaHelpers.isArray(fieldElement.value)) {
-          fieldElement.valueChanged(value, undefined);
-        }
-      } else {
-        // if not log the debug message
+      var fieldElement = this.getElement(elementId);
+      if (!fieldElement) {
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+        return;
+      }
+
+      this._internalData[elementId] = value;
+      this.data[elementId] = value;
+
+      fieldElement.value = value;
+      // *ij* polymer js doesn't call valueChanged if value is of type array or object
+      // we check for this situation and call valueChanged by hand
+      if (schemaHelpers.isObject(fieldElement.value) || schemaHelpers.isArray(fieldElement.value)) {
+        fieldElement.valueChanged(value, undefined);
       }
     },
 
     setElementState: function(elementId, state, value) {
-      var element = Polymer.dom(this.$.insertPoint).querySelector('#' + elementId);
-      if (element) {
-        element[state] = value;
-      } else {
-        // if not log the debug message
+      var element = this.getElement(elementId);
+      if (!element) {
         console.debug('Field with id: ' + elementId + ' doesn\'t exist in form.');
+        return;
       }
+
+      element[state] = value;
     },
 
     getElement: function(elementId) {
@@ -440,43 +464,70 @@
     },
 
     _dataChanged: function(newValue, oldValue) {
-      var fieldsContainer = Polymer.dom(this.$.insertPoint);
-      var fieldElement;
-      var properties = this.schema.properties;
-      var initialData = this._calculateInitialDataFromSchemaProperties(properties);
+      var _sh = window.schemaHelpers;
 
-      if (schemaHelpers.isString(newValue)) {
+      if (_sh.isString(newValue)) {
+        /*
+          if newValue for data is given as json string, parse it and assign it to this.data
+          if newValue is a valid json string this.data will trigger _dataChanged again so we return to prevent data changes being applied twice
+          if newValue is an invalid json string just return. Whatever the previous data was that remains visible to the user
+        */
         try {
           newValue = JSON.parse(newValue);
           this.data = newValue;
-          return;
         } catch (e) {
           console.log(e);
         }
+        return;
       }
 
-      this._isBatchUpdate = true;
-
-      if (schemaHelpers.isObject(oldValue)) {
-        Object.keys(initialData).forEach(function(propertyName) {
-          if (!newValue.hasOwnProperty(propertyName)) {
-            newValue[propertyName] = initialData[propertyName];
-          }
-        });
+      // if new value is not an object, ignore the value and return
+      if (!_sh.isObject(newValue)) {
+        console.log('at-core-form expects objects as new value, but got ' + _sh.formatJson(newValue) + ' instead');
+        return;
       }
 
-      if (schemaHelpers.isObject(newValue)) {
-        Object.keys(newValue).forEach(function(propertyName) {
-          fieldElement = fieldsContainer.querySelector('#' + propertyName);
-          if (schemaHelpers.valueNotReadOnly(fieldElement)) {
-            fieldElement.value = newValue[propertyName];
-          }
-        });
-      } else {
-        console.log('at-core-form expects objects as new value, but got ' + schemaHelpers.formatJson(newValue) + ' instead');
+      // initalize _internalData object; this objects holds last valid data set to at-core-form
+      if (!this._internalData) {
+        this._internalData = {};
+      }
+      var _internalData = this._internalData;
+
+      // update _internalData with keys from newValue
+      var newValueKeys = Object.keys(newValue);
+      newValueKeys.forEach(function (key, index) {
+        _internalData[key] = newValue[key];
+      });
+
+      if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties) || Object.keys(this.schema.properties).length === 0) {
+        // this means that schema is not set and at-core-form is not initialized; return
+        return;
       }
 
-      this._isBatchUpdate = false;
+      // at this point this._internalData contains updated values for each element on the form because
+      // 1) if schema was set first, this._internalData was already populated with initial values for each element,
+      //    and entries from newValue are merged into this._internalData
+      // 2) if data was set first, properties from this._internalData may be missing in this.data so they need to be copied over
+      //    but this is done in _schemaChanged
+
+      var fieldsContainer = Polymer.dom(this.$.insertPoint);
+      var fieldElement;
+      var self = this;
+      // use newValueKeys here because only keys from newValue are the ones changing
+      newValueKeys.forEach(function(propertyName) {
+        fieldElement = self.getElement(propertyName);
+        fieldElement.value = newValue[propertyName];
+      });
+
+      // newValue can contain only a subset of properties on the form
+      // value in data-changed should contain all properties so we need to copy over missing properties from _internalData
+      var internalDataKeys = Object.keys(this._internalData);
+      internalDataKeys.forEach(function (key, index) {
+        if (!self.data.hasOwnProperty(key)) {
+          self.data[key] = self._internalData[key];
+        }
+      });
+
       this._calculateFormValidState();
       this.fire('data-changed', {
         value: this.data
@@ -498,6 +549,7 @@
           return;
         }
       } else {
+        this._internalData[property] = value;
         this.data[property] = value;
         this._calculateFormValidState();
         this.fire('data-changed', {
@@ -568,7 +620,7 @@
     _calculateFormValidState: function() {
       var isValid = true;
 
-      this.elementsToValidate.forEach(function(element) {
+      this._elementsToValidate.forEach(function(element) {
         var elementValid = element.valid;
         isValid = isValid && elementValid;
       });
@@ -580,13 +632,13 @@
 
     /*
      * Validates the form
-     * It calls validate method of each element in elementsToValidate array
+     * It calls validate method of each element in _elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
      */
     validate: function() {
       var isValid = true;
 
-      this.elementsToValidate.forEach(function(element) {
+      this._elementsToValidate.forEach(function(element) {
         var elementValid = element.validate();
         isValid = isValid && elementValid;
       });
