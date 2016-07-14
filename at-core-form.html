@@ -434,7 +434,6 @@
         return;
       }
 
-      this._internalData[elementId] = value;
       this.data[elementId] = value;
 
       fieldElement.value = value;
@@ -500,6 +499,10 @@
       });
 
       if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties) || Object.keys(this.schema.properties).length === 0) {
+        // when schema is not set data-changed event should still be fired so that behavior is the same as when schema is set
+        this.fire('data-changed', {
+          value: this.data
+        });
         // this means that schema is not set and at-core-form is not initialized; return
         return;
       }
