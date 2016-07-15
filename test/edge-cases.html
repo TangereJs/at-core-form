@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-text tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-core-form.html">
+
+</head>
+
+<body>
+
+  <test-fixture>
+    <template>
+      <at-core-form></at-core-form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('edge cases', function () {
+
+      test('data contains property that doesn\'t exist in schema; set schema first, data next', function (done) {
+        var coreForm = document.createElement('at-core-form');
+        var schema = {
+          properties: {
+            text1: {
+              type: "string"
+            }
+          }
+        }
+        var data = {
+          text1: "lorem ipsum",
+          "odata.metadata": "ipsum lorem"
+        }
+
+        coreForm.schema = schema;
+
+        // internalData must have entries for each element
+        assert.isObject(coreForm._internalData, 'internal data is not set');
+        assert.equal(Object.keys(coreForm._internalData).length, 1, '_internalData doesn\'t contain correct number of properties');
+        assert.equal(coreForm._internalData.text1, "", 'text1 value not correct in _internalData');
+
+        assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+        assert.equal(coreForm._elementsToValidate.length, 1, 'elements to validate doesn\'t contain corrent number of elements');
+        // _elementsToValidate must have entries for each element
+        assert.equal(coreForm._elementsToValidate[0].id, "text1", 'text1 not present in _elementsToValidate');
+
+        var insertPoint = coreForm.$.insertPoint;
+        assert.equal(Polymer.dom(insertPoint).children.length, 2, 'insert point doesn\'t contain corrent number of elements');
+
+        var eventCount = 0;
+        coreForm.addEventListener('data-changed', function(event) {
+          eventCount += 1;
+        });
+
+        coreForm.data = data;
+
+        assert.isObject(coreForm._internalData, 'internal data is not set');
+        assert.equal(Object.keys(coreForm._internalData).length, 2, '_internalData doesn\'t contain correct number of properties');
+        assert.equal(coreForm._internalData.text1, "lorem ipsum", 'text1 value not correct in _internalData');
+
+        assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+        assert.equal(coreForm._elementsToValidate.length, 1, 'elements to validate doesn\'t contain corrent number of elements');
+        // _elementsToValidate must have entries for each element
+        assert.equal(coreForm._elementsToValidate[0].id, "text1", 'text1 not present in _elementsToValidate');
+
+        var insertPoint = coreForm.$.insertPoint;
+        assert.equal(Polymer.dom(insertPoint).children.length, 2, 'insert point doesn\'t contain corrent number of elements');
+
+        flush(function() {
+          assert.equal(eventCount, 1, 'at-core-form didn\'t fire corrent number of events');
+          done();
+        });
+
+      });
+
+      test('data contains property that doesn\'t exist in schema; set data first, schema next', function (done) {
+        var coreForm = document.createElement('at-core-form');
+        var schema = {
+          properties: {
+            text1: {
+              type: "string"
+            }
+          }
+        }
+        var data = {
+          text1: "lorem ipsum",
+          "odata.metadata": "ipsum lorem"
+        }
+
+        var eventCount = 0;
+        coreForm.addEventListener('data-changed', function(event) {
+          eventCount += 1;
+        });
+
+        coreForm.data = data;
+
+        // internalData must have entries for each element
+        assert.isObject(coreForm._internalData, 'internal data is not set');
+        assert.equal(Object.keys(coreForm._internalData).length, 2, '_internalData doesn\'t contain correct number of properties');
+        assert.equal(coreForm._internalData.text1, "lorem ipsum", 'text1 value not correct in _internalData');
+        assert.equal(coreForm._internalData["odata.metadata"], "ipsum lorem", 'odata.metadata value not correct in _internalData');
+
+        assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+        assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+
+        var insertPoint = coreForm.$.insertPoint;
+        assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+
+        coreForm.schema = schema;
+
+        assert.isObject(coreForm._internalData, 'internal data is not set');
+        assert.equal(Object.keys(coreForm._internalData).length, 2, '_internalData doesn\'t contain correct number of properties');
+        assert.equal(coreForm._internalData.text1, "lorem ipsum", 'text1 value not correct in _internalData');
+
+        assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+        assert.equal(coreForm._elementsToValidate.length, 1, 'elements to validate doesn\'t contain corrent number of elements');
+        // _elementsToValidate must have entries for each element
+        assert.equal(coreForm._elementsToValidate[0].id, "text1", 'text1 not present in _elementsToValidate');
+
+        var insertPoint = coreForm.$.insertPoint;
+        assert.equal(Polymer.dom(insertPoint).children.length, 2, 'insert point doesn\'t contain corrent number of elements');
+
+        flush(function() {
+          assert.equal(eventCount, 1, 'at-core-form didn\'t fire corrent number of events');
+          done();
+        });
+
+      });
+
+    });
+  </script>
+
+</body>
+</html>
