@@ -519,7 +519,9 @@
       // use newValueKeys here because only keys from newValue are the ones changing
       newValueKeys.forEach(function(propertyName) {
         fieldElement = self.getElement(propertyName);
-        fieldElement.value = newValue[propertyName];
+        if (fieldElement) {
+          fieldElement.value = newValue[propertyName];          
+        }
       });
 
       // newValue can contain only a subset of properties on the form
