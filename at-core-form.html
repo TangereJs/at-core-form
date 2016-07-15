@@ -212,15 +212,16 @@
     _hideChanged: function(newValue, oldValue) {
       var self = this;
       var insertPoint = this.$.insertPoint;
+      var parsedValue = schemaHelpers.parseBool(newValue);
 
       if (this.schema && this.schema.properties) {
         var properties = this.schema.properties;
         var propNames = Object.keys(properties);
         propNames.forEach(function(propName, index) {
-          var formElement = Polymer.dom(insertPoint).querySelector('#' + propName);
+          var formElement = self.getElement(propName);
           if (formElement) {
-            Polymer.dom(formElement.parentElement).classList.remove('hidden');
-            formElement.hide = newValue;
+            self.toggleClass('hidden', parsedValue, formElement.parentElement);
+            formElement.hide = parsedValue;
           }
         });
       }
@@ -365,10 +366,10 @@
           self._elementsToValidate.push(formElement);
 
           // if at-core-form is initially hidden, element should be hidden as well
-          formElement.hide = self.hide || propertyDefinition.hide;
+          formElement.hide = self.hide || _sh.parseBool(propertyDefinition.hide);
 
           // if at-core-form is initially disabled, element should be disabled as well
-          formElement.disabled = self.disabled || propertyDefinition.disabled;
+          formElement.disabled = self.disabled || _sh.parseBool(propertyDefinition.disabled);
 
           // append element to its container
           Polymer.dom(fieldContainer).appendChild(formElement);
@@ -658,14 +659,15 @@
       var fieldElement;
       var properties = this.schema.properties;
       var propertyNames = properties ? Object.keys(properties) : [];
+      var parsedValue = schemaHelpers.parseBool(newValue);
 
       propertyNames.forEach(function(propertyName) {
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
         if (fieldElement) {
-          if (newValue) {
-            fieldElement.disabled = newValue;
+          if (parsedValue) {
+            fieldElement.disabled = parsedValue;
           } else {
-            fieldElement.disabled = Boolean(properties[propertyName].disabled);
+            fieldElement.disabled = schemaHelpers.parseBool(properties[propertyName].disabled);
           }
         }
       });
