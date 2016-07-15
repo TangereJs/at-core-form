@@ -365,10 +365,10 @@
           self._elementsToValidate.push(formElement);
 
           // if at-core-form is initially hidden, element should be hidden as well
-          formElement.hide = self.hide;
+          formElement.hide = self.hide || propertyDefinition.hide;
 
           // if at-core-form is initially disabled, element should be disabled as well
-          formElement.disabled = self.disabled;
+          formElement.disabled = self.disabled || propertyDefinition.disabled;
 
           // append element to its container
           Polymer.dom(fieldContainer).appendChild(formElement);
@@ -520,7 +520,7 @@
       newValueKeys.forEach(function(propertyName) {
         fieldElement = self.getElement(propertyName);
         if (fieldElement) {
-          fieldElement.value = newValue[propertyName];          
+          fieldElement.value = newValue[propertyName];
         }
       });
 
