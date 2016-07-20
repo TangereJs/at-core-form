@@ -170,25 +170,8 @@
     ready: function() {
       this._elementsToValidate = [];
       this._isReady = true;
-
-      var self = this;
-      this.addEventListener('focus', function(event) {
-        if (!event.target.is || event.currentTarget.is !== "at-core-form") {
-          return;
-        }
-
-        var propertyDefinitions = self.schema.properties;
-        var propertyNames = propertyDefinitions ? Object.keys(propertyDefinitions) : [];
-        if (propertyDefinitions && propertyNames.length > 0) {
-          // focus frist element
-          var propertyName = propertyNames[0];
-          var element = self.getElement(propertyName);
-          if (element.focus) {
-            element.focus();
-          }
-        }
-      });
     },
+
     attached: function() {
       var resizeSensor = this.$.resizeSensor;
       var coreForm = this;
@@ -201,6 +184,7 @@
         coreForm.updateLayout(newWidth);
       });
     },
+
     updateLayout: function(newWidth, oldWidth) {
       // 377 is from fibonacci sequence; it should do just fine
       if (newWidth < 600) {
@@ -409,8 +393,16 @@
       var width = resizeSensor.queryWidth();
       self.updateLayout(width);
 
+      // focus first element on the form
+      var firstElementName = propertyNames[0];
+      var element = self.getElement(firstElementName);
+      if (element !== null && _sh.isFunction(element.focus)) {
+        element.focus();
+      }
+
       self.fire('at-core-form-rendered');
     },
+
     /* *ij*
      OK. Imperative data binding doesn't work in polymer anymore.
      It may happen in the future but not in near future.
