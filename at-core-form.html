@@ -245,7 +245,6 @@
 
       // check if newValue is valid schema object
       // if its invalid whatever the previous schema was that remains visible to the user
-      // during initialization if schema is set before data, data is undefined. When this happens return
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
       }
@@ -656,13 +655,13 @@
       propertyNames.forEach(function(propertyName) {
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
         if (fieldElement) {
-          if (parsedValue) {
-            fieldElement.disabled = parsedValue;
-          } else {
-            fieldElement.disabled = schemaHelpers.parseBool(properties[propertyName].disabled);
-          }
+            fieldElement.disabled = parsedValue || schemaHelpers.parseBool(properties[propertyName].disabled);
         }
       });
+
+      if (this._isReady) {
+        this._calculateFormValidState();
+      }
     },
     _layoutChanged: function(newValue, oldValue) {
       this.toggleClass('vertical', newValue === 'vertical', this.$.insertPoint);
