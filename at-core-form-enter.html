@@ -9,33 +9,36 @@
   <link rel="import" href="at-core-form.html" />
 
   <style>
-  .container-w {
-    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
-
-  .container-m {
-    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
-
-  .container-s {
-    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
-
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
     [class*='col-'] {
       border: 1px dashed blue;
     }
@@ -60,7 +63,8 @@
         'properties': {
           'text1': {
             'title': 'Text demo',
-            'type': 'string'
+            'type': 'string',
+            'value': 'abc'
           }
         }
       };
@@ -71,10 +75,23 @@
       var eventLog = document.getElementById('eventLog');
       var msgContainerDiv = document.createElement('div');
 
-      demoForm.addEventListener('keypress', function(event) {
+      demoForm.addEventListener('keypress', function (event) {
         var msgContainerClone = msgContainerDiv.cloneNode(true);
         msgContainerClone.textContent = "keypress event, with keycode: " + event.which;
         eventLog.appendChild(msgContainerClone);
+
+        msgContainerClone = msgContainerDiv.cloneNode(true);
+        msgContainerClone.textContent = "text1: " + demoForm.data.text1;
+        eventLog.appendChild(msgContainerClone);
+
+
+        if (event.keyCode == 13) {
+          //--that works-- demoForm.focus();
+          demoForm.validate();
+          msgContainerClone = msgContainerDiv.cloneNode(true);
+          msgContainerClone.textContent = "after validate text1: " + demoForm.data.text1;
+          eventLog.appendChild(msgContainerClone);
+        }
       });
     });
   </script>
