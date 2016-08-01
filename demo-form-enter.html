@@ -64,7 +64,8 @@
           'text1': {
             'title': 'Text demo',
             'type': 'string',
-            'value': 'abc'
+            'value': 'abc', 
+            required: true
           }
         }
       };
@@ -87,6 +88,7 @@
 
         if (event.keyCode == 13) {
           //--that works-- demoForm.focus();
+
           demoForm.validate();
           msgContainerClone = msgContainerDiv.cloneNode(true);
           msgContainerClone.textContent = "after validate text1: " + demoForm.data.text1;
