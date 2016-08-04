@@ -48,62 +48,72 @@
 </head>
 
 <body>
-  <div class="container-w">
-    <at-core-form id="coreFormDemo"></at-core-form>
-  </div>
+    <div class="container-w">
+        <div>
+            Working lookup prop-available:
+            <at-form-lookup id="workingLookupAvailable"></at-form-lookup>
+        </div>
+        <div>
+            Working lookup prop-xvaluelist:
+            <at-form-lookup id="workingLookupXvaluelist"></at-form-lookup>
+        </div>
+        <div>
+            Non-working schema lookups:
+            <at-core-form id="coreFormDemo"></at-core-form>
+        </div>
+    </div>
   <script>
-    window.addEventListener('WebComponentsReady', function (e) {
+      window.addEventListener('WebComponentsReady', function (e) {
+          var workingLookupAvailable = document.getElementById("workingLookupAvailable");
+          workingLookupAvailable.available = ["Active", "Resolved", "Closed"];
+          workingLookupAvailable.value = "Resolved";
+
+          var workingLookupXvaluelist = document.getElementById("workingLookupXvaluelist");
+          workingLookupXvaluelist.xvaluelist = [
+                        { title: "Active", value: "Active" },
+                        { title: "Resolved", value: "Resolved" },
+                        { title: "Closed", value: "Closed" }
+          ];
+          workingLookupXvaluelist.value = "Resolved";
+
           var demoForm = document.getElementById("coreFormDemo");
           demoForm.schema = {
-            'properties': {
-              'name1': {
-                'type': 'string',
-                'required': true
-              },
-              'name2': {
-                'type': 'string',
-                'required': true
-              },
-              "Reason": {
-                "description": "Reason",
-                "type": "string",
-                "xtype": "radio",
-                "maxChars": "2",
-                "required": "1",
-                "default": "20",
-                "title": "Reason",
-                "xvaluelist": [
-                  {"title": "Annual","value": "10"},
-                  {"title": "Sick","value": "20"}
-                ]
-              },
-              "Lookup": {
-                  "description": "Lookup",
-                  "type": "string",
-                  "xtype": "lookup",
-                  "value": "Resolved",
-                  "title": "Lookup",
-                  "xvaluelist": [
-                    {title: "Active", value: "Active"},
-                    {title: "Resolved", value: "Resolved"},
-                    {title: "Closed", value: "Closed"}
-                  ]
-              },
-              "Lookup2": {
-                  "description": "Lookup2",
-                  "type": "string",
-                  "xtype": "lookup",
-                  "value": "Resolved",
-                  "title": "Lookup2",
-                  "xvaluelist": [
-                    { "title": "Active", "value": "Active" },
-                    { "title": "Resolved", "value": "Resolved" },
-                    { "title": "Closed", "value": "Closed" }
-                  ]
+              'properties': {
+                  "Lookup": {
+                      "description": "Lookup",
+                      "type": "string",
+                      "xtype": "lookup",
+                      "value": "Resolved",
+                      "title": "Lookup",
+                      "available": ["Active", "Resolved", "Closed"]
+                  },
+                  "Lookup1": {
+                      "description": "Lookup1",
+                      "type": "string",
+                      "xtype": "lookup",
+                      "value": "Resolved",
+                      "title": "Lookup1",
+                      "xvaluelist": [
+                        { title: "Active", value: "Active" },
+                        { title: "Resolved", value: "Resolved" },
+                        { title: "Closed", value: "Closed" }
+                      ]
+                  },
+                  "Lookup2": {
+                      "description": "Lookup2",
+                      "type": "string",
+                      "xtype": "lookup",
+                      "value": "Resolved",
+                      "title": "Lookup2",
+                      "xvaluelist": [
+                        { "title": "Active", "value": "Active" },
+                        { "title": "Resolved", "value": "Resolved" },
+                        { "title": "Closed", "value": "Closed" }
+                      ]
+                  }
               }
-            }
           };
-    });
+      });
   </script>
 </body>
 
