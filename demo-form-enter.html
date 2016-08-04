@@ -59,18 +59,20 @@
   <script>
     window.addEventListener('WebComponentsReady', function (e) {
       var demoForm = document.getElementById("coreFormDemo");
+      
       demoForm.schema = {
         'properties': {
           'text1': {
             'title': 'Text demo',
             'type': 'string',
-            'value': 'abc', 
+            'default': 'abc', 
             required: true
           }
         }
       };
+      
       demoForm.data = {
-        'text1': "lorem ipsum"
+        'text1': ""
       };
 
       var eventLog = document.getElementById('eventLog');
