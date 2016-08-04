@@ -6,7 +6,7 @@
   <title>At-Core-Form demo</title>
 
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="../polymer/polymer.html" />
+    <link rel="import" href="../tangere/tangere.html" />
   <link rel="import" href="at-core-form.html" />
 
   <style>
@@ -73,15 +73,33 @@
                 "default": "20",
                 "title": "Reason",
                 "xvaluelist": [
-                  {
-                    "title": "Annual",
-                    "value": "10"
+                  {"title": "Annual","value": "10"},
+                  {"title": "Sick","value": "20"}
+                ]
               },
-                  {
-                    "title": "Sick",
-                    "value": "20"
-              }
-            ]
+              "Lookup": {
+                  "description": "Lookup",
+                  "type": "string",
+                  "xtype": "lookup",
+                  "value": "Resolved",
+                  "title": "Lookup",
+                  "xvaluelist": [
+                    {title: "Active", value: "Active"},
+                    {title: "Resolved", value: "Resolved"},
+                    {title: "Closed", value: "Closed"}
+                  ]
+              },
+              "Lookup2": {
+                  "description": "Lookup2",
+                  "type": "string",
+                  "xtype": "lookup",
+                  "value": "Resolved",
+                  "title": "Lookup2",
+                  "xvaluelist": [
+                    { "title": "Active", "value": "Active" },
+                    { "title": "Resolved", "value": "Resolved" },
+                    { "title": "Closed", "value": "Closed" }
+                  ]
               }
             }
           };
