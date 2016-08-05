@@ -19,7 +19,7 @@
       margin-left: auto;
       padding-bottom: 64px;
     }
-    
+
     .container-m {
       width: 70%;
       /* when fixed width is used ie 1024px resize sensor doesn't work */
@@ -29,7 +29,7 @@
       margin-left: auto;
       padding-bottom: 64px;
     }
-    
+
     .container-s {
       width: 55%;
       /* when fixed width is used ie 1024px resize sensor doesn't work */
@@ -39,7 +39,7 @@
       margin-left: auto;
       padding-bottom: 64px;
     }
-    
+
     [class*='col-'] {
       border: 1px dashed blue;
     }
@@ -82,16 +82,16 @@
                   "Lookup": {
                       "description": "Lookup",
                       "type": "string",
-                      "xtype": "lookup",
-                      "value": "Resolved",
+                      "xtype": "enum",
+                      "default": "Resolved",
                       "title": "Lookup",
                       "available": ["Active", "Resolved", "Closed"]
                   },
                   "Lookup1": {
                       "description": "Lookup1",
                       "type": "string",
-                      "xtype": "lookup",
-                      "value": "Resolved",
+                      "xtype": "enum",
+                      "default": "Resolved",
                       "title": "Lookup1",
                       "xvaluelist": [
                         { title: "Active", value: "Active" },
@@ -102,8 +102,8 @@
                   "Lookup2": {
                       "description": "Lookup2",
                       "type": "string",
-                      "xtype": "lookup",
-                      "value": "Resolved",
+                      "xtype": "enum",
+                      "default": "Resolved",
                       "title": "Lookup2",
                       "xvaluelist": [
                         { "title": "Active", "value": "Active" },
