@@ -305,6 +305,9 @@
 
           // create element for field
           formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+          
+          // enable autovalidation for all form elements
+          formElement.autovalidate = true;
 
           // create the field container
           fieldContainer = divPrototype.cloneNode(true);
@@ -628,7 +631,7 @@
     },
 
     /*
-     * Validates the form
+     * Validates the form and shows errors for invalid elements
      * It calls validate method of each element in _elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
      */
@@ -636,7 +639,7 @@
       var isValid = true;
 
       this._elementsToValidate.forEach(function(element) {
-        var elementValid = element.validate();
+        var elementValid = element.validate(true);
         isValid = isValid && elementValid;
       });
 
