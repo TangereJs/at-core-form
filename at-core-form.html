@@ -305,7 +305,7 @@
 
           // create element for field
           formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
-          
+
           // enable autovalidation for all form elements
           formElement.autovalidate = true;
 
@@ -331,6 +331,8 @@
           if (_sh.isFunction(formElement.clearUIValidState)) {
             // at-form-section doesn't have clearUIValidState function nor does it need one
             formElement.clearUIValidState();
+          } else if (_sh.isFunction(formElement.clearUIValidState)) {
+            formElement._clearUIValidState();            
           }
 
           formElement.addEventListener('value-changed', function(event) {
@@ -435,7 +437,11 @@
       // *ij* polymer js doesn't call valueChanged if value is of type array or object
       // we check for this situation and call valueChanged by hand
       if (schemaHelpers.isObject(fieldElement.value) || schemaHelpers.isArray(fieldElement.value)) {
-        fieldElement.valueChanged(value, undefined);
+        if (fieldElement.valueChanged) {
+          fieldElement.valueChanged(value, undefined);
+        } else if (fieldElement._valueChanged) {
+          fieldElement._valueChanged(value, undefined);
+        }
       }
     },
 
