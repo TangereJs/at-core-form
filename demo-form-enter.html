@@ -62,17 +62,17 @@
       
       demoForm.schema = {
         'properties': {
-          'text1': {
-            'title': 'Text demo',
+          'field1': {
+            'title': 'Test Field 1',
             'type': 'string',
-            'default': 'abc', 
+            'xtype': 'code',
             required: true
           }
         }
       };
       
       demoForm.data = {
-        'text1': ""
+        'field1': ""
       };
 
       var eventLog = document.getElementById('eventLog');
@@ -84,7 +84,7 @@
         eventLog.appendChild(msgContainerClone);
 
         msgContainerClone = msgContainerDiv.cloneNode(true);
-        msgContainerClone.textContent = "text1: " + demoForm.data.text1;
+        msgContainerClone.textContent = "field1: " + demoForm.data.field1;
         eventLog.appendChild(msgContainerClone);
 
 
@@ -93,7 +93,7 @@
 
           demoForm.validate();
           msgContainerClone = msgContainerDiv.cloneNode(true);
-          msgContainerClone.textContent = "after validate text1: " + demoForm.data.text1;
+          msgContainerClone.textContent = "after validate field1: " + demoForm.data.field1;
           eventLog.appendChild(msgContainerClone);
         }
       });
