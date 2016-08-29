@@ -331,8 +331,8 @@
           if (_sh.isFunction(formElement.clearUIValidState)) {
             // at-form-section doesn't have clearUIValidState function nor does it need one
             formElement.clearUIValidState();
-          } else if (_sh.isFunction(formElement.clearUIValidState)) {
-            formElement._clearUIValidState();            
+          } else if (_sh.isFunction(formElement._clearUIValidState)) {
+            formElement._clearUIValidState();
           }
 
           formElement.addEventListener('value-changed', function(event) {
