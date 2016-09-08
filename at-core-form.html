@@ -186,13 +186,39 @@
     },
 
     updateLayout: function(newWidth, oldWidth) {
-      // 377 is from fibonacci sequence; it should do just fine
       if (newWidth < 600) {
         this.layout = "vertical";
       } else {
         this.layout = "horizontal";
       }
     },
+
+    /**
+     * Focuses the element on the form with given elementId
+     * If elementId is provided and element with provided elementId exists, its focused.
+     * If elementId is not provided first element on the form is focused
+     */
+    setFocus: function (elementId) {
+      var _sh = window.schemaHelpers;
+      if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties)) {
+        return;
+      }
+
+      var element;
+      if (_sh.isString(elementId) && elementId !== "") {
+        element = this.getElement(elementId);
+      } else {
+        // focus first element on the form
+        var propertyNames = Object.keys(this.schema.properties);
+        var firstElementName = propertyNames[0];
+        element = this.getElement(firstElementName);
+      }
+
+      if (element !== null && _sh.isFunction(element.focus)) {
+        element.focus();
+      }
+    },
+
     _hideChanged: function(newValue, oldValue) {
       var self = this;
       var insertPoint = this.$.insertPoint;
@@ -369,15 +395,18 @@
           console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
         }
       });
-      // if data was set first there is a chance that some properties form this._internalData are missing in this.data
-      // this.data must be updated with missing properties
-      var internalDataKeys = Object.keys(this._internalData);
-      internalDataKeys.forEach(function (key, index) {
-        // self.data[key] === undefined means that the key is missing from self.data
-        if (!self.data.hasOwnProperty(key)) {
-          self.data[key] = self._internalData[key];
-        }
-      });
+
+      if (_sh.isObject(self.data)) {
+        // if data was set first there is a chance that some properties form this._internalData are missing in this.data
+        // this.data must be updated with missing properties
+        var internalDataKeys = Object.keys(this._internalData);
+        internalDataKeys.forEach(function (key, index) {
+          // self.data[key] === undefined means that the key is missing from self.data
+          if (!self.data.hasOwnProperty(key)) {
+            self.data[key] = self._internalData[key];
+          }
+        });
+      }
 
       // add div class="clearfix"
       var clearfixDiv = divPrototype.cloneNode(true);
@@ -396,13 +425,6 @@
 
       var width = resizeSensor.queryWidth();
       self.updateLayout(width);
-
-      // focus first element on the form
-      var firstElementName = propertyNames[0];
-      var element = self.getElement(firstElementName);
-      if (element !== null && _sh.isFunction(element.focus)) {
-        element.focus();
-      }
 
       self.fire('at-core-form-rendered');
     },
