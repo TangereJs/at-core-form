@@ -325,8 +325,11 @@
 
           // handle xgridcols
           xgridcols = displayType === "section" ? 12 : 6;
-          if (_sh.isNumber(propertyDefinition.xgridcols)) {
-            xgridcols = parseInt(propertyDefinition.xgridcols);
+          if (_sh.isString(propertyDefinition.xgridcols)) {
+            var parseResult = parseInt(propertyDefinition.xgridcols);
+            if (!window.isNaN(parseResult)) {
+              xgridcols = parseResult;
+            }
           }
 
           // create element for field
