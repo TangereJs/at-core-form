@@ -352,9 +352,15 @@
             // at-core-form._internalData doesn't contain an entry for the current property
             // add initial value of the formElement to the at-core-form.data
             self._internalData[propertyName] = formElement.value;
+            if (_sh.isObject(formElement.value) || _sh.isArray(formElement.value)) {
+              self._internalData[propertyName] = JSON.parse(JSON.stringify(formElement.value));
+            }
           } else {
             // else set initial value from at-core-form.data to fromElement
             formElement.value = self._internalData[propertyName];
+            if (_sh.isObject(self._internalData[propertyName]) || _sh.isArray(self._internalData[propertyName])) {
+              formElement.value = JSON.parse(JSON.stringify(self._internalData[propertyName]));
+            }
           }
 
           if (_sh.isFunction(formElement.clearUIValidState)) {
@@ -522,6 +528,9 @@
       var newValueKeys = Object.keys(newValue);
       newValueKeys.forEach(function (key, index) {
         _internalData[key] = newValue[key];
+        if (_sh.isObject(newValue[key]) || _sh.isArray(newValue[key])) {
+          _internalData[key] = JSON.parse(JSON.stringify(newValue[key]));
+        }
       });
 
       if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties) || Object.keys(this.schema.properties).length === 0) {
@@ -547,6 +556,9 @@
         fieldElement = self.getElement(propertyName);
         if (fieldElement) {
           fieldElement.value = newValue[propertyName];
+          if (_sh.isObject(newValue[propertyName]) || _sh.isArray(newValue[propertyName])) {
+            fieldElement.value = JSON.parse(JSON.stringify(newValue[propertyName]));
+          }
         }
       });
 
@@ -556,6 +568,9 @@
       internalDataKeys.forEach(function (key, index) {
         if (!self.data.hasOwnProperty(key)) {
           self.data[key] = self._internalData[key];
+          if (_sh.isObject(self._internalData[key]) || _sh.isArray(self._internalData[key])) {
+            self.data[key] = JSON.parse(JSON.stringify(self._internalData[key]));
+          }
         }
       });
 
@@ -571,6 +586,7 @@
      * value is the new value to be set
      */
     _updateDataObject: function(property, value) {
+      var _sh = window.schemaHelpers;
       if (this.schema.rules) {
         if (!this.businessRulesEvaluationInProgress) {
           this.businessRulesEvaluationInProgress = true;
@@ -582,6 +598,13 @@
       } else {
         this._internalData[property] = value;
         this.data[property] = value;
+
+        if (_sh.isObject(value) || _sh.isArray(value)) {
+          var valueClone = JSON.parse(JSON.stringify(value));
+          this._internalData[property] = valueClone;
+          this.data[property] = valueClone;
+        }
+
         this._calculateFormValidState();
         this.fire('data-changed', {
           property: property,
