@@ -140,12 +140,12 @@
        * @type Boolean
        * @default true
        */
-      valid: {
-        type: Boolean,
-        notify: true,
-        value: true,
-        readOnly: true
-      },
+      // valid: {
+      //   type: Boolean,
+      //   notify: true,
+      //   value: true,
+      //   readOnly: true
+      // },
       /**
        * at-core-form can now have a one column or two column layout <br/>
        * by default a one column layout is used but a two column layout can be specified <br/>
@@ -164,6 +164,9 @@
         xtype: "enum",
         available: "horizontal,vertical"
       }
+    },
+    get valid() {
+      return this.validate(false);
     },
     set valid(newValue) {},
 
@@ -675,11 +678,13 @@
       var isValid = true;
 
       this._elementsToValidate.forEach(function(element) {
-        var elementValid = element.valid;
-        isValid = isValid && elementValid;
+        if (!(element.disabled  || element.hide)) {
+          var elementValid = element.valid;
+          isValid = isValid && elementValid;
+        }
       });
 
-      this._setValid(isValid);
+      // this._setValid(isValid);
 
       return isValid;
     },
@@ -693,11 +698,13 @@
       var isValid = true;
 
       this._elementsToValidate.forEach(function(element) {
-        var elementValid = element.validate(true);
-        isValid = isValid && elementValid;
+        if (!(element.disabled || element.hide)) {
+          var elementValid = element.validate(true);
+          isValid = isValid && elementValid;
+        }
       });
 
-      this._setValid(isValid);
+      // this._setValid(isValid);
 
       return isValid;
     },
