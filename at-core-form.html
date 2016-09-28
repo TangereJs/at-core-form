@@ -389,7 +389,11 @@
           });
 
           Polymer.dom(formElement).setAttribute('id', propertyName);
-          self._elementsToValidate.push(formElement);
+          // do not put at-form-section into elementsToValidate because validation doesn't make sense for at-form-section          
+          if ([ "section" ].indexOf(displayType) < 0) {
+            self._elementsToValidate.push(formElement);
+          }
+
 
           // if at-core-form is initially hidden, element should be hidden as well
           formElement.hide = self.hide || _sh.parseBool(propertyDefinition.hide);
