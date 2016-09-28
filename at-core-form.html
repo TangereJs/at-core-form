@@ -590,7 +590,7 @@
      */
     _updateDataObject: function(property, value) {
       var _sh = window.schemaHelpers;
-      if (this.schema.rules) {
+      if (_sh.isArray(this.schema.rules) && this.schema.rules.length > 0) {
         if (!this.businessRulesEvaluationInProgress) {
           this.businessRulesEvaluationInProgress = true;
           this._evaluateRules(property, value);
@@ -607,13 +607,13 @@
           this._internalData[property] = valueClone;
           this.data[property] = valueClone;
         }
-
-        this._calculateFormValidState();
-        this.fire('data-changed', {
-          property: property,
-          value: this.data
-        });
       }
+
+      this._calculateFormValidState();
+      this.fire('data-changed', {
+        property: property,
+        value: this.data
+      });
     },
 
     filesChanged: function(newValue, oldValue) {
