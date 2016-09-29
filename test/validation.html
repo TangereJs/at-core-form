@@ -148,47 +148,47 @@
             image: {
               type: "string",
               xtype: "image"
+            },
+            enum: {
+              type: "string",
+              xtype: "enum"
+            },
+            lookup: {
+              type: "string",
+              xtype: "lookup"
+            },
+            marked: {
+              type: "string",
+              xtype: "marked"
+            },
+            number: {
+              type: "number"
+            },
+            password: {
+              type: "string",
+              xtype: "password"
+            },
+            radio: {
+              type: "string",
+              xtype: "radio"
+            },
+            section: {
+              type: "section"
+            },
+            text: {
+              type: "string"
+            },
+            textarea: {
+              type: "string",
+              xtype: "textarea"
             }
-            // enum: {
-            //   type: "string",
-            //   xtype: "enum"
-            // },
-            // lookup: {
-            //   type: "string",
-            //   xtype: "lookup"
-            // },
-            // marked: {
-            //   type: "string",
-            //   xtype: "marked"
-            // },
-            // number: {
-            //   type: "number"
-            // },
-            // password: {
-            //   type: "string",
-            //   xtype: "password"
-            // },
-            // radio: {
-            //   type: "string",
-            //   xtype: "radio"
-            // },
-            // section: {
-            //   type: "section"
-            // },
-            // state: {
-            //   type: "string",
-            //   xtype: "state"
-            // },
-            // text: {
-            //   type: "string"
-            // },
-            // textarea: {
-            //   type: "string",
-            //   xtype: "textarea"
-            // }
           }
         };
       }
+      // state: {
+      //   type: "string",
+      //   xtype: "state"
+      // },
 
       function assertElementIsValid(element) {
         var isValid = element.valid;
@@ -224,6 +224,11 @@
         var elementIds = Object.keys(properties);
         var i, elementId, element;
         var isValid;
+
+        // remove "section" from elementIds since validation doesn't make sense for at-form-section
+        var indexOfSection = elementIds.indexOf('section');
+        elementIds.splice(indexOfSection, 1);
+
         // set the schema
         coreForm.schema = getSchema();
         assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
@@ -300,7 +305,9 @@
           element.value = null;
           element.required = true;
 
-          assert.equal(element.value, null, "element value not set correctly");
+          if (elementId !== "image") {
+            assert.equal(element.value, null, "element value not set correctly");
+          }
           assert.equal(element.required, true, "element required not set correctly");
 
           assertElementIsInvalid(element);
@@ -355,7 +362,12 @@
           assert.equal(element.hide, false, 'element is hidden');
 
           // make element valid
-          element.value = element.properties.value.value;
+          var initialValue = element.properties.value.value;
+          if (isFunction(initialValue)) {
+            element.value = initialValue();
+          } else {
+            element.value = initialValue;
+          }
           element.required = false;
 
           assertElementIsValid(element);
