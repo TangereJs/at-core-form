@@ -337,10 +337,10 @@
 
           // create element for field
           formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
-
-          // enable autovalidation for all form elements
-          formElement.autovalidate = true;
-
+          
+          // enable autoValidate for all form elements 
+          formElement.autoValidate = true;
+          
           // create the field container
           fieldContainer = divPrototype.cloneNode(true);
           gridColsCssName = "col-" + xgridcols;
