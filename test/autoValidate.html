@@ -1,0 +1,285 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-text tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-core-form.html">
+
+</head>
+
+<body>
+
+  <test-fixture id="propertyTest">
+    <template>
+      <at-core-form></at-core-form>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    /**
+      at-core-form validation updated for MPS-81
+
+      disabled and hide do not affect valid state of form elements
+      at-core-form ignores disabled and hidden elements when calculating its valid state
+
+      Test case(s)
+        * at-core-form is initially valid.
+        * each element on the form is initially not hidden and not disabled and valid
+
+        * hidding and/or disabling any element on the form will not change valid state of the element and not change valid state of the at-core-form
+
+        * make each element on the form invalid
+        * hidding and/or disabling invalid element on the form will not change valid state of the element but will change valid state of the at-core-form
+
+     */
+
+    suite('validation tests', function () {
+
+      function isArray(obj) {
+        return Object.prototype.toString.call(obj) === "[object Array]";
+      }
+
+      function isObject(obj) {
+        return Object.prototype.toString.call(obj) === "[object Object]";
+      }
+
+      function isFunction(obj) {
+        return Object.prototype.toString.call(obj) === "[object Function]";
+      }
+
+      function areEqual(obj1, obj2) {
+        var result = false;
+        var obj1PropertyValue;
+        var obj2PropertyValue;
+
+        if (isArray(obj1) && isArray(obj2)) {
+          result = obj1.length === obj2.length;
+          // if lengths are different return false
+          if(!result) {
+            return result;
+          }
+
+          // else compare items in the arrays for equality
+          for (var i = 0; i < obj1.length && result; i++) {
+            obj1PropertyValue = obj1[i];
+            obj2PropertyValue = obj2[i];
+            result = areEqual(obj1PropertyValue, obj2PropertyValue);
+          }
+        } else if (isObject(obj1) && isObject(obj2)) {
+          var obj1Properties = Object.keys(obj1);
+          var obj2Properties = Object.keys(obj2);
+          // tests that these arrays have same lengths and same names
+          result = areEqual(obj1Properties, obj2Properties);
+
+          if (!result) {
+            return result;
+          }
+          // test that every property in both objects has same value
+          for (var j = 0; j < obj1Properties.length && result; j++) {
+            var obj1PropertyName = obj1Properties[j];
+            var obj2PropertyName = obj2Properties[j];
+            obj1PropertyValue = obj1[obj1PropertyName];
+            obj2PropertyValue = obj2[obj2PropertyName];
+            result = areEqual(obj1PropertyValue, obj2PropertyValue);
+          }
+        } else if (isFunction(obj1) && isFunction(obj2)) {
+          result = obj1.toString() === obj2.toString();
+        } else {
+          // this tests string, number, boolean, null and undefined
+          result = obj1 === obj2;
+        }
+
+        return result;
+      }
+
+      function getSchema() {
+        return {
+          properties: {
+            array: {
+              type: "array"
+            },
+            checkbox: {
+              type: "boolean"
+            },
+            toggle: {
+              type: "boolean",
+              xtype: "toggle"
+            },
+            code: {
+              type: "string",
+              xtype: "code"
+            },
+            json: {
+              type: "object",
+              xtype: "json"
+            },
+            date: {
+              type: "string",
+              xtype: "date"
+            },
+            time: {
+              type: "string",
+              xtype: "time"
+            },
+            datetime: {
+              type: "string",
+              xtype: "datetime"
+            },
+            daterange: {
+              type: "daterange"
+            },
+            file: {
+              type: "string",
+              xtype: "file"
+            },
+            image: {
+              type: "string",
+              xtype: "image"
+            },
+            enum: {
+              type: "string",
+              xtype: "enum"
+            },
+            lookup: {
+              type: "string",
+              xtype: "lookup"
+            },
+            marked: {
+              type: "string",
+              xtype: "marked"
+            },
+            number: {
+              type: "number"
+            },
+            password: {
+              type: "string",
+              xtype: "password"
+            },
+            radio: {
+              type: "string",
+              xtype: "radio"
+            },
+            section: {
+              type: "section"
+            },
+            text: {
+              type: "string"
+            },
+            textarea: {
+              type: "string",
+              xtype: "textarea"
+            }
+          }
+        };
+      }
+      // state: {
+      //   type: "string",
+      //   xtype: "state"
+      // },
+
+      function assertElementIsValid(element) {
+        var isValid = element.valid;
+        assert.equal(isValid, true, 'element '+ element.is +' is invalid');
+        isValid = element.validate();
+        assert.equal(isValid, true, 'element '+ element.is +' is invalid');
+      }
+
+      function assertElementIsInvalid(element) {
+        var isValid = element.valid;
+        assert.equal(isValid, false, 'element is valid');
+        isValid = element.validate();
+        assert.equal(isValid, false, 'element is valid');
+      }
+
+      function assertFormIsValid(coreForm) {
+        var isValid = coreForm.valid;
+        assert.equal(isValid, true, 'core form is invalid');
+        isValid = coreForm.validate();
+        assert.equal(isValid, true, 'core form is invalid');
+      }
+
+      function assertFormIsInvalid(coreForm) {
+        var isValid = coreForm.valid;
+        assert.equal(isValid, false, 'core form is valid');
+        isValid = coreForm.validate();
+        assert.equal(isValid, false, 'core form is valid');
+      }
+
+      test('autoValidate test', function () {
+        // assert that autoValidate is true for all elements on the form
+        var coreForm = fixture('propertyTest');
+        var properties = getSchema().properties;
+        var elementIds = Object.keys(properties);
+        var i, elementId, element;
+        var isValid;
+
+        // set the schema
+        coreForm.schema = getSchema();
+        assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
+
+        // remove "section" from elementIds since validation doesn't make sense for at-form-section
+        var indexOfSection = elementIds.indexOf('section');
+        elementIds.splice(indexOfSection, 1);
+
+        // each element on the form has autoValidate set to true
+        for (i = 0; i < elementIds.length; i++) {
+          elementId = elementIds[i];
+          element = coreForm.getElement(elementId);
+          assert.equal(element.autoValidate, true, "element's autoValidate value is not correct");
+
+          // and is valid
+          assertElementIsValid(element);
+
+          assertFormIsValid(coreForm);
+        }
+
+        /*
+          make each element invalid
+          form will become invalid
+          since autoValidate is true, error messages will be displayed for each element
+        */
+        for (i = 0; i < elementIds.length; i++) {
+          elementId = elementIds[i];
+          element = coreForm.getElement(elementId);
+
+          // make element invalid
+          element.value = null;
+          element.required = true;
+
+          if (elementId !== "image") {
+            assert.equal(element.value, null, "element value not set correctly");
+          }
+          assert.equal(element.required, true, "element required not set correctly");
+
+          // assert that error message is set
+          var hint = element.$.hint;
+          var hintContent = Polymer.dom(hint).textContent;
+          assert.equal(hintContent, element.T("This field is required."), "element " + element.is + " error message not set correctly");
+
+          // element should be invalid
+          assertElementIsInvalid(element);
+
+          // form should be invalid
+          assertFormIsInvalid(coreForm);
+
+        }
+      });
+
+    });
+  </script>
+
+</body>
+</html>
