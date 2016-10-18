@@ -337,10 +337,10 @@
 
           // create element for field
           formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
-          
-          // enable autoValidate for all form elements 
+
+          // enable autoValidate for all form elements
           formElement.autoValidate = true;
-          
+
           // create the field container
           fieldContainer = divPrototype.cloneNode(true);
           gridColsCssName = "col-" + xgridcols;
@@ -389,7 +389,7 @@
           });
 
           Polymer.dom(formElement).setAttribute('id', propertyName);
-          // do not put at-form-section into elementsToValidate because validation doesn't make sense for at-form-section          
+          // do not put at-form-section into elementsToValidate because validation doesn't make sense for at-form-section
           if ([ "section" ].indexOf(displayType) < 0) {
             self._elementsToValidate.push(formElement);
           }
@@ -617,6 +617,8 @@
       this.fire('data-changed', {
         property: property,
         value: this.data
+      },{
+        bubbles: false
       });
     },
 
