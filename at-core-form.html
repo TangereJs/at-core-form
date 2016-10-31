@@ -594,6 +594,7 @@
      */
     _updateDataObject: function(property, value) {
       var _sh = window.schemaHelpers;
+      this._internalData[property] = value;
       if (_sh.isArray(this.schema.rules) && this.schema.rules.length > 0) {
         if (!this.businessRulesEvaluationInProgress) {
           this.businessRulesEvaluationInProgress = true;
@@ -603,7 +604,6 @@
           return;
         }
       } else {
-        this._internalData[property] = value;
         this.data[property] = value;
 
         if (_sh.isObject(value) || _sh.isArray(value)) {
