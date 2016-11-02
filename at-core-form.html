@@ -442,7 +442,56 @@
       var width = resizeSensor.queryWidth();
       self.updateLayout(width);
 
+      // evaluate rules against new schema
+      if (propertyNames.length) {
+        self._executeRuleEvaluation(newValue);
+      }
+
       self.fire('at-core-form-rendered');
+    },
+
+    _executeRuleEvaluation: function (schema) {
+      var _sh = window.schemaHelpers;
+      if (this._isBusinessRulesEvaluationInProgress) {
+        return;
+      }
+      this._isBusinessRulesEvaluationInProgress = true;
+      if (_sh.isArray(schema.rules) && schema.rules.length) {
+
+        // what is happening here? Please note that steps are explained in reverse order because of dependencies
+        // 3. Why do we reset _rulesEvaluator every time
+        // Because _rulesEvaluator remembers last data it evaluated rules against
+        // if data is the same rules are not evaluated
+        // this means that if user doesn't change default values for elements between rule Editing and preview,
+        // updated rules will not be initially executed, but its expected that rules be executed
+        this._rulesEvaluator = new RulesEvaluator();
+
+        // 2. Why do we reset active schema every time?
+        // Because, activeSchema is cached as a private variable in at-form-behaviors-rules-evaluation so its saved between schema changes,
+        var activeSchema = {
+          properties: {}
+        };
+        activeSchema.properties = JSON.parse(JSON.stringify(schema.properties));
+        this._activeSchema = activeSchema;
+
+        // 1. Its expected to display the results of rules evaluation when new schema is set
+        // at-core-form invokes rule evaluation when any element on the form changes value;
+        // its not really desirable to invoke rule evaluation that way, since we have access to at-form-behaviors-rules-evaluation._evaluateRules function
+        // but to invoke evaluate rules we need a property and its value; so we provide first property on the form and its value
+        var propNames = Object.keys(schema.properties);
+        var propName = propNames[0];
+        var propValue = this.getElement(propName).value;
+        this._evaluateRules(propName, propValue);
+
+        // 1a. Why do we clear ui valid state of the elements
+        // Because its expected that initially UI errors are not displayed. Errors should be displayed only when user interacts with the element(s)
+        var self = this;
+        propNames.forEach(function(propName, index) {
+          var element = self.getElement(propName);
+          element._clearUIValidState();
+        });
+      }
+      this._isBusinessRulesEvaluationInProgress = false;
     },
 
     /* *ij*
@@ -581,9 +630,15 @@
         }
       });
 
+      if (_sh.isObject(this.schema) && _sh.isObject(this.schema.properties) && Object.keys(this.schema.properties).length) {
+        self._executeRuleEvaluation(this.schema);
+      }
+
       this._calculateFormValidState();
       this.fire('data-changed', {
         value: this.data
+      }, {
+        bubbles: false
       });
     },
 
@@ -596,10 +651,10 @@
       var _sh = window.schemaHelpers;
       this._internalData[property] = value;
       if (_sh.isArray(this.schema.rules) && this.schema.rules.length > 0) {
-        if (!this.businessRulesEvaluationInProgress) {
-          this.businessRulesEvaluationInProgress = true;
+        if (!this._isBusinessRulesEvaluationInProgress) {
+          this._isBusinessRulesEvaluationInProgress = true;
           this._evaluateRules(property, value);
-          this.businessRulesEvaluationInProgress = false;
+          this._isBusinessRulesEvaluationInProgress = false;
         } else {
           return;
         }
