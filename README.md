@@ -52,3 +52,12 @@ at-core-form
 |20.| string    | state    | at-form-state      | String ""  |
 |21.| string    | textarea | at-form-textarea   | String ""  |
 |22.| string    | time     | at-form-date       | String ""  |
+
+h5. at-core-form property ordering requirements
+In general
+
+a. at-core-form must render in the order the elements are defined in the schema
+b. a form showing the properties of an object should sort the properties alphabetical independently if the property is defined in the element directly or via a behavior
+c. b. should be applied independently how the form is rendered. So it should work in prop form but also if at-core-form is used to render the properties
+
+Does this make sense?
