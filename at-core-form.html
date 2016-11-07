@@ -1,5 +1,5 @@
 <link rel="import" href="../tangere/tangere.html">
-<link rel="import" href="../at-elements/at-designer-elements.html">
+<!-- <link rel="import" href="../at-elements/at-designer-elements.html"> -->
 <link rel="import" href="../at-core-schema/at-core-schema.html">
 <link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
 <link rel="import" href="../at-theme/at-theme.html">
@@ -251,16 +251,16 @@
       var currWidth = resizeSensor.queryWidth();
       coreForm.updateLayout(currWidth);
     },
-    // ------------------------------
-    _schemaChanged: function(newValue, oldValue) {
-      // cache the reference to at-core-schema.schemaHelpers
+
+
+    _schemaChanged: function (newValue, oldValue) {
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
         /*
-          if newValue for schema is given as json string, parse it and assign it to this.schema
-          if newValue is a valid json string this.schema will trigger _schemaChanged again so we return to prevent schema changes being applied twice
-          if newValue is an invalid json string just return. Whatever the previous schema was that remains visible to the user
+        if newValue for schema is given as json string, parse it and assign it to this.schema
+        if newValue is a valid json string this.schema will trigger _schemaChanged again so we return to prevent schema changes being applied twice
+        if newValue is an invalid json string just return. Whatever the previous schema was that remains visible to the user
         */
         try {
           newValue = JSON.parse(newValue);
@@ -271,12 +271,100 @@
         return;
       }
 
-
       // check if newValue is valid schema object
       // if its invalid whatever the previous schema was that remains visible to the user
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
       }
+
+      // figure out the list of the elements that should be imported
+      schemaHelpers.initializeCentralArrayOfComponents();
+      var _properties = newValue.properties;
+      var _propertyNames = Object.keys(newValue.properties);
+      var nonImportedElements = [];
+
+      _propertyNames.forEach(function (propName, index) {
+        var propDef = _properties[propName];
+        var displayType = schemaHelpers.getDisplayType(propDef, []);
+        var mapping = schemaHelpers.findMapping(displayType);
+
+        if (!mapping) {
+          // element is not loaded; scheadule it for importHref
+          propDef.displayType = displayType;
+          nonImportedElements.push(propDef);
+        }
+      });
+
+      var displayTypeToFormElementMapping = {
+        array: "at-form-array",
+        boolean: "at-form-checkbox",
+        toggle: "at-form-checkbox",
+        code: "at-form-codemirror",
+        json: "at-form-codemirror",
+        object: "at-form-complex",
+        date: "at-form-date",
+        time: "at-form-date",
+        datetime: "at-form-date",
+        daterange: "at-form-daterange",
+        file: "at-form-file",
+        image: "at-form-image",
+        'enum': "at-form-lookup",
+        lookup: "at-form-lookup",
+        marked: "at-form-markdown",
+        password: "at-form-password",
+        number: "at-form-number",
+        radio: "at-form-radio",
+        section: "at-form-section",
+        state: "at-form-state",
+        string: "at-form-text",
+        textarea: "at-form-textarea"
+      };
+
+      var self = this;
+      if (nonImportedElements.length) {
+        var pendingImportsCount = nonImportedElements.length;
+
+        nonImportedElements.forEach(function (propDef, index) {
+          // To construct elemHref we need static information about what (type, xtype) maps to which at-form element
+          // Right now, only $meta in each element contains this information and central array of components is populated with $meta information
+          // So, to dynamically importHref needed elements we need to introduce static information (which will just be a copy paste from $meta of each element)
+
+          var displayType = propDef.displayType;
+          var elementName = displayTypeToFormElementMapping[displayType];
+
+          // construct elemHref
+          var compUrl = document.baseURI.indexOf("/components/") >= 0 ? "/components/" : "components/";
+
+          if (document.URL.indexOf("/elements/designer-element/") >= 0) {
+            compUrl = "/components/";
+          }
+
+          if (window.ComponentsBase != undefined) {
+            compUrl = window.ComponentsBase;
+          }
+          var elemHref = compUrl + elementName + "/" + elementName + ".html";
+
+          self.importHref(elemHref, function(e) {
+            // import was successful
+            pendingImportsCount -= 1;
+            if (!pendingImportsCount) {
+              self._renderSchema(newValue);
+            }
+          }, function (e) {
+            // import failed
+            console.log("import failed: " + e.target.href);
+          });
+        });
+      } else {
+        self._renderSchema(newValue);
+      }
+    },
+
+    // ------------------------------
+    _renderSchema: function(newValue, oldValue) {
+      // cache the reference to at-core-schema.schemaHelpers
+      var _sh = window.schemaHelpers;
+
       // if data is set before schema, this._internalData is already updated
       // if schema is set first this._internalData is undefined so its initialized to empty object
       if (!this._internalData) {
