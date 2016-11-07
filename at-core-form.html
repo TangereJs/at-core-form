@@ -212,7 +212,7 @@
         element = this.getElement(elementId);
       } else {
         // focus first element on the form
-        var propertyNames = Object.keys(this.schema.properties);
+        var propertyNames = Object.getOwnPropertyNames(this.schema.properties);
         var firstElementName = propertyNames[0];
         element = this.getElement(firstElementName);
       }
@@ -229,7 +229,7 @@
 
       if (this.schema && this.schema.properties) {
         var properties = this.schema.properties;
-        var propNames = Object.keys(properties);
+        var propNames = Object.getOwnPropertyNames(properties);
         propNames.forEach(function(propName, index) {
           var formElement = self.getElement(propName);
           if (formElement) {
@@ -280,7 +280,7 @@
       // figure out the list of the elements that should be imported
       schemaHelpers.initializeCentralArrayOfComponents();
       var _properties = newValue.properties;
-      var _propertyNames = Object.keys(newValue.properties);
+      var _propertyNames = Object.getOwnPropertyNames(newValue.properties);
       var nonImportedElements = [];
 
       _propertyNames.forEach(function (propName, index) {
@@ -390,7 +390,7 @@
 
       var fieldsFragment = document.createDocumentFragment();
       var divPrototype = document.createElement('div');
-      var propertyNames = Object.keys(newValue.properties);
+      var propertyNames = Object.getOwnPropertyNames(newValue.properties);
       var propertyDefinition;
       var defaultValue;
       var containsProperty;
@@ -503,7 +503,7 @@
       if (_sh.isObject(self.data)) {
         // if data was set first there is a chance that some properties form this._internalData are missing in this.data
         // this.data must be updated with missing properties
-        var internalDataKeys = Object.keys(this._internalData);
+        var internalDataKeys = Object.getOwnPropertyNames(this._internalData);
         internalDataKeys.forEach(function (key, index) {
           // self.data[key] === undefined means that the key is missing from self.data
           if (!self.data.hasOwnProperty(key)) {
@@ -566,7 +566,7 @@
         // at-core-form invokes rule evaluation when any element on the form changes value;
         // its not really desirable to invoke rule evaluation that way, since we have access to at-form-behaviors-rules-evaluation._evaluateRules function
         // but to invoke evaluate rules we need a property and its value; so we provide first property on the form and its value
-        var propNames = Object.keys(schema.properties);
+        var propNames = Object.getOwnPropertyNames(schema.properties);
         var propName = propNames[0];
         var propValue = this.getElement(propName).value;
         this._evaluateRules(propName, propValue);
@@ -669,7 +669,7 @@
       var _internalData = this._internalData;
 
       // update _internalData with keys from newValue
-      var newValueKeys = Object.keys(newValue);
+      var newValueKeys = Object.getOwnPropertyNames(newValue);
       newValueKeys.forEach(function (key, index) {
         _internalData[key] = newValue[key];
         if (_sh.isObject(newValue[key]) || _sh.isArray(newValue[key])) {
@@ -677,7 +677,7 @@
         }
       });
 
-      if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties) || Object.keys(this.schema.properties).length === 0) {
+      if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties) || Object.getOwnPropertyNames(this.schema.properties).length === 0) {
         // when schema is not set data-changed event should still be fired so that behavior is the same as when schema is set
         this.fire('data-changed', {
           value: this.data
@@ -708,7 +708,7 @@
 
       // newValue can contain only a subset of properties on the form
       // value in data-changed should contain all properties so we need to copy over missing properties from _internalData
-      var internalDataKeys = Object.keys(this._internalData);
+      var internalDataKeys = Object.getOwnPropertyNames(this._internalData);
       internalDataKeys.forEach(function (key, index) {
         if (!self.data.hasOwnProperty(key)) {
           self.data[key] = self._internalData[key];
@@ -718,7 +718,7 @@
         }
       });
 
-      if (_sh.isObject(this.schema) && _sh.isObject(this.schema.properties) && Object.keys(this.schema.properties).length) {
+      if (_sh.isObject(this.schema) && _sh.isObject(this.schema.properties) && Object.getOwnPropertyNames(this.schema.properties).length) {
         self._executeRuleEvaluation(this.schema);
       }
 
@@ -784,7 +784,7 @@
       //this._isBatchUpdate = true;
 
       //if (schemaHelpers.isObject(oldValue)) {
-      //    Object.keys(initialData).forEach(function(propertyName) {
+      //    Object.getOwnPropertyNames(initialData).forEach(function(propertyName) {
       //        if (!newValue.hasOwnProperty(propertyName)) {
       //            newValue[propertyName] = initialData[propertyName];
       //        }
@@ -792,7 +792,7 @@
       //}
 
       //if (schemaHelpers.isObject(newdeValue)) {
-      //    Object.keys(newValue).forEach(function(propertyName) {
+      //    Object.getOwnPropertyNames(newValue).forEach(function(propertyName) {
       //        fieldElement = fieldsContainer.querySelector('#' + propertyName);
       //        if (schemaHelpers.valueNotReadOnly(fieldElement)) {
       //            fieldElement.value = newValue[propertyName];
@@ -862,7 +862,7 @@
       var fieldsContainer = this.$.insertPoint;
       var fieldElement;
       var properties = this.schema.properties;
-      var propertyNames = properties ? Object.keys(properties) : [];
+      var propertyNames = properties ? Object.getOwnPropertyNames(properties) : [];
       var parsedValue = schemaHelpers.parseBool(newValue);
 
       propertyNames.forEach(function(propertyName) {
@@ -914,7 +914,7 @@
     _calculateInitialDataFromSchemaProperties: function(properties) {
       var insertPoint = this.$.insertPoint;
       var result = {};
-      var propertyNames = properties ? Object.keys(properties) : [];
+      var propertyNames = properties ? Object.getOwnPropertyNames(properties) : [];
       var propSchemaDef;
       var calculatedValue;
 
