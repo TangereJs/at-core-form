@@ -207,6 +207,13 @@
         return;
       }
 
+      // postpone focus setting until rendering is finished
+      if (this._rendering) {
+        this._setFocusPending = true;
+        this._setFocusElementId = elementId;
+        return;
+      }
+
       var element;
       if (_sh.isString(elementId) && elementId !== "") {
         element = this.getElement(elementId);
@@ -276,6 +283,9 @@
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
       }
+
+      // set flag to indicate that rendering is currently active
+      this._rendering = true;
 
       // figure out the list of the elements that should be imported
       schemaHelpers.initializeCentralArrayOfComponents();
@@ -535,9 +545,16 @@
         self._executeRuleEvaluation(newValue);
       }
 
-      self.setFocus();
+      this._rendering = false; // clearing flag indicating an active rendering process
 
-      self.fire('at-core-form-rendered');
+      // set pending focus 
+      if (this._setFocusPending) {       
+        this.setFocus(this._setFocusElementId);
+        delete this._setFocusPending;
+        delete this._setFocusElementId;
+      }
+
+      self.fire('rendered', this, { bubbles: false });
     },
 
     _executeRuleEvaluation: function (schema) {
