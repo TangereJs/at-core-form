@@ -15,13 +15,14 @@
   <script src="../../iron-test-helpers/test-helpers.js"></script>
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
+  <link rel="import" href="../../at-form-text/at-form-text.html">
   <link rel="import" href="../at-core-form.html">
 
 </head>
 
 <body>
 
-  <test-fixture>
+  <test-fixture id="propertyTests">
     <template>
       <at-core-form></at-core-form>
     </template>
@@ -42,7 +43,7 @@
           var invalidDatas = [undefined, null, "", "undefined", "null", true, false, "true", "false", [], function() {
             return undefined;
           }];
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
 
           for (var i = 0; i < invalidSchemas.length; i++) {
@@ -72,7 +73,7 @@
             }
           ];
           var data = {};
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
 
           for (var i = 0; i < invalidSchemas.length; i++) {
@@ -97,7 +98,7 @@
           var invalidDatas = [undefined, null, "", "undefined", "null", true, false, "true", "false", [], function() {
             return undefined;
           }];
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
 
           for (var j = 0; j < invalidDatas.length; j++) {
@@ -149,7 +150,7 @@
         var stringData = JSON.stringify(getData());
 
         test('schema is string, data is string', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           coreForm.schema = stringSchema;
 
           // internalData must have entries for each element
@@ -206,14 +207,14 @@
           var insertPoint = coreForm.$.insertPoint;
           assert.equal(Polymer.dom(insertPoint).children.length, 5, 'insert point doesn\'t contain corrent number of elements');
 
-          flush(function() {
+          flush(function(){
             assert.equal(eventCount, 1, 'at-core-form didn\'t fire corrent number of events');
             done();
           });
         });
 
         test('schema is string, data is object', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           coreForm.schema = stringSchema;
 
           // internalData must have entries for each element
@@ -277,7 +278,7 @@
         });
 
         test('schema is object, data is string', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           coreForm.schema = schema;
 
           // internalData must have entries for each element
@@ -341,7 +342,7 @@
         });
 
         test('schema is object, data is object', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
           coreForm.schema = schema;
 
           // internalData must have entries for each element
@@ -460,7 +461,7 @@
         var stringData = JSON.stringify(getData());
 
         test('schema is string, data is string', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -516,7 +517,7 @@
         });
 
         test('schema is string, data is object', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -572,7 +573,7 @@
         });
 
         test('schema is object, data is string', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -627,7 +628,7 @@
         });
 
         test('schema is object, data is object', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -682,7 +683,7 @@
         });
 
         test('schema is object, data is object, set value for individual elements', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -814,7 +815,7 @@
         }
 
         test('schema is object, data is object, schema first data second, set value for individual elements', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
@@ -913,7 +914,7 @@
         });
 
         test('schema is object, data is object, data first, schema second, set value for individual elements', function(done) {
-          var coreForm = document.createElement('at-core-form');
+          var coreForm = fixture('propertyTests');
 
           var eventCount = 0;
           coreForm.addEventListener('data-changed', function(event) {
