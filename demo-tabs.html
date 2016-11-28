@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>At-Core-Form demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="at-core-form.html" />
+
+  <style>
+  .container-w {
+    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-m {
+    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-s {
+    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo" tab-mode="tab" active-tab="section2"></at-core-form>
+  </div>
+  <div class="container-s">
+    <button type="button" id="validateBtn">Validate</button>
+  </div>
+  <script>
+    window.addEventListener('WebComponentsReady', function (e) {
+      var demoForm = document.getElementById("coreFormDemo");
+      demoForm.schema = {
+        properties: {
+          text1: {
+            type: 'string'
+          },
+          text2: {
+            type: 'string'
+          },
+          text3: {
+            type: 'string'
+          },
+          text4: {
+            type: 'string'
+          },
+          section1: {
+            type: 'section'
+          },
+          text5: {
+            type: 'string'
+          },
+          text6: {
+            type: 'string'
+          },
+          section2: {
+            type: 'section'
+          },
+          text7: {
+            type: 'string'
+          },
+          text8: {
+            type: 'string'
+          },
+          section3: {
+            type: 'section'
+          },
+          text9: {
+            type: 'string'
+          },
+          text10: {
+            type: 'string',
+            required: true
+          },
+        }
+      };
+
+      var validateBtn = document.getElementById('validateBtn');
+      validateBtn.addEventListener('click', function(event) {
+        var result = demoForm.validate();
+      });
+
+    });
+  </script>
+</body>
+
+</html>
