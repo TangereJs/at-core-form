@@ -216,7 +216,6 @@
     set valid(newValue) {},
 
     ready: function() {
-      this._elementsToValidate = [];
       this._isReady = true;
     },
 
@@ -327,6 +326,19 @@
       // if its invalid whatever the previous schema was that remains visible to the user
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
+      }
+
+      // this is here to prevent rerendering of at-core-form when activeTab
+      // is updated by clicking an at-carbon-tab on at-carbon-tabs
+      if (this.tabMode === "tab") {
+        var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
+        if (carbonTabs) {
+          if (carbonTabs.selected === activeTab) {
+            return;
+          }
+          carbonTabs.selected = activeTab;
+          return;
+        }
       }
 
       // set flag to indicate that rendering is currently active
@@ -487,6 +499,7 @@
 
         carbonTabs.addEventListener('selected-changed', function(event) {
           ironPages.selected = event.detail.value;
+          self.activeTab = event.detail.value;
         });
 
         formGroups.forEach(function(group, index) {
@@ -646,7 +659,7 @@
 
         Polymer.dom(formElement).setAttribute('id', propertyName);
         // do not put at-form-section into elementsToValidate because validation doesn't make sense for at-form-section
-        if ([ "section" ].indexOf(displayType) < 0) {
+        if ([ "section" ].indexOf(displayType) === -1) {
           self._elementsToValidate.push(formElement);
         }
 
@@ -854,7 +867,9 @@
         self._executeRuleEvaluation(this.schema);
       }
 
-      this._calculateFormValidState();
+      if (this._elementsToValidate) {
+        this._calculateFormValidState();
+      }
       this.fire('data-changed', {
         value: this.data
       }, {
