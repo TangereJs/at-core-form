@@ -363,7 +363,7 @@
             currentGroupElements = [];
             formGroups.push({
               name: currentGroupName,
-              label: propDef.label || currentGroupName,
+              label: propDef.title || currentGroupName,
               elements:  currentGroupElements
             });
           }
@@ -486,14 +486,6 @@
         Polymer.dom(fieldsFragment).appendChild(ironPages);
         ironPages.attrForSelected = 'id';
 
-        carbonTabs.$.tabsContent.attrForSelected = 'id';
-        carbonTabs.selected = self.activeTab || formGroups[0].name;
-
-        carbonTabs.addEventListener('selected-changed', function(event) {
-          ironPages.selected = event.detail.value;
-          self.activeTab = event.detail.value;
-        });
-
         formGroups.forEach(function(group, index) {
           var name = group.name;
           var label = group.label;
@@ -515,6 +507,14 @@
           });
         });
 
+        carbonTabs.$.tabsContent.attrForSelected = 'id';
+        carbonTabs.selected = self.activeTab || formGroups[0].name;
+        ironPages.selected = self.activeTab || formGroups[0].name;
+
+        carbonTabs.addEventListener('selected-changed', function(event) {
+          ironPages.selected = event.detail.value;
+          self.activeTab = event.detail.value;
+        });
       }
 
       if (_sh.isObject(self.data)) {
@@ -586,14 +586,15 @@
 
         displayType = schemaHelpers.getDisplayType(propertyDefinition, self._unsupported_types);
 
-        // handle xgridcols
         xgridcols = displayType === "section" ? 12 : 6;
+        // handle xgridcols
         if (_sh.isString(propertyDefinition.xgridcols)) {
           var parseResult = parseInt(propertyDefinition.xgridcols);
           if (!window.isNaN(parseResult)) {
             xgridcols = parseResult;
           }
         }
+        xgridcols = displayType === "section" ? 12 : xgridcols;
 
         // create element for field
         var formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
@@ -992,19 +993,29 @@
      */
     validate: function() {
       var isValid = true;
+      var firstInvalid = false;
+      var sectionId;
 
-      for (var i = 0; i < this._elementsToValidate.length && isValid; i++) {
+      for (var i = 0; i < this._elementsToValidate.length; i++) {
         var element = this._elementsToValidate[i];
         if (!(element.disabled || element.hide)) {
           var elementValid = element.validate(true);
           isValid = isValid && elementValid;
+
+          if (!elementValid && !firstInvalid) {
+            sectionId = this._findSection(element.id);
+            if (sectionId) {
+              firstInvalid = element;
+            }
+          }
         }
       }
 
-      var sectionId = this._findSection(element.id);
-      if (this.tabMode === "tab" && sectionId) {
-        var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
-        if (tabs) tabs.selected = sectionId;
+      if (firstInvalid) {
+        if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.tabMode === "tab") {
+          var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
+          if (tabs) tabs.selected = sectionId;
+        }
       }
 
       return isValid;
