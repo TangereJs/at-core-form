@@ -202,12 +202,13 @@
        */
       activeTab: {
         type: String,
-        value: ""
+        value: "",
+        observer: '_activeTabChanged'
       }
     },
 
     observers: [
-      '_schemaChanged(schema, tabMode, activeTab)'
+      '_schemaChanged(schema, tabMode)'
     ],
 
     get valid() {
@@ -216,6 +217,7 @@
     set valid(newValue) {},
 
     ready: function() {
+      this._activeTabChanged(this.activeTab, "called from ready");
       this._isReady = true;
     },
 
@@ -304,7 +306,7 @@
     },
 
 
-    _schemaChanged: function (newValue, tabMode, activeTab) {
+    _schemaChanged: function (newValue, tabMode) {
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
@@ -326,19 +328,6 @@
       // if its invalid whatever the previous schema was that remains visible to the user
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
-      }
-
-      // this is here to prevent rerendering of at-core-form when activeTab
-      // is updated by clicking an at-carbon-tab on at-carbon-tabs
-      if (this.tabMode === "tab") {
-        var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
-        if (carbonTabs) {
-          if (carbonTabs.selected === activeTab) {
-            return;
-          }
-          carbonTabs.selected = activeTab;
-          return;
-        }
       }
 
       // set flag to indicate that rendering is currently active
@@ -497,6 +486,9 @@
         Polymer.dom(fieldsFragment).appendChild(ironPages);
         ironPages.attrForSelected = 'id';
 
+        carbonTabs.$.tabsContent.attrForSelected = 'id';
+        carbonTabs.selected = self.activeTab || formGroups[0].name;
+
         carbonTabs.addEventListener('selected-changed', function(event) {
           ironPages.selected = event.detail.value;
           self.activeTab = event.detail.value;
@@ -522,8 +514,7 @@
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
           });
         });
-        carbonTabs.$.tabsContent.attrForSelected = 'id';
-        carbonTabs.selected = self.activeTab || formGroups[0].name;
+
       }
 
       if (_sh.isObject(self.data)) {
@@ -679,6 +670,17 @@
       } else {
         console.log('Property name is invalid. Skipping ' + propertyName + ' property');
         console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
+      }
+    },
+
+    _activeTabChanged: function (newValue, oldValue) {
+      // this is here to prevent rerendering of at-core-form when activeTab
+      // is updated by clicking an at-carbon-tab on at-carbon-tabs
+      if (this.tabMode !== "tab") { return; }
+
+      var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
+      if (carbonTabs && carbonTabs.selected !== newValue) {
+        carbonTabs.selected = newValue;
       }
     },
 
