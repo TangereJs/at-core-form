@@ -719,9 +719,7 @@
 
         // 1a. Why do we clear ui valid state of the elements
         // Because its expected that initially UI errors are not displayed. Errors should be displayed only when user interacts with the element(s)
-        var self = this;
-        propNames.forEach(function(propName, index) {
-          var element = self.getElement(propName);
+        this._elementsToValidate.forEach(function(element, index) {
           element._clearUIValidState();
         });
       }
