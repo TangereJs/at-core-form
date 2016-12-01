@@ -13,6 +13,15 @@
   <template>
     <style include="at-form-common"></style>
     <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      :host * {
+        box-sizing: border-box;
+      }
+
       .at-core-form-wrapper {
         position: relative;
         margin-top: 16px;
@@ -168,33 +177,39 @@
       },
 
       /**
-      * at-core-form tabMode governs the rendering of at-form-section <br/>
-      * tabMode === default, renders at-form-section as a heading
-      * tabMode === tab, renders at-form-section as a tab
+      * at-core-form sectionMode governs the rendering of at-form-section <br/>
+      * sectionMode === default, renders at-form-section as a heading
+      * sectionMode === tab, renders at-form-section as a tab
       * all form-section elements form a tab group
       * iron-pages hold the elements belonging to a tab group
       * clicking a tab changes elements currently visible on screen
       *
-      * @property tabMode
+      * @property sectionMode
       * @type string
       * @default default
       */
-      tabMode: {
+      sectionMode: {
         type: String,
-        value: 'default',
+        value: 'auto',
         xtype: "enum",
         xvaluelist: [{
-          title: "Default",
-          value: "default"
+          title: "Always Sections",
+          value: "sections"
         }, {
-          title: "Tab Layout",
-          value: "tab"
+          title: "Always Tabs",
+          value: "tabs"
+        }, {
+          title: "Responsive",
+          value: "auto"
+        }, {
+          title: "Tabs in mobile mode",
+          value: "mobile"
         }]
       },
 
       /**
-       * holds the value of the currently active tab when tabMode === tab <br/>
-       * has value of "" when tabMode === default
+       * holds the value of the currently active tab when sectionMode === tab <br/>
+       * has value of "" when sectionMode === default
        *
        * @property activeTab
        * @type string
@@ -208,7 +223,7 @@
     },
 
     observers: [
-      '_schemaChanged(schema, tabMode)'
+      '_schemaChanged(schema, sectionMode, layout)'
     ],
 
     get valid() {
@@ -235,6 +250,7 @@
     },
 
     updateLayout: function(newWidth, oldWidth) {
+      if (isNaN(newWidth)) { return; }
       if (newWidth < 600) {
         this.layout = "vertical";
       } else {
@@ -306,7 +322,7 @@
     },
 
 
-    _schemaChanged: function (newValue, tabMode) {
+    _schemaChanged: function (newValue, sectionMode, layout) {
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
@@ -354,7 +370,8 @@
           propDef.displayType = displayType;
           nonImportedElements.push(propDef);
         }
-        if (tabMode === "tab") {
+
+        if (sectionMode === "tabs" || (["auto", "mobile"].indexOf(sectionMode) !== -1 && layout === "vertical")) {
           if (displayType !== 'section') {
             currentGroupElements.push({ name: propName, definition: propDef });
           } else {
@@ -367,7 +384,9 @@
               elements:  currentGroupElements
             });
           }
-        } else {
+        } else if (sectionMode === "sections" || (sectionMode === "auto" && layout === "horizontal")) {
+          nonGroupedElements.push({ name: propName, definition: propDef });
+        } else if (sectionMode === "mobile" && layout === "horizontal" && displayType !== 'section') {
           nonGroupedElements.push({ name: propName, definition: propDef });
         }
 
@@ -677,8 +696,6 @@
     _activeTabChanged: function (newValue, oldValue) {
       // this is here to prevent rerendering of at-core-form when activeTab
       // is updated by clicking an at-carbon-tab on at-carbon-tabs
-      if (this.tabMode !== "tab") { return; }
-
       var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
       if (carbonTabs && carbonTabs.selected !== newValue) {
         carbonTabs.selected = newValue;
@@ -1012,7 +1029,7 @@
       }
 
       if (firstInvalid) {
-        if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.tabMode === "tab") {
+        if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.sectionMode === "tab") {
           var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
           if (tabs) tabs.selected = sectionId;
         }
