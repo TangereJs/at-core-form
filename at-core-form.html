@@ -82,7 +82,7 @@
     hostAttributes: {
       tabindex: 0
     },
-    behaviors: [Tangere.behaviors.RulesEvaluation],
+    behaviors: [ Tangere.behaviors.RulesEvaluation ],
     properties: {
       /**
        * Specification of elements that should appear on the form.<br/>
@@ -223,7 +223,8 @@
     },
 
     observers: [
-      '_schemaChanged(schema, sectionMode, layout)'
+      '_schemaChanged(schema, sectionMode, layout)',
+      '_sectionLayoutChanged(sectionMode, layout)'
     ],
 
     get valid() {
@@ -322,7 +323,7 @@
     },
 
 
-    _schemaChanged: function (newValue, sectionMode, layout) {
+    _schemaChanged: function (newValue) {
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
@@ -371,25 +372,18 @@
           nonImportedElements.push(propDef);
         }
 
-        if (sectionMode === "tabs" || (["auto", "mobile"].indexOf(sectionMode) !== -1 && layout === "vertical")) {
-          if (displayType !== 'section') {
-            currentGroupElements.push({ name: propName, definition: propDef });
-          } else {
-            // open a new group
-            currentGroupName = propName;
-            currentGroupElements = [];
-            formGroups.push({
-              name: currentGroupName,
-              label: propDef.title || currentGroupName,
-              elements:  currentGroupElements
-            });
-          }
-        } else if (sectionMode === "sections" || (sectionMode === "auto" && layout === "horizontal")) {
-          nonGroupedElements.push({ name: propName, definition: propDef });
-        } else if (sectionMode === "mobile" && layout === "horizontal" && displayType !== 'section') {
-          nonGroupedElements.push({ name: propName, definition: propDef });
+        if (displayType !== 'section') {
+          currentGroupElements.push({ name: propName, definition: propDef });
+        } else {
+          // open a new group
+          currentGroupName = propName;
+          currentGroupElements = [{ name: propName, definition: propDef }];
+          formGroups.push({
+            name: currentGroupName,
+            label: propDef.title || currentGroupName,
+            elements: currentGroupElements
+          });
         }
-
       });
 
       var displayTypeToFormElementMapping = {
@@ -497,13 +491,26 @@
       });
 
       if (formGroups.length) {
+        if (sectionMode === "tabs" || (["auto", "mobile"].indexOf(sectionMode) !== -1 && layout === "vertical")) {
+
+        } else if (sectionMode === "sections" || (sectionMode === "auto" && layout === "horizontal")) {
+
+        } else if (sectionMode === "mobile" && layout === "horizontal" && displayType !== 'section') {
+        }
+
+        var sectionMode = self.sectionMode;
+        var layout = self.layout;
+        self._hideTabs = sectionMode ==="sections" ||
+          (sectionMode === "auto" && layout === "horizontal") ||
+          (sectionMode === "mobile" && layout === "horizontal");
+
+        self._hideHeadings = sectionMode === "mobile" && layout === "horizontal";
+        var selectedSection = self.activeTab || formGroups[0].name;
+
         // create tab group
         var carbonTabs = document.createElement('at-carbon-tabs');
         Polymer.dom(fieldsFragment).appendChild(carbonTabs);
-
-        var ironPages = document.createElement('iron-pages');
-        Polymer.dom(fieldsFragment).appendChild(ironPages);
-        ironPages.attrForSelected = 'id';
+        carbonTabs.hidden = self._hideTabs;
 
         formGroups.forEach(function(group, index) {
           var name = group.name;
@@ -514,25 +521,34 @@
           Polymer.dom(carbonTabs).appendChild(carbonTab);
 
           var ironPage = divPrototype.cloneNode(true);
-          Polymer.dom(ironPages).appendChild(ironPage);
-          Polymer.dom(ironPage).setAttribute('id', name);
+          Polymer.dom(fieldsFragment).appendChild(ironPage);
+          Polymer.dom(ironPage).setAttribute('at-core-form-section-id', name);
+          self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
 
           var elements = group.elements;
           elements.forEach(function (element, index) {
             var propertyName = element.name;
             var propertyDefinition = element.definition;
+            if (!index) {
+              propertyDefinition.hide = self._hideHeadings;
+            }
 
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
           });
         });
 
         carbonTabs.$.tabsContent.attrForSelected = 'id';
-        carbonTabs.selected = self.activeTab || formGroups[0].name;
-        ironPages.selected = self.activeTab || formGroups[0].name;
+        carbonTabs.selected = selectedSection;
 
         carbonTabs.addEventListener('selected-changed', function(event) {
-          ironPages.selected = event.detail.value;
+          if (self._hideTabs) { return; }
           self.activeTab = event.detail.value;
+          var sections = Polymer.dom(self.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+          sections.forEach(function(section, index) {
+            var sectionId = section.getAttribute('at-core-form-section-id');
+            self.toggleClass('hidden', sectionId !== self.activeTab, section);
+          });
+
         });
       }
 
@@ -691,6 +707,31 @@
         console.log('Property name is invalid. Skipping ' + propertyName + ' property');
         console.log('Property definition is:  ', schemaHelpers.formatJson(propertyDefinition));
       }
+    },
+
+    _sectionLayoutChanged: function (sectionMode, layout) {
+      var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
+      var sections = Polymer.dom(this.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+      var headings = Polymer.dom(this.$.insertPoint).querySelectorAll('at-form-section');
+      var self = this;
+      var sectionMode = self.sectionMode;
+      var layout = self.layout;
+      var hideTabs = self._hideTabs = sectionMode ==="sections" ||
+        (sectionMode === "auto" && layout === "horizontal") ||
+        (sectionMode === "mobile" && layout === "horizontal");
+      var hideHeadings = self._hideHeadings = sectionMode === "mobile" && layout === "horizontal";
+      var selectedSection = this.activeTab;
+
+      this.toggleClass('hidden', hideTabs, carbonTabs);
+      sections.forEach(function(section, index) {
+        var sectionId = section.getAttribute('at-core-form-section-id');
+        self.toggleClass('hidden', !hideTabs && sectionId !== selectedSection, section);
+      });
+
+      headings.forEach(function(heading, index){
+        self.toggleClass('hidden', hideHeadings, heading);
+      });
+
     },
 
     _activeTabChanged: function (newValue, oldValue) {
