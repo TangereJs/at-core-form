@@ -2,11 +2,16 @@
   "name": "paper-checkbox",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#0.8-preview",
+    "tangere": "TangereJs/tangere#0.8-preview",
+    "at-core-schema": "TangereJs/at-core-schema#0.8-preview",
+    "at-core-resize-sensor": "TangereJs/at-core-resize-sensor#0.8-preview",
+    "at-rule-engine": "TangereJs/at-rule-engine#0.8-preview",
+    "at-carbon-tabs": "TangereJs/at-carbon-tabs#0.8-preview",
     "at-theme": "TangereJs/at-theme#0.8-preview",
     "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview",
     "paper-checkbox": "PolymerElements/paper-checkbox#master",
-    "paper-toggle-button": "PolymerElements/paper-toggle-button#master"
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#master",
+    "at-doc-viewer": "TangereJs/at-doc-viewer#0.8-preview"
   },
   "version": "0.0.1.166"
 }
