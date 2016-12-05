@@ -222,7 +222,7 @@
     },
 
     observers: [
-      '_schemaChanged(schema, sectionMode, layout)',
+      '_schemaChanged(schema)',
       '_sectionLayoutChanged(sectionMode, layout)'
     ],
 
@@ -490,13 +490,6 @@
       });
 
       if (formGroups.length) {
-        if (sectionMode === "tabs" || (["auto", "mobile"].indexOf(sectionMode) !== -1 && layout === "vertical")) {
-
-        } else if (sectionMode === "sections" || (sectionMode === "auto" && layout === "horizontal")) {
-
-        } else if (sectionMode === "mobile" && layout === "horizontal" && displayType !== 'section') {
-        }
-
         var sectionMode = self.sectionMode;
         var layout = self.layout;
         self._hideTabs = sectionMode ==="sections" ||
@@ -721,14 +714,14 @@
       var hideHeadings = self._hideHeadings = sectionMode === "mobile" && layout === "horizontal";
       var selectedSection = this.activeTab;
 
-      this.toggleClass('hidden', hideTabs, carbonTabs);
+      if (carbonTabs) { carbonTabs.hidden = hideTabs; }
       sections.forEach(function(section, index) {
         var sectionId = section.getAttribute('at-core-form-section-id');
         self.toggleClass('hidden', !hideTabs && sectionId !== selectedSection, section);
       });
 
       headings.forEach(function(heading, index){
-        self.toggleClass('hidden', hideHeadings, heading);
+        heading.hide = hideHeadings;
       });
 
     },
