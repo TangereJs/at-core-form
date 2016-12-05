@@ -510,7 +510,7 @@
           var label = group.label;
           var carbonTab = document.createElement('at-carbon-tab');
           Polymer.dom(carbonTab).setAttribute('id', name);
-          Polymer.dom(carbonTab).innerHTML = window.schemaHelpers.capitalize(label);
+          Polymer.dom(carbonTab).innerHTML = label;
           Polymer.dom(carbonTabs).appendChild(carbonTab);
 
           var ironPage = divPrototype.cloneNode(true);
