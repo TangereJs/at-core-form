@@ -528,7 +528,7 @@
           var elements = group.elements;
           elements.forEach(function (element, index) {
             var propertyName = element.name;
-            var propertyDefinition = element.definition;
+            var propertyDefinition = JSON.parse(JSON.stringify(element.definition));
             if (!index) {
               propertyDefinition.hide = self._hideHeadings;
             }
