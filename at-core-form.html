@@ -345,16 +345,24 @@
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
       }
-
-      // set flag to indicate that rendering is currently active
-      this._rendering = true;
+      
 
       // figure out the list of the elements that should be imported
       schemaHelpers.initializeCentralArrayOfComponents();
       var _properties = newValue.properties;
       var _propertyNames = Object.getOwnPropertyNames(newValue.properties);
-      var nonImportedElements = [];
 
+      // don't render initial, empty schema
+      if (!this.__ready && _propertyNames.length == 0) {
+        this.__ready = true;
+        return;
+      }
+      this.__ready = true;
+
+
+      // set flag to indicate that rendering is currently active
+      this._rendering = true;
+      var nonImportedElements = [];
       var nonGroupedElements;
       var formGroups = [];
       var currentGroupName = "";
