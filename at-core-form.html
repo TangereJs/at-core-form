@@ -345,7 +345,7 @@
       if (!_sh.isObject(newValue) || !_sh.isObject(newValue.properties)) {
         return;
       }
-      
+
 
       // figure out the list of the elements that should be imported
       schemaHelpers.initializeCentralArrayOfComponents();
@@ -1052,15 +1052,19 @@
      * It calls validate method of each element in _elementsToValidate array
      * Form is valid if all elements are valid. Form is invalid if at least one element is invalid.
      */
-    validate: function() {
+    validate: function(showError, setFocusOnError) {
       var isValid = true;
       var firstInvalid = false;
       var sectionId;
 
+      if (setFocusOnError === undefined) {
+        setFocusOnError = false;
+      }
+
       for (var i = 0; i < this._elementsToValidate.length; i++) {
         var element = this._elementsToValidate[i];
         if (!(element.disabled || element.hide)) {
-          var elementValid = element.validate(true);
+          var elementValid = element.validate(showError);
           isValid = isValid && elementValid;
 
           if (!elementValid && !firstInvalid) {
@@ -1076,6 +1080,9 @@
         if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.sectionMode === "tab") {
           var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
           if (tabs) tabs.selected = sectionId;
+        }
+        if (setFocusOnError) {
+          element.focus();
         }
       }
 
