@@ -6,7 +6,6 @@
   <title>At-Core-Form demo</title>
 
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../tangere/tangere.html" />
   <link rel="import" href="at-core-form.html" />
 
   <style>
@@ -63,7 +62,7 @@
         </div>
     </div>
   <script>
-      window.addEventListener('WebComponentsReady', function (e) {
+      document.addEventListener('WebComponentsReady', function (e) {
           var workingLookupAvailable = document.getElementById("workingLookupAvailable");
           workingLookupAvailable.available = ["Active", "Resolved", "Closed"];
           workingLookupAvailable.value = "Resolved";
