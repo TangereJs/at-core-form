@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>At-Core-Form demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="at-core-form.html" />
+
+  <style>
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+    
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo"></at-core-form>
+  </div>
+  <div class="container-m">
+    <h4>Event Log</h4>
+    <div id="eventLog" class="container-s">
+
+    </div>
+  </div>
+  <script>
+    window.addEventListener('WebComponentsReady', function (e) {
+      var demoForm = document.getElementById("coreFormDemo");
+      
+      demoForm.schema = {
+        'properties': {
+          'field1': {
+            'title': 'Test Field 1',
+            'type': 'string',
+            'xtype': 'code',
+            required: true
+          }
+        }
+      };
+      
+      demoForm.data = {
+        'field1': ""
+      };
+
+      var eventLog = document.getElementById('eventLog');
+      var msgContainerDiv = document.createElement('div');
+
+      demoForm.addEventListener('keypress', function (event) {
+        var msgContainerClone = msgContainerDiv.cloneNode(true);
+        msgContainerClone.textContent = "keypress event, with keycode: " + event.which;
+        eventLog.appendChild(msgContainerClone);
+
+        msgContainerClone = msgContainerDiv.cloneNode(true);
+        msgContainerClone.textContent = "field1: " + demoForm.data.field1;
+        eventLog.appendChild(msgContainerClone);
+
+
+        if (event.keyCode == 13) {
+          //--that works-- demoForm.focus();
+
+          demoForm.validate();
+          msgContainerClone = msgContainerDiv.cloneNode(true);
+          msgContainerClone.textContent = "after validate field1: " + demoForm.data.field1;
+          eventLog.appendChild(msgContainerClone);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

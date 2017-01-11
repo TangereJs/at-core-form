@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
-  <link rel="import" href="../polymer/polymer.html" />
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="at-core-form.html" />
 
   <style>
@@ -48,7 +48,7 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       -webkit-touch-callout: none;
     }
 
@@ -58,6 +58,7 @@
   </style>
 
 </head>
+
 <body unresolved>
   <div class="container">
     <div class="row">
@@ -72,38 +73,89 @@
     </div>
   </div>
   <script>
-    window.addEventListener('polymer-ready', function (e) {
+    window.addEventListener('WebComponentsReady', function (e) {
       var demoForm1 = document.getElementById("coreFormDemo1");
       var demoForm2 = document.getElementById("coreFormDemo2");
 
       demoForm1.schema = {
-        'properties':
-          {
-            'id': { 'description': 'The unique identifier for a product', 'type': 'number' },
-            'name': { 'type': 'string', 'required': true },
-            'city': { 'type': 'string', 'default': 'Default city name' },
-            'active': { 'type': 'boolean' },
-            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'xvaluelist':'XML,JSON', 'default': 'XML' }
+        'properties': {
+          'id': {
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
-        'required': ['id', 'city']
+          'name': {
+            'type': 'string',
+            'required': true
+          },
+          'city': {
+            'type': 'string',
+            'default': 'Default city name',
+            'required': true
+          },
+          'active': {
+            'type': 'boolean'
+          },
+          'activePera': {
+            'type': 'boolean',
+            'title': 'This is description for pera'
+          },
+          'dropdownDemo': {
+            'title': 'Name',
+            'type': 'string',
+            'xtype': 'enum',
+            'xvaluelist': 'XML,JSON'
+          }
+        }
       };
-      demoForm1.data = { 'id': 0, 'city': 'Boston', 'active': true, 'activePera': false };
-            
+      demoForm1.data = {
+        'id': 0,
+        'city': 'Boston',
+        'active': true,
+        'activePera': false,
+        'dropdownDemo': 'XML'
+      };
+
       demoForm2.schema = {
-        'properties':
-          {
-            'id': { 'description': 'The unique identifier for a product', 'type': 'number' },
-            'name': { 'type': 'string', 'required': true },
-            'city': { 'type': 'string', 'default': 'Default city name' },
-            'active': { 'type': 'boolean' },
-            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'xvaluelist': 'XML,JSON', 'default': 'XML' }
+        'properties': {
+          'id': {
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true
           },
-        'required': ['id', 'city']
+          'name': {
+            'type': 'string',
+            'required': true
+          },
+          'city': {
+            'type': 'string',
+            'default': 'Default city name',
+            'required': true
+          },
+          'active': {
+            'type': 'boolean'
+          },
+          'activePera': {
+            'type': 'boolean',
+            'title': 'This is description for pera'
+          },
+          'dropdownDemo': {
+            'title': 'Name',
+            'type': 'string',
+            'xtype': 'enum',
+            'xvaluelist': 'XML,JSON'
+          }
+        }
       };
-      demoForm2.data = { 'id': 1648, 'city': 'Krusevac', 'active': false, 'activePera': true };
+      demoForm2.data = {
+        'id': 1648,
+        'city': 'Krusevac',
+        'active': false,
+        'activePera': true,
+        'dropdownDemo': 'JSON'
+      };
     });
   </script>
 </body>
+
 </html>

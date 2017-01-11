@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-text tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../at-form-text/at-form-text.html">
+  <link rel="import" href="../at-core-form.html">
+
+</head>
+
+<body>
+
+  <test-fixture>
+    <template>
+      <at-core-form></at-core-form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('hide and disabled tests', function () {
+
+      function getSchema() {
+        return {
+          properties: {
+            text1: {
+              type: "string"
+            }
+          }
+        };
+      }
+
+      test('schema does not hide nor disable, at-core-form not hidden or disabled test various false and true values', function () {
+        var falseBooleanValues = [ undefined, null, "", "undefined", "null", false, "false", 0, "0", -0.1, "-0.1", -42, "-42" ];
+        var trueBooleanValues = [ true, "true", 42, "42", 3.14159, "3.14159", {}, [], function() { return undefined; }];
+
+        var coreForm = document.createElement('at-core-form');
+        coreForm.schema = getSchema();
+
+        var text1 = coreForm.getElement('text1');
+        assert.equal(text1.hide, false, 'text1 is hidden');
+        assert.equal(text1.disabled, false, 'text1 is disabled');
+
+        falseBooleanValues.forEach(function (boolValue, index) {
+          var schema = getSchema();
+          schema.properties.text1.disabled = boolValue;
+          coreForm.schema = schema;
+
+          var text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.disabled, false, 'text1 is disabled');
+
+          schema = getSchema();
+          schema.properties.text1.hide = boolValue;
+          coreForm.schema = schema;
+
+          text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.disabled, false, 'text1 is disabled');
+
+          schema = getSchema();
+          schema.properties.text1.disabled = boolValue;
+          schema.properties.text1.hide = boolValue;
+          coreForm.schema = schema;
+
+          text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.disabled, false, 'text1 is disabled');
+
+        });
+
+        trueBooleanValues.forEach(function (boolValue, index) {
+          var schema = getSchema();
+          schema.properties.text1.disabled = boolValue;
+          coreForm.schema = schema;
+
+          var text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.disabled, true, 'text1 is disabled');
+
+          schema = getSchema();
+          schema.properties.text1.hide = boolValue;
+          coreForm.schema = schema;
+
+          text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, true, 'text1 is hidden');
+          assert.equal(text1.disabled, false, 'text1 is disabled');
+
+          schema = getSchema();
+          schema.properties.text1.disabled = boolValue;
+          schema.properties.text1.hide = boolValue;
+          coreForm.schema = schema;
+
+          text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, true, 'text1 is hidden');
+          assert.equal(text1.disabled, true, 'text1 is disabled');
+        });
+      });
+
+      function twoPropSchema() {
+        return {
+          properties: {
+            text1: {
+              type: "string"
+            },
+            text2: {
+              type: "string"
+            }
+          }
+        };
+      }
+
+      test('schema hide, at-core-form hide combinations', function () {
+        var coreForm = document.createElement('at-core-form');
+
+        var formHides = [ false, true ];
+        var text1Hides = [ false, false, true, true ];
+        var text2Hides = [ false, true, false, true ];
+
+        var text1ExpectedHides = [ false, false, true, true, true, true, true, true ];
+        var text2ExpectedHides = [ false, true, false, true, true, true, true, true ];
+
+        formHides.forEach(function (formHide, index) {
+          coreForm.hide = formHide;
+          var hidesLength = text1Hides.length;
+
+          for (var i = 0; i < hidesLength; i++) {
+            var schema = twoPropSchema();
+            var text1Hide = text1Hides[i];
+            var text2Hide = text2Hides[i];
+
+            schema.properties.text1.hide = text1Hide;
+            schema.properties.text2.hide = text2Hide;
+
+            coreForm.schema = schema;
+
+            var text1 = coreForm.getElement('text1');
+            assert.equal(text1.hide, text1ExpectedHides[index*hidesLength+i], 'text1 is hidden');
+
+            var text2 = coreForm.getElement('text2');
+            assert.equal(text2.hide, text2ExpectedHides[index*hidesLength+i], 'text2 is hidden');
+          }
+
+        });
+      });
+
+      test('schema disabled, at-core-form disabled combinations', function () {
+        var coreForm = document.createElement('at-core-form');
+
+        var formDisableds = [ false, true ];
+        var text1Disableds = [ false, false, true, true ];
+        var text2Disableds = [ false, true, false, true ];
+
+        var text1ExpectedDisableds = [ false, false, true, true, true, true, true, true ];
+        var text2ExpectedDisableds = [ false, true, false, true, true, true, true, true ];
+
+        formDisableds.forEach(function (formDisabled, index) {
+          coreForm.disabled = formDisabled;
+          var hidesLength = text1Disableds.length;
+          for (var i = 0; i < hidesLength; i++) {
+            var schema = twoPropSchema();
+            var text1Disabled = text1Disableds[i];
+            var text2Disabled = text2Disableds[i];
+
+            schema.properties.text1.disabled = text1Disabled;
+            schema.properties.text2.disabled = text2Disabled;
+
+            coreForm.schema = schema;
+
+            var text1 = coreForm.getElement('text1');
+            assert.equal(text1.disabled, text1ExpectedDisableds[index*hidesLength+i], 'text1 is disabled');
+
+            var text2 = coreForm.getElement('text2');
+            assert.equal(text2.disabled, text2ExpectedDisableds[index*hidesLength+i], 'text2 is disabled');
+          }
+
+        });
+      });
+
+    });
+  </script>
+
+</body>
+</html>

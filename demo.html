@@ -1,94 +1,183 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
-  <link rel="import" href="../polymer/polymer.html" />
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="at-core-form.html" />
 
   <style>
-    .row {
-      margin-right: -15px;
-      margin-left: -15px;
-    }
+  .container-w {
+    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
 
-    .container {
-      padding-right: 15px;
-      padding-left: 15px;
-      margin-right: auto;
-      margin-left: auto;
-    }
+  .container-m {
+    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
 
-    @media (min-width: 768px) {
-      .container {
-        width: 750px;
-      }
-    }
+  .container-s {
+    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
 
-    @media (min-width: 992px) {
-      .container {
-        width: 970px;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      .container {
-        width: 1170px;
-      }
-    }
-  </style>
-  <style shim-shadowdom>
-    body {
-      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
-      margin: 0;
-      padding: 24px;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
-      -webkit-touch-callout: none;
-    }
-
-    paper-input.narrow {
-      width: 150px;
+    [class*='col-'] {
+      border: 1px dashed blue;
     }
   </style>
 
 </head>
-<body unresolved>
-  <div class="container">
-    <div class="row">
-      <div>
-        <!-- test fields for required, all failing right now  -->
-        <paper-input label="Type something" required error="This input requires a value!"></paper-input>
-        <paper-input label="Type something..." willvalidate required id="paper_input1" ></paper-input>
-        <paper-input label="Type something..." willvalidate validationmessage="Please fill out this field." required invalid id="paper_input" class="invalid"></paper-input>
-        <at-core-form id="coreFormDemo"></at-core-form>
-      </div>
-    </div>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo"></at-core-form>
   </div>
   <script>
-    window.addEventListener('polymer-ready', function (e) {
+    window.addEventListener('WebComponentsReady', function (e) {
       var demoForm = document.getElementById("coreFormDemo");
       demoForm.schema = {
-        'properties':
-          {
-            'id': { 'description': 'The unique identifier for a product', 'type': 'number' },
-            'name': { 'type': 'string', 'required': true },
-            'city': { 'type': 'string', 'default': 'Default city name' },
-            'active': { 'type': 'boolean' },
-            'activePera': { 'type': 'boolean', 'description': 'This is description for pera' },
-            'activeToggle': { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" },
-            'dropdownDemo': { 'title': 'Name', 'type': 'enum', 'available': 'XML,JSON', 'default': 'XML' },
-            'codeMirrorDemo': { "title": "Code Mirror", "type": "string", "xtype": "code" }
+        'properties': {
+          'textareademo': {
+            'title': 'Textarea demo',
+            'type': 'string',
+            'xtype': 'textarea'
           },
-        'required': ['id', 'city']
+          'id': {
+            'title': 'The unique identifier for a product',
+            'type': 'number',
+            'required': true,
+            'hint': 'Input required.'
+          },
+          'name': {
+            'type': 'string',
+            'required': true
+          },
+          'activeDemo1': {
+            'type': 'boolean'
+          },
+          'city': {
+            'type': 'string',
+            'default': 'Default city name',
+            'required': true,
+            'value': 'Boston'
+          },
+          'activeDemo2': {
+            'type': 'boolean',
+            'title': 'This is description for pera',
+            'value': '1'
+          },
+          'activeToggle': {
+            "type": "boolean",
+            "xtype": "toggle",
+            "title": "This is description for active toggle"
+          },
+          'dropdownDemo': {
+            'title': 'Name',
+            'type': 'string',
+            'enum': 'XML,JSON',
+            'value': 'JSON'
+          },
+           "Reason": {
+            "description": "Reason",
+            "type": "string",
+            "xtype": "radio",
+            "maxChars": "2",
+            "required": "1",
+            "value": "10",
+            "title": "Reason",
+            "xvaluelist": [
+              {
+                "title": "Annual",
+                "value": "10"
+              },
+              {
+                "title": "Sick",
+                "value": "20"
+              }
+            ]
+          },
+           "EmpId": {
+            "description": "Employee",
+            "type": "string",
+            "xtype": "lookup",
+            "maxChars": "50",
+            "FParameter": "50",
+            "required": "1",
+            "value": "2",
+            "title": "Employee",
+            "url": "/api/adenin.GateKeeper.Content/user/"
+          },
+          'codeMirrorDemo': {
+            "title": "Code Mirror",
+            "type": "string",
+            "xtype": "code"
+          },
+          'markedDemo': {
+            "title": "Markdown Demo",
+            "type": "string",
+            "xtype": "marked"
+          },
+          'passwordDemo': {
+            "title": "Password Demo",
+            "type": "string",
+            "xtype": "password"
+          },
+          'formFileDemo': {
+            "title": "Form file Demo",
+            "type": "string",
+            "xtype": "file"
+          },
+          'formImageDemo': {
+            "title": "Form image Demo",
+            "type": "string",
+            "xtype": "image"
+          },
+          'dateDemo': {
+            "title": "Date demo",
+            "type": "string",
+            "xtype": "date"
+          },
+          'timeDemo': {
+            "title": "Time demo",
+            "type": "string",
+            "xtype": "time"
+          },
+          'dateTimeDemo': {
+            "title": "Datetime demo",
+            "type": "string",
+            "xtype": "datetime"
+          },
+          'dateRangeDemo': {
+            "title": "Daterange demo",
+            "type": "daterange"
+          }
+        }
       };
-      demoForm.data = { 'id': 0, 'city': 'Boston', 'active': true, 'activePera': false };
+      demoForm.data = {
+        'id': 3213,
+        'city': 'Boston',
+        'name': 'Djura',
+        'activeDemo1': true,
+        'activeDemo2': false,
+        'dropdownDemo': 'XML'
+      };
     });
   </script>
 </body>
+
 </html>

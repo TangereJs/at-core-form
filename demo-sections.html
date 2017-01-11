@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>at-core-form demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="at-core-form.html" />
+
+  <style>
+  .container-w {
+    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-m {
+    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+  .container-s {
+    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+  }
+
+    /*[class*='col-'] {
+      border: 1px dashed blue;
+    }*/
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <h4>Mode default</h4>
+    <at-core-form id="default" section-mode="sections" active-tab="section2"></at-core-form>
+  </div>
+  <div class="container-w">
+    <h4>Mode tab</h4>
+    <at-core-form id="tab" section-mode="tabs" active-tab="section2"></at-core-form>
+  </div>
+  <div class="container-w">
+    <h4>Mode auto</h4>
+    <at-core-form id="auto" section-mode="auto" active-tab="section2"></at-core-form>
+  </div>
+  <div class="container-w">
+    <h4>Mode mobile</h4>
+    <at-core-form id="mobile" section-mode="mobile" active-tab="section2"></at-core-form>
+  </div>
+  <script>
+    window.addEventListener('WebComponentsReady', function (e) {
+
+      function getSchema() {
+        return {
+          properties: {
+            text1: { type: 'string' },
+            text2: { type: 'string' },
+            text3: { type: 'string' },
+            text4: { type: 'string' },
+            section1: { type: 'section', title:'the first section' },
+            text5: { type: 'string' },
+            text6: { type: 'string' },
+            section2: { type: 'section', title: 'Section 2' },
+            text7: { type: 'string' },
+            text8: { type: 'string' },
+            section3: { type: 'section' },
+            text9: { type: 'string' },
+            text10: { type: 'string', required: true },
+          }
+        };
+      }
+
+      var coreForm;
+
+      coreForm = document.getElementById("default");
+      coreForm.schema = getSchema();
+
+      coreForm = document.getElementById("tab");
+      coreForm.schema = getSchema();
+
+      coreForm = document.getElementById("auto");
+      coreForm.schema = getSchema();
+
+      coreForm = document.getElementById("mobile");
+      coreForm.schema = getSchema();
+    });
+  </script>
+</body>
+
+</html>

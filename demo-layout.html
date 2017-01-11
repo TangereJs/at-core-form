@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>at-core-form layout demo</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../layout/layout.html">
+
+  <style>
+  .container-w {
+    width: 1024px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+  .container-m {
+    width: 768px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+  .container-s {
+    width: 320px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 64px;
+    overflow: auto;
+  }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout vertical">
+    <div class="container-m">
+      <h2>Horizontal</h2>
+      <at-core-form id="coreForm1" layout="horizontal"></at-core-form>
+    </div>
+    <div class="container-w">
+      <h2>Vertical</h2>
+      <at-core-form id="coreForm2"></at-core-form>
+    </div>
+  </div>
+  <script>
+    window.addEventListener('WebComponentsReady', function(e) {
+      var formSchema = {
+        'properties': {
+          'id': {
+            'title': 'The unique identifier for a product',
+            'type': 'number'
+          },
+          'name': {
+            'type': 'string',
+            'required': true,
+            'xgridcols': 3
+          },
+          'city': {
+            'type': 'string',
+            'value': 'Default city name'
+          },
+          'active': {
+            'type': 'boolean', 'xgridcols': 3
+          },
+          'activePera': {
+            'type': 'boolean',
+            'title': 'This is description for pera'
+          },
+          'activeToggle': {
+            "type": "boolean",
+            "xtype": "toggle",
+            "title": "This is description for active toggle"
+          },
+          'dropdownDemo': {
+            'title': 'Name',
+            'type': 'string',
+            'xtype': 'enum',
+            'xvaluelist': 'XML,JSON', 'xgridcols': 12
+          },
+          'codeMirrorDemo': {
+            "title": "Code Mirror",
+            "type": "string",
+            "xtype": "code"
+          }
+        },
+        'required': ['id', 'city']
+      };
+
+      var formData = {
+        'id': 3213,
+        'city': 'Boston',
+        'active': true,
+        'activePera': false,
+        'dropdownDemo': 'XML'
+      };
+
+
+      var coreForm1 = document.getElementById("coreForm1");
+      coreForm1.schema = formSchema;
+      coreForm1.data = formData;
+
+      var coreForm2 = document.getElementById("coreForm2");
+      coreForm2.schema = formSchema;
+      coreForm2.data = formData;
+    });
+  </script>
+</body>
+
+</html>

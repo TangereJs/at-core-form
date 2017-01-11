@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-text tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../at-form-text/at-form-text.html">
+  <link rel="import" href="../at-core-form.html">
+
+</head>
+
+<body>
+
+  <test-fixture id="propertyTests">
+    <template>
+      <at-core-form></at-core-form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('hide and disabled tests', function() {
+
+      function getSchema() {
+        return {
+          properties: {
+            text1: {
+              type: "string"
+            },
+            text2: {
+              type: "string"
+            },
+            text3: {
+              type: "string"
+            }
+          }
+        };
+      }
+
+      test('schema does not hide, hide and check each element', function(done) {
+
+        var coreForm = fixture('propertyTests');
+        coreForm.schema = getSchema();
+        flush(function() {
+          var text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          var text2 = coreForm.getElement('text2');
+          assert.equal(text2.hide, false, 'text2 is hidden');
+          var text3 = coreForm.getElement('text3');
+          assert.equal(text2.hide, false, 'text3 is hidden');
+
+          coreForm.setElementState('text1', 'hide', true);
+          assert.equal(text1.hide, true, 'text1 is hidden');
+          assert.equal(text1.parentElement.classList.contains('hidden'), true, 'text1 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text1', 'hide', false);
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.parentElement.classList.contains('hidden'), false, 'text1 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text2', 'hide', true);
+          assert.equal(text2.hide, true, 'text2 is hidden');
+          assert.equal(text2.parentElement.classList.contains('hidden'), true, 'text2 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text2', 'hide', false);
+          assert.equal(text2.hide, false, 'text2 is hidden');
+          assert.equal(text2.parentElement.classList.contains('hidden'), false, 'text2 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text3', 'hide', true);
+          assert.equal(text3.hide, true, 'text1 is hidden');
+          assert.equal(text3.parentElement.classList.contains('hidden'), true, 'text3 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text3', 'hide', false);
+          assert.equal(text3.hide, false, 'text3 is hidden');
+          assert.equal(text3.parentElement.classList.contains('hidden'), false, 'text3 container classList doesnt contain hidden class');
+
+          done();
+        });
+      });
+
+      function getHidingSchema() {
+        return {
+          properties: {
+            text1: {
+              type: "string",
+              hide: true
+            },
+            text2: {
+              type: "string",
+              hide: true
+            },
+            text3: {
+              type: "string",
+              hide: true
+            }
+          }
+        };
+      }
+
+      test('schema hides, show and hide and check each element', function(done) {
+
+        var coreForm = fixture('propertyTests');
+        coreForm.schema = getHidingSchema();
+
+        flush(function() {
+          var text1 = coreForm.getElement('text1');
+          assert.equal(text1.hide, true, 'text1 is hidden');
+          var text2 = coreForm.getElement('text2');
+          assert.equal(text2.hide, true, 'text2 is hidden');
+          var text3 = coreForm.getElement('text3');
+          assert.equal(text2.hide, true, 'text3 is hidden');
+
+          coreForm.setElementState('text1', 'hide', false);
+          assert.equal(text1.hide, false, 'text1 is hidden');
+          assert.equal(text1.parentElement.classList.contains('hidden'), false, 'text1 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text1', 'hide', true);
+          assert.equal(text1.hide, true, 'text1 is hidden');
+          assert.equal(text1.parentElement.classList.contains('hidden'), true, 'text1 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text2', 'hide', false);
+          assert.equal(text2.hide, false, 'text2 is hidden');
+          assert.equal(text2.parentElement.classList.contains('hidden'), false, 'text2 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text2', 'hide', true);
+          assert.equal(text2.hide, true, 'text2 is hidden');
+          assert.equal(text2.parentElement.classList.contains('hidden'), true, 'text2 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text3', 'hide', false);
+          assert.equal(text3.hide, false, 'text1 is hidden');
+          assert.equal(text3.parentElement.classList.contains('hidden'), false, 'text3 container classList doesnt contain hidden class');
+
+          coreForm.setElementState('text3', 'hide', true);
+          assert.equal(text3.hide, true, 'text3 is hidden');
+          assert.equal(text3.parentElement.classList.contains('hidden'), true, 'text3 container classList doesnt contain hidden class');
+
+          done();
+        });
+
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

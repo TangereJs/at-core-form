@@ -1,16 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>At-Core-Form demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
-  <!--<link rel="import" href="../polymer/polymer.html" />-->
-  <link rel="import" href="../code-mirror/code-mirror.html" />
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../layout/layout.html" />
+  <link rel="import" href="../at-form-codemirror/at-form-codemirror.html" />
+  <link rel="import" href="../at-form-checkbox/at-form-checkbox.html" />
 
-  <style shim-shadowdom>
+  <style>
     body {
       margin: 0;
       position: absolute;
@@ -19,138 +21,247 @@
       height: 100%;
       width: 100%;
     }
-
-    .h100w100 {
-      height: 100%;
-      width: 100%;
-    }
-
-    .h50w100 {
-      height: 50%;
-      width: 100%;
-    }
   </style>
-
 </head>
-<body unresolved>
-  <div class="h100w100" vertical layout>
-    <div class="h50w100" horizontal layout>
-      <div class="h100w100" flex>
-        <div vertical layout class="h100w100">
-          <h2>Form Schema (JSON)</h2>
-          <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
-          <!--// mappings for code-* are
-          // code-html -> htmlmixed
-          // code-css -> text/css
-          // code-javascript -> javascript
-          // code-json -> application/json
-          // code-sql -> sql
-          // code-xml -> xml-->
-          <code-mirror id="formSchema" mode="javascript" flex>
-            {
-            "properties":
-            {
-            "id": {
-            "description": "The unique identifier for a product", "type": "number"},
-            "name": { "type": "string", "required": "true", "xinputmode": "required" },
-            "city": { "type": "string", "default": "Default city name" },
-            "active": { "type": "boolean" },
-            "activePera": { "type": "boolean", "description": "This is description for pera" },
-            "activeToggle": { "type": "boolean", "xtype": "toggle", "description": "This is description for active toggle" },
-            "dropdownDemo": { "title": "Name", "type": "string", "xtype": "enum", "xvaluelist":"XML,JSON", "default": "XML" },
-            "card": { "title": "Card", "type": "string", "xtype": "lookup", "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"},
-            "codeMirrorDemo": { "title": "Code Mirror", "type": "string", "xtype": "code-markdown"},
-            "markdownDemo": { "title": "Markdown", "type": "string", "xtype": "marked" }
-            },
-            "required": ["id", "city"]
-            }
-          </code-mirror>
-        </div>
-      </div>
-      <div class="h100w100" flex>
-        <div vertical layout class="h100w100">
-          <h2>Form Data (JSON)</h2>
-          <div>
-            <label>Form is currently: </label>
-            <span id="formValid">valid</span>
-            <span id="formInvalid" hidden>invalid</span>
-          </div>
-          <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
-          <code-mirror id="formData" mode="javascript" flex>
-            {
-            "id": "5",
-            "city": "Boston",
-            "active": true,
-            "activePera": false
-            }
-          </code-mirror>
-        </div>
-      </div>
+
+<body>
+  <div class="horizontal layout">
+    <div class="vertical layout flex-4">
+      <h2>Form Schema (JSON)</h2>
+      <!--setting mode to json or json-ld doesn't work so I use javascript which works-->
+      <!--// mappings for code-* are
+        // code-html -> htmlmixed
+        // code-css -> text/css
+        // code-javascript -> javascript
+        // code-json -> application/json
+        // code-sql -> sql
+        // code-xml -> xml-->
+      <at-form-codemirror id="formSchema" mode="javascript" max-lines="0"></at-form-codemirror>
     </div>
-    <div class="h100w100" flex>
-      <div vertical layout class="h100w100">
-        <h2>Generated form</h2>
-        <at-core-form id="coreForm" flex>
-        </at-core-form>
+    <div class="vertical layout flex-4">
+      <h2>Form Data (JSON)</h2>
+      <div>
+        <label>Form is currently: </label>
+        <span id="formValid">valid</span>
+        <span id="formInvalid" hidden>invalid</span>
       </div>
+      <div>
+        <at-form-checkbox id="disableForm" label="Disable form"></at-form-checkbox>
+      </div>
+      <!--setting mode to json or json-ld doesn't work so I use javascript which works -->
+      <at-form-codemirror id="formData" mode="javascript" max-lines="0"></at-form-codemirror>
+    </div>
+    <div class="vertical layout flex-4">
+      <h2>Generated form</h2>
+      <at-core-form id="coreForm" layout="horizontal"></at-core-form>
     </div>
   </div>
 
-
   <script>
-    (function () {
+    (function() {
+      var __debug_data_changed_call_count = 0;
+      var _isUserInput = false;
 
-      window.addEventListener('polymer-ready', function (e) {
+      var initialSchema = {
+        "properties": {
+          "id": {
+            "title": "The unique identifier for a product",
+            "type": "number",
+            "required": "true"
+          },
+          "name": {
+            "type": "string",
+            "required": "true"
+          },
+          "city": {
+            "type": "string",
+            "default": "Default city name",
+            "required": "true"
+          },
+          "password": {
+            "type": "string",
+            "xtype": "password",
+            "title": "Password",
+            "placeholder": "Type your password"
+          },
+          "mahradio": {
+            "type": "string",
+            "xtype": "radio",
+            "title": "Choose a fruit",
+            "xvaluelist": [{
+              "title": "Apple",
+              "value": "apple"
+            }, {
+              "title": "Peach",
+              "value": "peach"
+            }, {
+              "title": "Plum",
+              "value": "plum"
+            }]
+          },
+          "mahradio2": {
+            "type": "string",
+            "xtype": "radio",
+            "title": "Choose a tool",
+            "xvaluelist": "javascript,C#,Java,D"
+          },
+          "active": {
+            "type": "string"
+          },
+          "activePera": {
+            "type": "boolean",
+            "title": "This is description for pera"
+          },
+          "activeToggle": {
+            "type": "boolean",
+            "xtype": "toggle",
+            "title": "This is description for active toggle"
+          },
+          "dropdownDemo": {
+            "title": "Name",
+            "type": "string",
+            "xtype": "enum",
+            "xvaluelist": "XML,JSON"
+          },
+          "dropdownEnumDemo": {
+            "title": "Name",
+            "type": "string",
+            "enum": ["XML", "JSON"]
+          },
+          "card": {
+            "title": "Card",
+            "type": "string",
+            "xtype": "lookup",
+            "xurl": "http://localhost:2014/Activity/adenin.GateKeeper.Content/card/"
+          },
+          "file": {
+            "title": "at-form-file demo",
+            "type": "string",
+            "xtype": "file"
+          },
+          "image": {
+            "title": "at-form-image demo",
+            "type": "string",
+            "xtype": "image"
+          },
+          "codeMirrorDemo": {
+            "title": "Code Mirror",
+            "type": "string",
+            "xtype": "code",
+            "mode": "markdown"
+          },
+          "markdownDemo": {
+            "title": "Markdown",
+            "type": "string",
+            "xtype": "marked",
+            "required": "true"
+          },
+          "dateDemo": {
+            "title": "Date demo",
+            "type": "string",
+            "xtype": "date"
+          },
+          "timeDemo": {
+            "title": "Time demo",
+            "type": "string",
+            "xtype": "time"
+          },
+          "dateTimeDemo": {
+            "title": "Datetime demo",
+            "type": "string",
+            "xtype": "datetime"
+          },
+          "dateRangeDemo": {
+            "title": "Daterange demo",
+            "type": "daterange"
+          }
+        }
+      };
+
+      var initialData = {
+        "id": "5",
+        "city": "Boston",
+        "active": true,
+        "activePera": false,
+        "dropdownDemo": "XML",
+        "mahradio": "plum",
+        "mahradio2": "Java"
+      };
+
+      window.addEventListener('WebComponentsReady', function(e) {
         var coreForm = document.getElementById('coreForm');
 
         var formSchema = document.getElementById('formSchema');
-        formSchema.mirror.on('change', function () {
-          //console.log("form schema changed");
-          try {
-            coreForm.schema = JSON.parse(formSchema.mirror.getValue());
-            coreForm.updateValidState();
-          } catch (e) {
-
-          }
-
-        });
-        //autoFormat(formSchema.mirror);
-
+        formSchema.value = JSON.stringify(initialSchema, null, ' ');
         var formData = document.getElementById('formData');
-        formData.mirror.on('change', function () {
-          //console.log("form data changed");
-          try {
-            coreForm.data = JSON.parse(formData.mirror.getValue());
-            coreForm.updateValidState();
-          } catch (e) {
+        formData.value = JSON.stringify(initialData, null, ' ');
 
+        var resetDataChangedCallCount = debounce(function() {
+          __debug_data_changed_call_count = 0;
+        }, 100, false);
+
+        var formSchemaChangedFunc = function() {
+          try {
+            coreForm.schema = JSON.parse(formSchema.value);
+            coreForm.validate();
+          } catch (e) {
+            console.log(e);
           }
+        };
+
+        var formDataChangedFunc = function() {
+          try {
+            var formDataValue = JSON.parse(formData.value);
+            coreForm.data = formDataValue;
+            coreForm.validate();
+          } catch (e) {
+            console.log(e);
+          }
+        };
+
+        coreForm.addEventListener('data-changed', function(e) {
+          resetDataChangedCallCount();
+          __debug_data_changed_call_count += 1;
+          console.log("at-core-form data-changed called " + __debug_data_changed_call_count + " times");
+
+          var dataString = JSON.stringify(e.detail.value, undefined, ' ');
+          _isUserInput = true;
+          formData.value = dataString;
+          _isUserInput = false;
         });
-        //autoFormat(formData.mirror);
 
         try {
-          var schema = JSON.parse(formSchema.mirror.getValue());
+          var schema = JSON.parse(formSchema.value);
           coreForm.schema = schema;
-          var data = JSON.parse(formData.mirror.getValue());
+          formSchema.value = JSON.stringify(coreForm.schema, undefined, ' ');
+          var data = JSON.parse(formData.value);
           coreForm.data = data;
-          coreForm.addEventListener('data-changed', function (e) {
-            var dataString = JSON.stringify(e.detail);
-            dataString = dataString.replace(/,/g, ",\n");
-            formData.value = dataString;
+
+          formData.value = JSON.stringify(coreForm.data, undefined, ' ');
+          updateFormValidGui(coreForm.valid);
+
+          formSchema.addEventListener('value-changed', function() {
+            console.log("User changed form schema");
+            formSchemaChangedFunc();
+            formDataChangedFunc();
           });
 
-          updateFormValidGui(coreForm.valid);
+          formData.addEventListener('value-changed', function() {
+            console.log("User changed form data");
+            if (!_isUserInput) {
+              formDataChangedFunc();
+            }
+          });
         } catch (e) {
-
+          console.log(e);
         }
 
-        var validObject = { valid: true };
-        var pathObserver = new PathObserver(validObject, 'valid');
-        coreForm.bind('valid', pathObserver);
-
-        var anotherPathObserver = new PathObserver(validObject, 'valid');
-        anotherPathObserver.open(function (newValue, oldValue) {
-          updateFormValidGui(newValue);
+        var validObject = {
+          valid: true
+        };
+        coreForm.addEventListener('valid-changed', function(e) {
+          validObject.valid = e.detail.value;
+          updateFormValidGui(validObject.valid);
         });
       });
 
@@ -167,13 +278,36 @@
         }
       }
 
+      var disableForm = document.getElementById('disableForm');
+      disableForm.addEventListener('value-changed', function(event) {
+        coreForm.disabled = event.detail.value;
+      });
+
       function autoFormat(editor) {
         // this doesn't work because polymer code mirror doesn't support code formatting :'(
         //var totalLines = editor.lineCount();
         //var totalChars = editor.getValue().length;
         //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines, ch: totalChars });
       }
+
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+          var context = this,
+            args = arguments;
+          var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      };
+
     })();
   </script>
 </body>
+
 </html>
