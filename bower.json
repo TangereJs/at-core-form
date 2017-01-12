@@ -9,7 +9,7 @@
     "at-rule-engine": "TangereJs/at-rule-engine#0.8-preview",
     "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview",
     "at-carbon-tabs": "TangereJs/at-carbon-tabs#0.8-preview",
-    "layout": "PolymerElements/layout#master",
+    "layout": "Polymer/layout#master",
     "at-rule-edit": "TangereJs/at-rule-edit#0.8-preview",
     "at-form-checkbox": "TangereJs/at-form-checkbox#0.8-preview",
     "at-form-codemirror": "TangereJs/at-form-codemirror#0.8-preview",
