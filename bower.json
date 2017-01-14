@@ -1,19 +1,19 @@
 {
-  "name": "paper-checkbox",
+  "name": "at-core-form",
   "private": true,
   "dependencies": {
-    "tangere": "TangereJs/tangere#0.8-preview",
-    "at-core-schema": "TangereJs/at-core-schema#0.8-preview",
-    "at-core-resize-sensor": "TangereJs/at-core-resize-sensor#0.8-preview",
-    "at-theme": "TangereJs/at-theme#0.8-preview",
-    "at-rule-engine": "TangereJs/at-rule-engine#0.8-preview",
-    "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview",
-    "at-carbon-tabs": "TangereJs/at-carbon-tabs#0.8-preview",
+    "tangere": "TangereJs/tangere#master",
+    "at-core-schema": "TangereJs/at-core-schema#master",
+    "at-core-resize-sensor": "TangereJs/at-core-resize-sensor#master",
+    "at-theme": "TangereJs/at-theme#master",
+    "at-rule-engine": "TangereJs/at-rule-engine#master",
+    "at-form-behaviors": "TangereJs/at-form-behaviors#master",
+    "at-carbon-tabs": "TangereJs/at-carbon-tabs#master",
     "layout": "Polymer/layout#master",
-    "at-rule-edit": "TangereJs/at-rule-edit#0.8-preview",
-    "at-form-checkbox": "TangereJs/at-form-checkbox#0.8-preview",
-    "at-form-codemirror": "TangereJs/at-form-codemirror#0.8-preview",
-    "at-doc-viewer": "TangereJs/at-doc-viewer#0.8-preview"
+    "at-rule-edit": "TangereJs/at-rule-edit#master",
+    "at-form-checkbox": "TangereJs/at-form-checkbox#master",
+    "at-form-codemirror": "TangereJs/at-form-codemirror#master",
+    "at-doc-viewer": "TangereJs/at-doc-viewer#master"
   },
   "version": "0.0.1.166"
 }
