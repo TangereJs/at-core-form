@@ -697,7 +697,6 @@
 
         // if at-core-form is initially hidden, element should be hidden as well
         formElement.hide = self.hide || _sh.parseBool(propertyDefinition.hide);
-        console.log('form element hide ' + formElement.hide);
         // added for AT-214; when element is hidden, fieldContainer for that element should be hidden as well
         self.toggleClass('hidden', formElement.hide, fieldContainer);
 
