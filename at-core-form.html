@@ -295,17 +295,22 @@
       var insertPoint = this.$.insertPoint;
       var parsedValue = schemaHelpers.parseBool(newValue);
 
-      if (this.schema && this.schema.properties) {
-        var properties = this.schema.properties;
-        var propNames = Object.getOwnPropertyNames(properties);
-        propNames.forEach(function(propName, index) {
-          var formElement = self.getElement(propName);
-          if (formElement) {
-            self.toggleClass('hidden', parsedValue, formElement.parentElement);
-            formElement.hide = parsedValue;
-          }
-        });
-      }
+      self.async(function () {
+
+        if (self.schema && self.schema.properties) {
+          var properties = self.schema.properties;
+          var propNames = Object.getOwnPropertyNames(properties);
+          propNames.forEach(function(propName, index) {
+            var formElement = self.getElement(propName);
+            if (formElement) {
+              self.toggleClass('hidden', parsedValue, formElement.parentElement);
+              console.log('at-core-form hide ' + newValue);
+              formElement.hide = parsedValue;
+            }
+          });
+        }
+
+      });
     },
     // ------------------------------
     // *ij* maybe one day when we have HTML7 and resize event for elements this function will not be necessary
@@ -692,6 +697,7 @@
 
         // if at-core-form is initially hidden, element should be hidden as well
         formElement.hide = self.hide || _sh.parseBool(propertyDefinition.hide);
+        console.log('form element hide ' + formElement.hide);
         // added for AT-214; when element is hidden, fieldContainer for that element should be hidden as well
         self.toggleClass('hidden', formElement.hide, fieldContainer);
 
