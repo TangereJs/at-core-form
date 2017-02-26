@@ -456,7 +456,7 @@
             // import failed
             console.log("import failed: " + e.target.href);
           }, true);
-        });
+        }, this);
       } else {
         self._renderSchema(nonGroupedElements, formGroups);
       }
