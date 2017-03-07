@@ -1064,6 +1064,8 @@
         setFocusOnError = false;
       }
 
+      if (!this._elementsToValidate) { return isValid; }
+      
       for (var i = 0; i < this._elementsToValidate.length; i++) {
         var element = this._elementsToValidate[i];
         if (!(element.disabled || element.hide)) {
