@@ -456,6 +456,7 @@
           }, function (e) {
             // import failed
             console.log("import failed: " + e.target.href);
+            console.debug("Please add a mapping for (type, xtype) = ("+ propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
           }, true);
         }, this);
       } else {
