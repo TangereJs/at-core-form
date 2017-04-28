@@ -435,29 +435,33 @@
           var displayType = propDef.displayType;
           var elementName = displayTypeToFormElementMapping[displayType];
 
-          // construct elemHref
-          var compUrl = this.resolveUrl("../");
-
-          if (document.URL.indexOf("/elements/designer-element/") >= 0) {
-            compUrl = "/components/";
-          }
-
-          if (window.ComponentsBase != undefined) {
-            compUrl = window.ComponentsBase;
-          }
-          var elemHref = compUrl + elementName + "/" + elementName + ".html";
-
-          self.importHref(elemHref, function(e) {
-            // import was successful
-            pendingImportsCount -= 1;
-            if (!pendingImportsCount) {
-              self._renderSchema(nonGroupedElements, formGroups);
-            }
-          }, function (e) {
-            // import failed
-            console.log("import failed: " + e.target.href);
+          if (!elementName) {
             console.debug("Please add a mapping for (type, xtype) = ("+ propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
-          }, true);
+          } else {
+            // construct elemHref
+            var compUrl = this.resolveUrl("../");
+
+            if (document.URL.indexOf("/elements/designer-element/") >= 0) {
+              compUrl = "/components/";
+            }
+
+            if (window.ComponentsBase != undefined) {
+              compUrl = window.ComponentsBase;
+            }
+            var elemHref = compUrl + elementName + "/" + elementName + ".html";
+
+            self.importHref(elemHref, function(e) {
+              // import was successful
+              pendingImportsCount -= 1;
+              if (!pendingImportsCount) {
+                self._renderSchema(nonGroupedElements, formGroups);
+              }
+            }, function (e) {
+              // import failed
+              console.log("import failed: " + e.target.href);            
+            }, true);            
+          }
+          
         }, this);
       } else {
         self._renderSchema(nonGroupedElements, formGroups);
