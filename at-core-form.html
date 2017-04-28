@@ -420,6 +420,7 @@
         state: "at-form-state",
         string: "at-form-text",
         textarea: "at-form-textarea",
+        cron: "at-form-cron",
         random: "at-form-random"
       };
 
@@ -437,6 +438,7 @@
 
           if (!elementName) {
             console.debug("Please add a mapping for (type, xtype) = ("+ propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
+            pendingImportsCount -=1;
           } else {
             // construct elemHref
             var compUrl = this.resolveUrl("../");
