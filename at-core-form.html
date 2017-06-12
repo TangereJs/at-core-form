@@ -596,7 +596,7 @@
       self.updateLayout(width);
 
       // evaluate rules against new schema
-      if (nonGroupedElements.length && formGroups.length) {
+      if (nonGroupedElements.length || formGroups.length) {
         self._executeRuleEvaluation(this.schema);
       }
 
@@ -760,7 +760,7 @@
 
     _executeRuleEvaluation: function (schema) {
       var _sh = window.schemaHelpers;
-      if (this._isBusinessRulesEvaluationInProgress || this._rendering) {
+      if (this._isBusinessRulesEvaluationInProgress) {
         return;
       }
       this._isBusinessRulesEvaluationInProgress = true;
@@ -937,7 +937,7 @@
         }
       });
 
-      if (_sh.isObject(this.schema) && _sh.isObject(this.schema.properties) && Object.getOwnPropertyNames(this.schema.properties).length) {
+      if (!this._rendering && _sh.isObject(this.schema) && _sh.isObject(this.schema.properties) && Object.getOwnPropertyNames(this.schema.properties).length) {
         self._executeRuleEvaluation(this.schema);
       }
 
