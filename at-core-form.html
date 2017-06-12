@@ -760,7 +760,7 @@
 
     _executeRuleEvaluation: function (schema) {
       var _sh = window.schemaHelpers;
-      if (this._isBusinessRulesEvaluationInProgress) {
+      if (this._isBusinessRulesEvaluationInProgress || this._rendering) {
         return;
       }
       this._isBusinessRulesEvaluationInProgress = true;
