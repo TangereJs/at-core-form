@@ -376,7 +376,9 @@
         var displayType = schemaHelpers.getDisplayType(propDef, []);
         var mapping = schemaHelpers.findMapping(displayType);
 
-        if (!mapping) {
+        // propDef.default !== window is added to hanlde cases from polymer behaviors
+        // where initial value for properities is window
+        if (!mapping && propDef.default !== window) {
           // element is not loaded; scheadule it for importHref
           var scheduledPropDef = JSON.parse(JSON.stringify(propDef));
           scheduledPropDef.displayType = displayType;
