@@ -9,7 +9,7 @@
     "at-rule-engine": "TangereJs/at-rule-engine#master",
     "at-form-behaviors": "TangereJs/at-form-behaviors#master",
     "at-carbon-tabs": "TangereJs/at-carbon-tabs#master",
-    "layout": "Polymer/layout#master",
+    "layout": "TangereJs/layout#master",
     "at-rule-edit": "TangereJs/at-rule-edit#master",
     "at-form-checkbox": "TangereJs/at-form-checkbox#master",
     "at-form-codemirror": "TangereJs/at-form-codemirror#master",
