@@ -46,18 +46,20 @@
           var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
 
+          coreForm.addEventListener('rendered', function(){
+              assert.isObject(coreForm._internalData, 'internal data is not set');
+              assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
+              assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+              assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
+              assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
+          });
+
           for (var i = 0; i < invalidSchemas.length; i++) {
             var schema = invalidSchemas[i];
             for (var j = 0; j < invalidDatas.length; j++) {
               var data = invalidDatas[j];
               coreForm.schema = schema;
               coreForm.data = data;
-
-              assert.isObject(coreForm._internalData, 'internal data is not set');
-              assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
-              assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-              assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
-              assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
             }
           }
         });
@@ -76,16 +78,18 @@
           var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
 
-          for (var i = 0; i < invalidSchemas.length; i++) {
-            var schema = invalidSchemas[i];
-            coreForm.schema = schema;
-            coreForm.data = data;
-
+          coreForm.addEventListener('rendered', function() {
             assert.isObject(coreForm._internalData, 'internal data is not set');
             assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
             assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
             assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
             assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
+          });
+
+          for (var i = 0; i < invalidSchemas.length; i++) {
+            var schema = invalidSchemas[i];
+            coreForm.schema = schema;
+            coreForm.data = data;
           }
         });
       });
@@ -100,6 +104,14 @@
           }];
           var coreForm = fixture('propertyTests');
           var insertPoint = coreForm.$.insertPoint;
+
+          coreForm.addEventListener('rendered', function() {
+            assert.isObject(coreForm._internalData, 'internal data is not set');
+            assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
+            assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
+            assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
+            assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
+          });
 
           for (var j = 0; j < invalidDatas.length; j++) {
             var data = invalidDatas[j];
@@ -478,11 +490,10 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in _internalData');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in _internalData');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
 
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
 
           coreForm.schema = stringSchema;
@@ -534,11 +545,9 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in data');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in data');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
-
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
 
           coreForm.schema = stringSchema;
@@ -590,11 +599,10 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in data');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in data');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
 
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
           coreForm.schema = schema;
 
@@ -644,11 +652,10 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in data');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in data');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
 
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
 
           coreForm.schema = schema;
@@ -699,11 +706,10 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in data');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in data');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
 
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
           coreForm.schema = schema;
 
@@ -931,11 +937,10 @@
           assert.equal(coreForm.data.text1, "text1 lorem ipsum", 'text1 value not correct in data');
           assert.equal(coreForm.data.text2, "text2 lorem ipsum", 'text2 value not correct in data');
 
-          assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
-          assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate doesn\'t contain corrent number of elements');
+          assert.equal(coreForm._elementsToValidate, undefined, 'elements to validate is not set');
 
           var insertPoint = coreForm.$.insertPoint;
-          assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point doesn\'t contain corrent number of elements');
+          assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point doesn\'t contain corrent number of elements');
 
           coreForm.schema = schema;
 
