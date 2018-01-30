@@ -329,6 +329,12 @@
     _schemaChanged: function (newValue) {
       var _sh = window.schemaHelpers;
 
+      // clear the previous html content in the container
+      // we do not use Polymer.dom(fieldsContainer).innerHTML = "" because innerHTML invokes browser's html parser which is more expensive than removing nodes
+      while (Polymer.dom(this.$.insertPoint).firstChild) {
+        Polymer.dom(this.$.insertPoint).removeChild(Polymer.dom(this.$.insertPoint).firstChild);
+      }
+
       if (_sh.isString(newValue)) {
         /*
         if newValue for schema is given as json string, parse it and assign it to this.schema
@@ -496,11 +502,6 @@
       }
 
       var fieldsContainer = this.$.insertPoint;
-      // clear the previous html content in the container
-      // we do not use Polymer.dom(fieldsContainer).innerHTML = "" because innerHTML invokes browser's html parser which is more expensive than removing nodes
-      while (Polymer.dom(fieldsContainer).firstChild) {
-        Polymer.dom(fieldsContainer).removeChild(Polymer.dom(fieldsContainer).firstChild);
-      }
 
       var fieldsFragment = document.createDocumentFragment();
       var divPrototype = document.createElement('div');
