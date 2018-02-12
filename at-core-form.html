@@ -581,10 +581,12 @@
         });
       }
 
-      // add div class="clearfix"
-      var clearfixDiv = divPrototype.cloneNode(true);
-      Polymer.dom(clearfixDiv).classList.add('clearfix');
-      Polymer.dom(fieldsFragment).appendChild(clearfixDiv);
+      if (nonGroupedElements.length || formGroups.length) {
+        // add div class="clearfix"
+        var clearfixDiv = divPrototype.cloneNode(true);
+        Polymer.dom(clearfixDiv).classList.add('clearfix');
+        Polymer.dom(fieldsFragment).appendChild(clearfixDiv);
+      }
 
       Polymer.dom(fieldsContainer).appendChild(fieldsFragment);
 
