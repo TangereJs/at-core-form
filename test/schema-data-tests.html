@@ -110,7 +110,7 @@
             assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
             assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
             assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
-            assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
+            assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point is not empty');
           });
 
           for (var j = 0; j < invalidDatas.length; j++) {
@@ -122,7 +122,7 @@
             assert.equal(Object.keys(coreForm._internalData).length, 0, 'internal data is not empty');
             assert.isArray(coreForm._elementsToValidate, 'elements to validate is not set');
             assert.equal(coreForm._elementsToValidate.length, 0, 'elements to validate is not empty');
-            assert.equal(Polymer.dom(insertPoint).children.length, 1, 'insert point is not empty');
+            assert.equal(Polymer.dom(insertPoint).children.length, 0, 'insert point is not empty');
           }
         });
       });
