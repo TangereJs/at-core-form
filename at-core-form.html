@@ -36,6 +36,7 @@
       at-form-checkbox {
         min-height: 76px;
       }
+
       /* workaround for IE11 flexbox min-height bug */
 
       _:-ms-fullscreen,
@@ -54,6 +55,7 @@
       .vertical .col-6 at-form-checkbox {
         min-height: 32px;
       }
+
       /* workaround for IE11 flexbox min-height bug */
 
       _:-ms-fullscreen,
@@ -80,7 +82,7 @@
     hostAttributes: {
       tabindex: 0
     },
-    behaviors: [ Tangere.behaviors.RulesEvaluation ],
+    behaviors: [Tangere.behaviors.RulesEvaluation],
     properties: {
       /**
        * Specification of elements that should appear on the form.<br/>
@@ -228,7 +230,7 @@
     get valid() {
       return this.validate(false);
     },
-    set valid(newValue) {},
+    set valid(newValue) { },
 
     ready: function() {
       this._activeTabChanged(this.activeTab, "called from ready");
@@ -262,7 +264,7 @@
      * If elementId is provided and element with provided elementId exists, its focused.
      * If elementId is not provided first element on the form is focused
      */
-    setFocus: function (elementId) {
+    setFocus: function(elementId) {
       var _sh = window.schemaHelpers;
       if (!_sh.isObject(this.schema) || !_sh.isObject(this.schema.properties)) {
         return;
@@ -295,7 +297,7 @@
       var insertPoint = this.$.insertPoint;
       var parsedValue = schemaHelpers.parseBool(newValue);
 
-      self.async(function () {
+      self.async(function() {
 
         if (self.schema && self.schema.properties) {
           var properties = self.schema.properties;
@@ -326,7 +328,7 @@
     },
 
 
-    _schemaChanged: function (newValue) {
+    _schemaChanged: function(newValue) {
       var _sh = window.schemaHelpers;
 
       // clear the previous html content in the container
@@ -378,7 +380,7 @@
       var currentGroupName = "";
       var currentGroupElements = nonGroupedElements = [];
 
-      _propertyNames.forEach(function (propName, index) {
+      _propertyNames.forEach(function(propName, index) {
         var propDef = _properties[propName];
         var displayType = schemaHelpers.getDisplayType(propDef, []);
         var mapping = schemaHelpers.findMapping(displayType);
@@ -438,7 +440,7 @@
       if (nonImportedElements.length) {
         var pendingImportsCount = nonImportedElements.length;
 
-        nonImportedElements.forEach(function (propDef, index) {
+        nonImportedElements.forEach(function(propDef, index) {
           // To construct elemHref we need static information about what (type, xtype) maps to which at-form element
           // Right now, only $meta in each element contains this information and central array of components is populated with $meta information
           // So, to dynamically importHref needed elements we need to introduce static information (which will just be a copy paste from $meta of each element)
@@ -447,8 +449,8 @@
           var elementName = displayTypeToFormElementMapping[displayType];
 
           if (!elementName) {
-            console.debug("Please add a mapping for (type, xtype) = ("+ propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
-            pendingImportsCount -=1;
+            console.debug("Please add a mapping for (type, xtype) = (" + propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
+            pendingImportsCount -= 1;
           } else {
             // construct elemHref
             var compUrl = this.resolveUrl("../");
@@ -468,12 +470,12 @@
               if (!pendingImportsCount) {
                 self._renderSchema(nonGroupedElements, formGroups);
               }
-            }, function (e) {
+            }, function(e) {
               // import failed
-              console.log("import failed: " + e.target.href);            
-            }, true);            
+              console.log("import failed: " + e.target.href);
+            }, true);
           }
-          
+
         }, this);
       } else {
         self._renderSchema(nonGroupedElements, formGroups);
@@ -516,7 +518,7 @@
       if (formGroups.length) {
         var sectionMode = self.sectionMode;
         var layout = self.layout;
-        self._hideTabs = sectionMode ==="sections" ||
+        self._hideTabs = sectionMode === "sections" ||
           (sectionMode === "auto" && layout === "horizontal") ||
           (sectionMode === "mobile" && layout === "horizontal");
 
@@ -543,7 +545,7 @@
           self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
 
           var elements = group.elements;
-          elements.forEach(function (element, index) {
+          elements.forEach(function(element, index) {
             var propertyName = element.name;
             var propertyDefinition = JSON.parse(JSON.stringify(element.definition));
             if (!index) {
@@ -573,7 +575,7 @@
         // if data was set first there is a chance that some properties form this._internalData are missing in this.data
         // this.data must be updated with missing properties
         var internalDataKeys = Object.getOwnPropertyNames(this._internalData);
-        internalDataKeys.forEach(function (key, index) {
+        internalDataKeys.forEach(function(key, index) {
           // self.data[key] === undefined means that the key is missing from self.data
           if (!self.data.hasOwnProperty(key)) {
             self.data[key] = self._internalData[key];
@@ -618,7 +620,7 @@
       self.fire('rendered', this, { bubbles: false });
     },
 
-    _renderSingleElement: function (propertyName, propertyDefinition, divPrototype, fieldsFragment) {
+    _renderSingleElement: function(propertyName, propertyDefinition, divPrototype, fieldsFragment) {
       var defaultValue;
       var containsProperty;
       var displayType;
@@ -705,7 +707,7 @@
 
         Polymer.dom(formElement).setAttribute('id', propertyName);
         // do not put at-form-section into elementsToValidate because validation doesn't make sense for at-form-section
-        if ([ "section", "statichtml" ].indexOf(displayType) === -1) {
+        if (["section", "statichtml"].indexOf(displayType) === -1) {
           self._elementsToValidate.push(formElement);
         }
 
@@ -728,14 +730,14 @@
       }
     },
 
-    _sectionLayoutChanged: function (sectionMode, layout) {
+    _sectionLayoutChanged: function(sectionMode, layout) {
       var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
       var sections = Polymer.dom(this.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
       var headings = Polymer.dom(this.$.insertPoint).querySelectorAll('at-form-section');
       var self = this;
       var sectionMode = self.sectionMode;
       var layout = self.layout;
-      var hideTabs = self._hideTabs = sectionMode ==="sections" ||
+      var hideTabs = self._hideTabs = sectionMode === "sections" ||
         (sectionMode === "auto" && layout === "horizontal") ||
         (sectionMode === "mobile" && layout === "horizontal");
       var hideHeadings = self._hideHeadings = ["mobile", "tabs"].indexOf(sectionMode) !== -1 ||
@@ -748,14 +750,14 @@
         self.toggleClass('hidden', !hideTabs && sectionId !== selectedSection, section);
       });
 
-      headings.forEach(function(heading, index){
+      headings.forEach(function(heading, index) {
         heading.hide = hideHeadings;
         self.toggleClass('hidden', hideHeadings, heading.parentElement);
       });
 
     },
 
-    _activeTabChanged: function (newValue, oldValue) {
+    _activeTabChanged: function(newValue, oldValue) {
       // this is here to prevent rerendering of at-core-form when activeTab
       // is updated by clicking an at-carbon-tab on at-carbon-tabs
       var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
@@ -764,7 +766,7 @@
       }
     },
 
-    _executeRuleEvaluation: function (schema) {
+    _executeRuleEvaluation: function(schema) {
       var _sh = window.schemaHelpers;
       if (this._isBusinessRulesEvaluationInProgress) {
         return;
@@ -895,7 +897,7 @@
 
       // update _internalData with keys from newValue
       var newValueKeys = Object.getOwnPropertyNames(newValue);
-      newValueKeys.forEach(function (key, index) {
+      newValueKeys.forEach(function(key, index) {
         _internalData[key] = newValue[key];
         if (_sh.isObject(newValue[key]) || _sh.isArray(newValue[key])) {
           _internalData[key] = JSON.parse(JSON.stringify(newValue[key]));
@@ -934,7 +936,7 @@
       // newValue can contain only a subset of properties on the form
       // value in data-changed should contain all properties so we need to copy over missing properties from _internalData
       var internalDataKeys = Object.getOwnPropertyNames(this._internalData);
-      internalDataKeys.forEach(function (key, index) {
+      internalDataKeys.forEach(function(key, index) {
         if (!self.data.hasOwnProperty(key)) {
           self.data[key] = self._internalData[key];
           if (_sh.isObject(self._internalData[key]) || _sh.isArray(self._internalData[key])) {
@@ -953,8 +955,8 @@
       this.fire('data-changed', {
         value: this.data
       }, {
-        bubbles: false
-      });
+          bubbles: false
+        });
     },
 
     /*
@@ -987,9 +989,9 @@
       this.fire('data-changed', {
         property: property,
         value: this.data
-      },{
-        bubbles: false
-      });
+      }, {
+          bubbles: false
+        });
     },
 
     filesChanged: function(newValue, oldValue) {
@@ -1054,7 +1056,7 @@
       var isValid = true;
 
       this._elementsToValidate.forEach(function(element) {
-        if (!(element.disabled  || element.hide)) {
+        if (!(element.disabled || element.hide)) {
           var elementValid = element.valid;
           isValid = isValid && elementValid;
         }
@@ -1080,7 +1082,7 @@
       }
 
       if (!this._elementsToValidate) { return isValid; }
-      
+
       for (var i = 0; i < this._elementsToValidate.length; i++) {
         var element = this._elementsToValidate[i];
         if (!(element.disabled || element.hide)) {
@@ -1109,7 +1111,7 @@
       return isValid;
     },
 
-    _findSection: function (id) {
+    _findSection: function(id) {
       var lastGroupName = false;
 
       var propertyNames = Object.getOwnPropertyNames(this.schema.properties);
@@ -1121,7 +1123,7 @@
         if (displayType !== 'section') {
           if (propName === id && !lastGroupName) {
             return false;
-          } else if (propName === id){
+          } else if (propName === id) {
             return lastGroupName;
           }
         } else {
@@ -1140,7 +1142,7 @@
       propertyNames.forEach(function(propertyName) {
         fieldElement = Polymer.dom(fieldsContainer).querySelector('#' + propertyName);
         if (fieldElement) {
-            fieldElement.disabled = parsedValue || schemaHelpers.parseBool(properties[propertyName].disabled);
+          fieldElement.disabled = parsedValue || schemaHelpers.parseBool(properties[propertyName].disabled);
         }
       });
 
@@ -1153,11 +1155,11 @@
     },
     _convertPropertiesToSchemaValues: function(properties) {
       var result = {
-          schema: {
-            properties: {}
-          },
-          values: {}
+        schema: {
+          properties: {}
         },
+        values: {}
+      },
         property,
         propDef,
         innerProp,
