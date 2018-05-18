@@ -448,7 +448,8 @@
           // So, to dynamically importHref needed elements we need to introduce static information (which will just be a copy paste from $meta of each element)
 
           var displayType = propDef.displayType;
-          var elementName = propDef.type === "element" ? displayType : displayTypeToFormElementMapping[displayType];
+          var elementName = displayTypeToFormElementMapping[displayType];
+          if (elementName == undefined) { elementName = displayType; }
 
           if (!elementName) {
             console.debug("Please add a mapping for (type, xtype) = (" + propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
