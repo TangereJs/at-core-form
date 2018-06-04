@@ -232,7 +232,7 @@
     },
 
     observers: [
-      '_schemaChanged(schema)',
+      '_schemaChanged(schema, placeholder)',
       '_sectionLayoutChanged(sectionMode, layout)'
     ],
 
@@ -337,11 +337,11 @@
     },
 
 
-    _schemaChanged: function(newValue) {
+    _schemaChanged: function(newValue, placeholder) {
       var _sh = window.schemaHelpers;
 
       // set the placeholder while at-core-form loads and renders the elements
-      Polymer.dom(this.$.insertPoint).innerHTML = this.placeholder;
+      Polymer.dom(this.$.insertPoint).innerHTML = placeholder;
 
       if (_sh.isString(newValue)) {
         /*
