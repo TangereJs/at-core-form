@@ -1,7 +1,7 @@
 <link rel="import" href="../tangere/tangere.html">
 <link rel="import" href="../at-core-schema/at-core-schema.html">
 <link rel="import" href="../at-core-resize-sensor/at-core-resize-sensor.html">
-<link rel="import" href="../at-theme/at-theme.html">
+<link rel="import" href="../at-core-style-classes/at-core-style-classes.html">
 <link rel="import" href="../at-rule-engine/at-rule-engine.html">
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-rules-evaluation.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tabs.html">
@@ -10,6 +10,7 @@
 <dom-module id="at-core-form">
   <template>
     <style include="at-form-common"></style>
+    <style include="at-core-style-classes"></style>
     <style>
       :host {
         display: block;
@@ -219,6 +220,14 @@
         type: String,
         value: "",
         observer: '_activeTabChanged'
+      },
+
+      placeholder: {
+        type: String,
+        value: "<div class='m'> <div class='placeholder-text'></div><div class='placeholder-text mtsm'></div></div>",
+        xtype: 'code',
+        xgridcols: "12",
+        mode: "html"
       }
     },
 
@@ -331,11 +340,8 @@
     _schemaChanged: function(newValue) {
       var _sh = window.schemaHelpers;
 
-      // clear the previous html content in the container
-      // we do not use Polymer.dom(fieldsContainer).innerHTML = "" because innerHTML invokes browser's html parser which is more expensive than removing nodes
-      while (Polymer.dom(this.$.insertPoint).firstChild) {
-        Polymer.dom(this.$.insertPoint).removeChild(Polymer.dom(this.$.insertPoint).firstChild);
-      }
+      // set the placeholder while at-core-form loads and renders the elements
+      Polymer.dom(this.$.insertPoint).innerHTML = this.placeholder;
 
       if (_sh.isString(newValue)) {
         /*
@@ -593,6 +599,8 @@
         Polymer.dom(fieldsFragment).appendChild(clearfixDiv);
       }
 
+      // clear the placeholder
+      Polymer.dom(fieldsContainer).innerHTML = '';
       Polymer.dom(fieldsContainer).appendChild(fieldsFragment);
 
       // if any element is required in schema its valid state is updated after creation
