@@ -340,9 +340,6 @@
     _schemaChanged: function(newValue, placeholder) {
       var _sh = window.schemaHelpers;
 
-      // set the placeholder while at-core-form loads and renders the elements
-      Polymer.dom(this.$.insertPoint).innerHTML = placeholder;
-
       if (_sh.isString(newValue)) {
         /*
         if newValue for schema is given as json string, parse it and assign it to this.schema
@@ -364,7 +361,6 @@
         return;
       }
 
-
       // figure out the list of the elements that should be imported
       schemaHelpers.initializeCentralArrayOfComponents();
       var _properties = newValue.properties;
@@ -377,6 +373,8 @@
       }
       this.__ready = true;
 
+      // set the placeholder while at-core-form loads and renders the elements
+      Polymer.dom(this.$.insertPoint).innerHTML = placeholder;
 
       // set flag to indicate that rendering is currently active
       this._rendering = true;
