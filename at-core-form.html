@@ -335,7 +335,41 @@
       var currWidth = resizeSensor.queryWidth();
       coreForm.updateLayout(currWidth);
     },
+    
+    // map legacy xtypes
+    // this list is also in at-form-complex and at-core-dashboard
+    _displayTypeToFormElementMapping: {
+      array: "at-form-array",
+      boolean: "at-form-checkbox",
+      toggle: "at-form-checkbox",
+      code: "at-form-codemirror",
+      json: "at-form-codemirror",
+      object: "at-form-complex",
+      date: "at-form-date",
+      time: "at-form-date",
+      datetime: "at-form-date",
+      daterange: "at-form-daterange",
+      file: "at-form-file",
+      html: "at-form-html",
+      image: "at-form-image",
+      'enum': "at-form-lookup",
+      lookup: "at-form-lookup",
+      marked: "at-form-markdown",
+      password: "at-form-password",
+      number: "at-form-number",
+      radio: "at-form-radio",
+      section: "at-form-section",
+      state: "at-form-state",
+      string: "at-form-text",
+      textarea: "at-form-textarea",
+      cron: "at-form-cron",
+      random: "at-form-random"
+    },
 
+    _getLegacyElementName: function(displayType) {
+      var elementName = this._displayTypeToFormElementMapping[displayType];
+      return elementName;
+    },
 
     _schemaChanged: function(newValue, placeholder) {
       var _sh = window.schemaHelpers;
@@ -362,7 +396,6 @@
       }
 
       // figure out the list of the elements that should be imported
-      schemaHelpers.initializeCentralArrayOfComponents();
       var _properties = newValue.properties;
       var _propertyNames = Object.getOwnPropertyNames(newValue.properties);
 
@@ -383,18 +416,20 @@
       var formGroups = [];
       var currentGroupName = "";
       var currentGroupElements = nonGroupedElements = [];
+      var self = this;
 
       _propertyNames.forEach(function(propName, index) {
         var propDef = _properties[propName];
         var displayType = schemaHelpers.getDisplayType(propDef, []);
-        var mapping = schemaHelpers.findMapping(displayType);
+        var elementName = self._getLegacyElementName(displayType);
+        if (elementName == undefined) elementName = displayType;
 
         // propDef.default !== window is added to hanlde cases from polymer behaviors
         // where initial value for properities is window
-        if (!mapping && propDef.default !== window) {
+        if (propDef.default !== window) {
           // element is not loaded; scheadule it for importHref
           var scheduledPropDef = JSON.parse(JSON.stringify(propDef));
-          scheduledPropDef.displayType = displayType;
+          scheduledPropDef.elementName = elementName;
           nonImportedElements.push(scheduledPropDef);
         }
 
@@ -411,38 +446,7 @@
           });
         }
       });
-
-      // map legacy xtypes
-      // this list is also in at-form-complex and at-core-dashboard
-      var displayTypeToFormElementMapping = {
-        array: "at-form-array",
-        boolean: "at-form-checkbox",
-        toggle: "at-form-checkbox",
-        code: "at-form-codemirror",
-        json: "at-form-codemirror",
-        object: "at-form-complex",
-        date: "at-form-date",
-        time: "at-form-date",
-        datetime: "at-form-date",
-        daterange: "at-form-daterange",
-        file: "at-form-file",
-        html: "at-form-html",
-        image: "at-form-image",
-        'enum': "at-form-lookup",
-        lookup: "at-form-lookup",
-        marked: "at-form-markdown",
-        password: "at-form-password",
-        number: "at-form-number",
-        radio: "at-form-radio",
-        section: "at-form-section",
-        state: "at-form-state",
-        string: "at-form-text",
-        textarea: "at-form-textarea",
-        cron: "at-form-cron",
-        random: "at-form-random"
-      };
-
-      var self = this;
+      
       if (nonImportedElements.length) {
         var pendingImportsCount = nonImportedElements.length;
 
@@ -450,10 +454,7 @@
           // To construct elemHref we need static information about what (type, xtype) maps to which at-form element
           // Right now, only $meta in each element contains this information and central array of components is populated with $meta information
           // So, to dynamically importHref needed elements we need to introduce static information (which will just be a copy paste from $meta of each element)
-
-          var displayType = propDef.displayType;
-          var elementName = displayTypeToFormElementMapping[displayType];
-          if (elementName == undefined) { elementName = displayType; }
+          var elementName = propDef.elementName;
 
           if (!elementName) {
             console.debug("Please add a mapping for (type, xtype) = (" + propDef.type + ", " + propDef.xtype + ") to displayTypeToFormElementMapping object in at-core-form");
@@ -661,8 +662,11 @@
         }
         xgridcols = displayType === "section" ? 12 : xgridcols;
 
+        var elementName = self._getLegacyElementName(displayType);
+        if (elementName == undefined) elementName = displayType;
+
         // create element for field
-        var formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition);
+        var formElement = schemaHelpers.createElement(propertyName, displayType, propertyDefinition, elementName);
 
         // enable autoValidate for all form elements
         formElement.autoValidate = true;
