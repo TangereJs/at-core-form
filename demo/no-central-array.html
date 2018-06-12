@@ -5,36 +5,39 @@
   <meta name="viewport" content="width=device-width" />
   <title>At-Core-Form demo</title>
 
-  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="at-core-form.html" />
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-core-form.html" />
 
   <style>
-  .container-w {
-    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
-  .container-m {
-    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
-  .container-s {
-    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
     [class*='col-'] {
       border: 1px dashed blue;
@@ -48,18 +51,162 @@
     <at-core-form id="coreFormDemo"></at-core-form>
   </div>
   <script>
-    document.addEventListener('WebComponentsReady', function () {
-      var properties = {
-        'AT-FORM-ARRAY-1': {
-          type: 'array',
-        }
-      };
-
+    document.addEventListener('WebComponentsReady', function() {
       var schema = {
-        properties: properties
+        "$type": "form",
+        "properties": {
+          "view5": {
+            "type": "element",
+            "title": "Liquid View 5",
+            "xtype": "at-core-view",
+            "view": "<div>at-core-view works!</div>"
+          },
+          "ajax1": {
+            "type": "element",
+            "title": "Ajax 1",
+            "xtype": "at-form-ajax"
+          },
+          "array2": {
+            "type": "array",
+            "title": "Array 2",
+            "schema": "{\n \"items\": {\n  \"properties\": {\n   \"value\": {\n    \"type\": \"string\",\n    \"title\": \"Value\"\n   }\n  }\n }\n}",
+            "default": "[]"
+          },
+          "boolean3": {
+            "type": "boolean",
+            "title": "Checkbox 3",
+            "default": "false"
+          },
+          "toggle4": {
+            "type": "boolean",
+            "title": "Toggle 4",
+            "xtype": "toggle",
+            "default": "false"
+          },
+          "checkboxlist6": {
+            "type": "string",
+            "title": "Checkbox list 6",
+            "xtype": "at-form-checkbox-list"
+          },
+          "code7": {
+            "type": "string",
+            "title": "Code 7",
+            "xtype": "code"
+          },
+          "cron8": {
+            "type": "string",
+            "title": "Cron 8",
+            "xtype": "cron"
+          },
+          "date9": {
+            "type": "string",
+            "title": "Date 9",
+            "xtype": "date"
+          },
+          "time10": {
+            "type": "string",
+            "title": "Time 10",
+            "xtype": "time"
+          },
+          "datetime11": {
+            "type": "string",
+            "title": "Date and time 11",
+            "xtype": "datetime"
+          },
+          "daterange12": {
+            "type": "daterange",
+            "title": "Daterange 12"
+          },
+          "file13": {
+            "type": "string",
+            "title": "File 13",
+            "xtype": "file",
+            "default": "{\n \"invalid\": {\n  \"count\": 0\n },\n \"valid\": [],\n \"current\": [],\n \"deleted\": []\n}"
+          },
+          "html14": {
+            "type": "string",
+            "title": "Html 14",
+            "xtype": "html"
+          },
+          "image15": {
+            "type": "string",
+            "title": "Image 15",
+            "xtype": "image"
+          },
+          "enum16": {
+            "type": "string",
+            "title": "Enum 16",
+            "xtype": "enum"
+          },
+          "lookup17": {
+            "type": "string",
+            "title": "Lookup 17",
+            "xtype": "lookup"
+          },
+          "marked18": {
+            "type": "string",
+            "title": "Markdown 18",
+            "xtype": "marked",
+            "inlineAttachmentExtraParams": "{}"
+          },
+          "modal19": {
+            "type": "element",
+            "title": "Modal form 19",
+            "xtype": "at-form-modal",
+            "schema": "{\n \"properties\": {}\n}",
+            "default": "{}"
+          },
+          "number20": {
+            "type": "number",
+            "title": "Number 20"
+          },
+          "password21": {
+            "type": "string",
+            "title": "Password 21",
+            "xtype": "password"
+          },
+          "radio22": {
+            "type": "string",
+            "title": "Radio 22",
+            "xtype": "radio"
+          },
+          "random23": {
+            "type": "string",
+            "title": "Random 23",
+            "xtype": "random"
+          },
+          "section24": {
+            "type": "section",
+            "title": "Section 24"
+          },
+          "state25": {
+            "type": "string",
+            "title": "State 25",
+            "xtype": "state"
+          },
+          "static26": {
+            "type": "string",
+            "title": "Static HTML 26",
+            "xtype": "at-form-static"
+          },
+          "string27": {
+            "type": "string",
+            "title": "Text 27"
+          },
+          "textarea28": {
+            "type": "string",
+            "title": "Textarea 28",
+            "xtype": "textarea"
+          }
+        },
+        "$meta": {
+          "title": "",
+          "sectionMode": "tabs"
+        },
+        "rules": []
       };
       var data = {};
-      
+
       var demoForm = document.getElementById("coreFormDemo");
       demoForm.schema = schema;
 
