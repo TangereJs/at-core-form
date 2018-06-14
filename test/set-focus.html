@@ -35,7 +35,7 @@
   </test-fixture>
 
   <script>
-    suite('set focus function tests', function () {
+    suite('set focus function tests', function() {
 
       function getSchema() {
         return {
@@ -69,227 +69,264 @@
         return 'shadowDOM';
       }
 
-      test('schema is set as attribute, setFocus without params', function () {
+      test('schema is set as attribute, setFocus without params', function(done) {
+        var form = fixture('attrSchema');
+        assert.deepEqual(form.schema, getSchema(), "schema not set correctly");
+
+        function checkRendered() {
+          if (form._rendering) {
+            setTimeout(checkRendered, 100);
+            return;
+          }
+          handleRenderedEvent();
+        }
+
+        setTimeout(checkRendered);
+
+        function handleRenderedEvent() {
+          assert.deepEqual(form.data, getData(), true, "data not set correctly");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus();
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+          done();
+        }
+
+      });
+
+      test('schema is set as attribute, cycle setFocus on each element', function(done) {
         var form = fixture('attrSchema');
 
-        assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
-        assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
+        assert.deepEqual(form.schema, getSchema(), "schema not set correctly");
 
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
+        function checkRendered() {
+          if (form._rendering) {
+            setTimeout(checkRendered, 100);
+            return;
+          }
+          handleRenderedEvent();
         }
 
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
+        setTimeout(checkRendered);
 
-        form.setFocus();
+        function handleRenderedEvent() {
+          assert.deepEqual(form.data, getData(), "data not set correctly");
 
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus();
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus("text2");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), true, "text2 does not have focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus("text3");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), true, "text3 does not have focus");
+
+          form.setFocus("text1");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+          done();
         }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
       });
 
-      test('schema is set as attribute, cycle setFocus on each element', function () {
-        var form = fixture('attrSchema');
-
-        assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
-        assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus();
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus("text2");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), true, "text2 does not have focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus("text3");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), true, "text3 does not have focus");
-
-        form.setFocus("text1");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-      });
-
-      test('schema is set in code, setFocus without params', function () {
+      test('schema is set in code, setFocus without params', function(done) {
         var form = fixture('propertyTests');
+        form.addEventListener('rendered', handleRenderedEvent);
         form.schema = getSchema();
 
-        assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
-        assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
+        function handleRenderedEvent() {
+          assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
+          assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
 
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus();
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+          done();
         }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus();
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
       });
 
-      test('schema is set in code, cycle setFocus on each element', function () {
+      test('schema is set in code, cycle setFocus on each element', function(done) {
         var form = fixture('propertyTests');
+
+        form.addEventListener('rendered', handleRenderedEvent);
         form.schema = getSchema();
+        function handleRenderedEvent() {
+          assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
+          assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
 
-        assert.equal(window.schemaHelpers.areEqual(form.schema, getSchema()), true, "schema not set correctly");
-        assert.equal(window.schemaHelpers.areEqual(form.data, getData()), true, "data not set correctly");
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
 
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus();
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus("text2");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), true, "text2 does not have focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+
+          form.setFocus("text3");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), false, "text1 has focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), true, "text3 does not have focus");
+
+          form.setFocus("text1");
+
+          var activeElement = document.activeElement;
+          if (getDomMode(form) === "shadowDOM") {
+            activeElement = form.shadowRoot.activeElement;
+          }
+
+          var element = form.getElement("text1");
+          assert.equal(element.contains(activeElement), true, "text1 does not have focus");
+          element = form.getElement("text2");
+          assert.equal(element.contains(activeElement), false, "text2 has focus");
+          element = form.getElement("text3");
+          assert.equal(element.contains(activeElement), false, "text3 has focus");
+          done();
         }
 
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus();
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus("text2");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), true, "text2 does not have focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
-
-        form.setFocus("text3");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), false, "text1 has focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), true, "text3 does not have focus");
-
-        form.setFocus("text1");
-
-        var activeElement = document.activeElement;
-        if (getDomMode(form) === "shadowDOM") {
-          activeElement = form.shadowRoot.activeElement;
-        }
-
-        var element = form.getElement("text1");
-        assert.equal(element.contains(activeElement), true, "text1 does not have focus");
-        element = form.getElement("text2");
-        assert.equal(element.contains(activeElement), false, "text2 has focus");
-        element = form.getElement("text3");
-        assert.equal(element.contains(activeElement), false, "text3 has focus");
       });
 
     });
   </script>
 
 </body>
+
 </html>

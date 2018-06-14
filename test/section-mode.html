@@ -25,40 +25,29 @@
 
   <test-fixture id="asAttrTabModeSections">
     <template>
-      <at-core-form
-        schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
-        section-mode="sections"
-      ></at-core-form>
+      <at-core-form schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
+        section-mode="sections"></at-core-form>
     </template>
   </test-fixture>
 
   <test-fixture id="asAttrTabModeTabs">
     <template>
-      <at-core-form
-        schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
-        section-mode="tabs"
-        active-tab="section2"
-      ></at-core-form>
+      <at-core-form schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
+        section-mode="tabs" active-tab="section2"></at-core-form>
     </template>
   </test-fixture>
 
   <test-fixture id="asAttrTabModeAuto">
     <template>
-      <at-core-form
-        schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
-        section-mode="auto"
-        active-tab="section2"
-      ></at-core-form>
+      <at-core-form schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
+        section-mode="auto" active-tab="section2"></at-core-form>
     </template>
   </test-fixture>
 
   <test-fixture id="asAttrTabModeMobile">
     <template>
-      <at-core-form
-        schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
-        section-mode="mobile"
-        active-tab="section2"
-      ></at-core-form>
+      <at-core-form schema='{"properties":{"text1":{"type":"string"},"text2":{"type":"string"},"text3":{"type":"string"},"text4":{"type":"string"},"section1":{"type":"section"},"text5":{"type":"string"},"text6":{"type":"string"},"section2":{"type":"section"},"text7":{"type":"string"},"text8":{"type":"string"},"section3":{"type":"section"},"text9":{"type":"string"},"text10":{"type":"string","required":true}}}'
+        section-mode="mobile" active-tab="section2"></at-core-form>
     </template>
   </test-fixture>
 
@@ -242,136 +231,187 @@
 
       suite('tests were properties are set as attributes', function() {
 
-        test('seciton mode sections', function() {
+        test('seciton mode sections', function(done) {
           var form = fixture('asAttrTabModeSections');
+          function checkRendered() {
+            if (form._rendering) {
+              setTimeout(checkRendered, 100);
+              return;
+            }
+            handleRenderedEvent();
+          }
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          setTimeout(checkRendered);
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+          function handleRenderedEvent() {
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
+
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            done();
+          }
         });
 
-        test('section mode tabs, activeTab = section2', function() {
+        test('section mode tabs, activeTab = section2', function(done) {
           var form = fixture('asAttrTabModeTabs');
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          function checkRendered() {
+            if (form._rendering) {
+              setTimeout(checkRendered, 100);
+              return;
+            }
+            handleRenderedEvent();
+          }
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isFalse(carbonTabs.hidden, 'carbon tabs not hidden');
+          setTimeout(checkRendered);
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isFalse(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            done();
+          }
         });
 
-        test('section mode auto, activeTab = section2', function() {
+        test('section mode auto, activeTab = section2', function(done) {
           var form = fixture('asAttrTabModeAuto');
+          function checkRendered() {
+            if (form._rendering) {
+              setTimeout(checkRendered, 100);
+              return;
+            }
+            handleRenderedEvent();
+          }
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          setTimeout(checkRendered);
 
-          assert.equal(form.layout, "horizontal", "form layout is not correct");
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+            assert.equal(form.layout, "horizontal", "form layout is not correct");
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            done();
+          }
         });
 
-        test('section mode mobile, activeTab = section2', function() {
+        test('section mode mobile, activeTab = section2', function(done) {
           var form = fixture('asAttrTabModeMobile');
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          function checkRendered() {
+            if (form._rendering) {
+              setTimeout(checkRendered, 100);
+              return;
+            }
+            handleRenderedEvent();
+          }
 
-          assert.equal(form.layout, "horizontal", "form layout is not correct");
+          setTimeout(checkRendered);
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            assert.equal(form.layout, "horizontal", "form layout is not correct");
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          var formSections = Polymer.dom(form.$.insertPoint).querySelectorAll('at-form-section');
-          formSections.forEach(function(section, index) {
-            assert.isTrue(section.hide, 'section header not hidden');
-          });
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            var formSections = Polymer.dom(form.$.insertPoint).querySelectorAll('at-form-section');
+            formSections.forEach(function(section, index) {
+              assert.isTrue(section.hide, 'section header not hidden');
+            });
+            done();
+          }
         });
       });
 
@@ -380,149 +420,167 @@
       /********************************************************************************/
 
       suite('tests were properties are set in code', function() {
-        test('seciton mode sections', function() {
+        test('seciton mode sections', function(done) {
           var form = fixture('propertyTests');
           form.sectionMode = "sections";
           form.activeTab = "section2";
+          form.addEventListener('rendered', handleRenderedEvent);
           form.schema = getSchema();
 
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
-
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            done();
+          }
         });
 
-        test('section mode tabs, activeTab = section2', function() {
+        test('section mode tabs, activeTab = section2', function(done) {
           var form = fixture('propertyTests');
           form.sectionMode = "tabs";
           form.activeTab = "section2";
+          form.addEventListener('rendered', handleRenderedEvent);
           form.schema = getSchema();
+          function handleRenderedEvent() {
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isFalse(carbonTabs.hidden, 'carbon tabs not hidden');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isFalse(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isTrue(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            done();
+          }
         });
 
-        test('section mode auto, activeTab = section2', function() {
+        test('section mode auto, activeTab = section2', function(done) {
           var form = fixture('propertyTests');
           form.sectionMode = "auto";
           form.activeTab = "section2";
+          form.addEventListener('rendered', handleRenderedEvent);
           form.schema = getSchema();
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          assert.equal(form.layout, "horizontal", "form layout is not correct");
+            assert.equal(form.layout, "horizontal", "form layout is not correct");
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+
+            done();
+          }
         });
 
-        test('section mode mobile, activeTab = section2', function() {
+        test('section mode mobile, activeTab = section2', function(done) {
           var form = fixture('propertyTests');
           form.sectionMode = "mobile";
           form.activeTab = "section2";
+
+          form.addEventListener('rendered', handleRenderedEvent);
           form.schema = getSchema();
 
-          assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
-          assert.deepEqual(form.data, getData(), 'data not set correctly');
+          function handleRenderedEvent() {
+            assert.deepEqual(form.schema, getSchema(), 'schema not set correctly');
+            assert.deepEqual(form.data, getData(), 'data not set correctly');
 
-          assert.equal(form.layout, "horizontal", "form layout is not correct");
+            assert.equal(form.layout, "horizontal", "form layout is not correct");
 
-          var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
-          assert.isNotNull(carbonTabs, 'carbon tabs not created');
-          assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
+            var carbonTabs = Polymer.dom(form.$.insertPoint).querySelector('at-carbon-tabs');
+            assert.isNotNull(carbonTabs, 'carbon tabs not created');
+            assert.isTrue(carbonTabs.hidden, 'carbon tabs not hidden');
 
-          var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
-          assert.equal(carbonTabsList.length, 3, 'missing tabs');
-          var sectionIds = ["section1", "section2", "section3"];
-          carbonTabsList.forEach(function(carbonTab, index) {
-            assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
-          });
+            var carbonTabsList = Polymer.dom(form.$.insertPoint).querySelectorAll('at-carbon-tab');
+            assert.equal(carbonTabsList.length, 3, 'missing tabs');
+            var sectionIds = ["section1", "section2", "section3"];
+            carbonTabsList.forEach(function(carbonTab, index) {
+              assert.equal(carbonTab.id, sectionIds[index], 'carbon tab id not correct');
+            });
 
-          var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
-          assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
+            var ironPages = Polymer.dom(form.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
+            assert.equal(ironPages.length, 3, 'form did not create sections for tab mode sections');
 
-          assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
-          var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            assert.equal(carbonTabs.selected, 'section2', 'selected tab is not correct');
+            var selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section2]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
-          assert.isNotNull(selectedPage, "there is no other page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section1]');
+            assert.isNotNull(selectedPage, "there is no other page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
-          assert.isNotNull(selectedPage, "there is no selected page");
-          assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
+            selectedPage = Polymer.dom(form.$.insertPoint).querySelector('div[at-core-form-section-id=section3]');
+            assert.isNotNull(selectedPage, "there is no selected page");
+            assert.isFalse(selectedPage.classList.contains('hidden'), 'selected page is hidden');
 
-          var formSections = Polymer.dom(form.$.insertPoint).querySelectorAll('at-form-section');
-          formSections.forEach(function(section, index) {
-            assert.isTrue(section.hide, 'section header not hidden');
-          });
+            var formSections = Polymer.dom(form.$.insertPoint).querySelectorAll('at-form-section');
+            formSections.forEach(function(section, index) {
+              assert.isTrue(section.hide, 'section header not hidden');
+            });
+            done();
+          }
         });
       });
     });

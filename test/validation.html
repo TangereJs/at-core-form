@@ -47,7 +47,7 @@
 
      */
 
-    suite('validation tests', function () {
+    suite('validation tests', function() {
 
       function isArray(obj) {
         return Object.prototype.toString.call(obj) === "[object Array]";
@@ -69,7 +69,7 @@
         if (isArray(obj1) && isArray(obj2)) {
           result = obj1.length === obj2.length;
           // if lengths are different return false
-          if(!result) {
+          if (!result) {
             return result;
           }
 
@@ -219,7 +219,7 @@
         assert.equal(isValid, false, 'core form is valid');
       }
 
-      test('disabled and hidden effect on valid state', function () {
+      test('disabled and hidden effect on valid state', function(done) {
         var coreForm = fixture('propertyTest');
         var properties = getSchema().properties;
         var elementIds = Object.keys(properties);
@@ -230,159 +230,163 @@
         var indexOfSection = elementIds.indexOf('section');
         elementIds.splice(indexOfSection, 1);
 
+        coreForm.addEventListener('rendered', handleRenderedEvent);
+
         // set the schema
         coreForm.schema = getSchema();
-        assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
 
-        // each element on the form is initially valid, and not disabled and not hidden
-        for (i = 0; i < elementIds.length; i++) {
-          elementId = elementIds[i];
-          element = coreForm.getElement(elementId);
-          assert.equal(element.disabled, false, 'element is disabled');
-          assert.equal(element.hide, false, 'element is hidden');
+        function handleRenderedEvent() {
+          assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
 
-          assertElementIsValid(element);
-        }
+          // each element on the form is initially valid, and not disabled and not hidden
+          for (i = 0; i < elementIds.length; i++) {
+            elementId = elementIds[i];
+            element = coreForm.getElement(elementId);
+            assert.equal(element.disabled, false, 'element is disabled');
+            assert.equal(element.hide, false, 'element is hidden');
 
-        // at-core-form is initally valid
-        assertFormIsValid(coreForm);
-
-        // hidding and/or disabling any element on the form will not change valid state of the element and not change valid state of the at-core-form
-        for (i = 0; i < elementIds.length; i++) {
-          elementId = elementIds[i];
-          element = coreForm.getElement(elementId);
-
-          // disable the element
-          element.disabled = true;
-          assert.equal(element.disabled, true, 'element is enabled');
-
-          // element must remain valid
-          assertElementIsValid(element);
-
-          // at-core-form must remain valid
-          assertFormIsValid(coreForm);
-
-          // enable the element
-          element.disabled = false;
-          assert.equal(element.disabled, false, 'element is disabled');
-
-          // hide the element
-          element.hide = true;
-          assert.equal(element.hide, true, 'element is visible');
-
-          // element must remain valid
-          assertElementIsValid(element);
-
-          // at-core-form must remain valid
-          assertFormIsValid(coreForm);
-
-          // disable the element; now element is both disabled and hidden
-          element.disabled = true;
-          assert.equal(element.disabled, true, 'element is enabled');
-          // element must remain valid
-          assertElementIsValid(element);
-
-          // at-core-form must remain valid
-          assertFormIsValid(coreForm);
-
-          // enable and show the element
-          element.disabled = false;
-          assert.equal(element.disabled, false, 'element is disabled');
-          element.hide = false;
-          assert.equal(element.hide, false, 'element is hidden');
-        }
-
-        /*
-          make each element invalid
-          form will become invalid
-          hidding and/or disabling the element on the form will not change valid state of the element
-          but will change valid state of the at-core-form
-        */
-        for (i = 0; i < elementIds.length; i++) {
-          elementId = elementIds[i];
-          element = coreForm.getElement(elementId);
-
-          // make element invalid
-          element.value = null;
-          element.required = true;
-
-          if (elementId !== "image") {
-            assert.equal(element.value, null, "element value not set correctly");
+            assertElementIsValid(element);
           }
-          assert.equal(element.required, true, "element required not set correctly");
 
-          assertElementIsInvalid(element);
-
-          // form becomes invalid
-          assertFormIsInvalid(coreForm);
-
-          // disable the element
-          element.disabled = true;
-          assert.equal(element.disabled, true, 'element is enabled');
-
-          // element remains invalid
-          assertElementIsInvalid(element);
-
-          // at-core-form becomes valid
+          // at-core-form is initally valid
           assertFormIsValid(coreForm);
 
-          // enable the element
-          element.disabled = false;
-          assert.equal(element.disabled, false, 'element is disabled');
+          // hidding and/or disabling any element on the form will not change valid state of the element and not change valid state of the at-core-form
+          for (i = 0; i < elementIds.length; i++) {
+            elementId = elementIds[i];
+            element = coreForm.getElement(elementId);
 
-          // element remains invalid
-          assertElementIsInvalid(element);
+            // disable the element
+            element.disabled = true;
+            assert.equal(element.disabled, true, 'element is enabled');
 
-          // at-core-form becomes invalid
-          assertFormIsInvalid(coreForm);
+            // element must remain valid
+            assertElementIsValid(element);
 
-          // hide the element
-          element.hide = true;
-          assert.equal(element.hide, true, 'element is visible');
+            // at-core-form must remain valid
+            assertFormIsValid(coreForm);
 
-          // element remains invalid
-          assertElementIsInvalid(element);
+            // enable the element
+            element.disabled = false;
+            assert.equal(element.disabled, false, 'element is disabled');
 
-          // at-core-form becomes valid
-          assertFormIsValid(coreForm);
+            // hide the element
+            element.hide = true;
+            assert.equal(element.hide, true, 'element is visible');
 
-          // disable the element; now element is both disabled and hidden
-          element.disabled = true;
-          assert.equal(element.disabled, true, 'element is enabled');
+            // element must remain valid
+            assertElementIsValid(element);
 
-          // element remains invalid
-          assertElementIsInvalid(element);
+            // at-core-form must remain valid
+            assertFormIsValid(coreForm);
 
-          // at-core-form remains valid
-          assertFormIsValid(coreForm);
+            // disable the element; now element is both disabled and hidden
+            element.disabled = true;
+            assert.equal(element.disabled, true, 'element is enabled');
+            // element must remain valid
+            assertElementIsValid(element);
 
-          // enable and show the element
-          element.disabled = false;
-          assert.equal(element.disabled, false, 'element is disabled');
-          element.hide = false;
-          assert.equal(element.hide, false, 'element is hidden');
+            // at-core-form must remain valid
+            assertFormIsValid(coreForm);
 
-          // make element valid
-          var initialValue = element.properties.value.value;
-          if (isFunction(initialValue)) {
-            element.value = initialValue();
-          } else {
-            element.value = initialValue;
+            // enable and show the element
+            element.disabled = false;
+            assert.equal(element.disabled, false, 'element is disabled');
+            element.hide = false;
+            assert.equal(element.hide, false, 'element is hidden');
           }
-          element.required = false;
 
-          assertElementIsValid(element);
+          /*
+            make each element invalid
+            form will become invalid
+            hidding and/or disabling the element on the form will not change valid state of the element
+            but will change valid state of the at-core-form
+          */
+          for (i = 0; i < elementIds.length; i++) {
+            elementId = elementIds[i];
+            element = coreForm.getElement(elementId);
 
-          // at-core-form becomes valid
-          assertFormIsValid(coreForm);
+            // make element invalid
+            element.value = null;
+            element.required = true;
+
+            if (elementId !== "image") {
+              assert.equal(element.value, null, "element value not set correctly");
+            }
+            assert.equal(element.required, true, "element required not set correctly");
+
+            assertElementIsInvalid(element);
+
+            // form becomes invalid
+            assertFormIsInvalid(coreForm);
+
+            // disable the element
+            element.disabled = true;
+            assert.equal(element.disabled, true, 'element is enabled');
+
+            // element remains invalid
+            assertElementIsInvalid(element);
+
+            // at-core-form becomes valid
+            assertFormIsValid(coreForm);
+
+            // enable the element
+            element.disabled = false;
+            assert.equal(element.disabled, false, 'element is disabled');
+
+            // element remains invalid
+            assertElementIsInvalid(element);
+
+            // at-core-form becomes invalid
+            assertFormIsInvalid(coreForm);
+
+            // hide the element
+            element.hide = true;
+            assert.equal(element.hide, true, 'element is visible');
+
+            // element remains invalid
+            assertElementIsInvalid(element);
+
+            // at-core-form becomes valid
+            assertFormIsValid(coreForm);
+
+            // disable the element; now element is both disabled and hidden
+            element.disabled = true;
+            assert.equal(element.disabled, true, 'element is enabled');
+
+            // element remains invalid
+            assertElementIsInvalid(element);
+
+            // at-core-form remains valid
+            assertFormIsValid(coreForm);
+
+            // enable and show the element
+            element.disabled = false;
+            assert.equal(element.disabled, false, 'element is disabled');
+            element.hide = false;
+            assert.equal(element.hide, false, 'element is hidden');
+
+            // make element valid
+            var initialValue = element.properties.value.value;
+            if (isFunction(initialValue)) {
+              element.value = initialValue();
+            } else {
+              element.value = initialValue;
+            }
+            element.required = false;
+
+            assertElementIsValid(element);
+
+            // at-core-form becomes valid
+            assertFormIsValid(coreForm);
+          }
+
+          done();
         }
-
-
       });
-
-
     });
   </script>
 
 </body>
+
 </html>

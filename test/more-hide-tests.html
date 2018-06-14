@@ -50,8 +50,9 @@
       test('schema does not hide, hide and check each element', function(done) {
 
         var coreForm = fixture('propertyTests');
+        coreForm.addEventListener('rendered', handleRenderedEvent);
         coreForm.schema = getSchema();
-        flush(function() {
+        function handleRenderedEvent() {
           var text1 = coreForm.getElement('text1');
           assert.equal(text1.hide, false, 'text1 is hidden');
           var text2 = coreForm.getElement('text2');
@@ -84,7 +85,7 @@
           assert.equal(text3.parentElement.classList.contains('hidden'), false, 'text3 container classList doesnt contain hidden class');
 
           done();
-        });
+        }
       });
 
       function getHidingSchema() {
@@ -107,11 +108,11 @@
       }
 
       test('schema hides, show and hide and check each element', function(done) {
-
         var coreForm = fixture('propertyTests');
+        coreForm.addEventListener('rendered', handleRenderedEvent);
         coreForm.schema = getHidingSchema();
 
-        flush(function() {
+        function handleRenderedEvent() {
           var text1 = coreForm.getElement('text1');
           assert.equal(text1.hide, true, 'text1 is hidden');
           var text2 = coreForm.getElement('text2');
@@ -144,10 +145,8 @@
           assert.equal(text3.parentElement.classList.contains('hidden'), true, 'text3 container classList doesnt contain hidden class');
 
           done();
-        });
-
+        }
       });
-
     });
   </script>
 

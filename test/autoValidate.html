@@ -47,7 +47,7 @@
 
      */
 
-    suite('validation tests', function () {
+    suite('validation tests', function() {
 
       function isArray(obj) {
         return Object.prototype.toString.call(obj) === "[object Array]";
@@ -69,7 +69,7 @@
         if (isArray(obj1) && isArray(obj2)) {
           result = obj1.length === obj2.length;
           // if lengths are different return false
-          if(!result) {
+          if (!result) {
             return result;
           }
 
@@ -193,9 +193,9 @@
 
       function assertElementIsValid(element) {
         var isValid = element.valid;
-        assert.equal(isValid, true, 'element '+ element.is +' is invalid');
+        assert.equal(isValid, true, 'element ' + element.is + ' is invalid');
         isValid = element.validate();
-        assert.equal(isValid, true, 'element '+ element.is +' is invalid');
+        assert.equal(isValid, true, 'element ' + element.is + ' is invalid');
       }
 
       function assertElementIsInvalid(element) {
@@ -219,7 +219,7 @@
         assert.equal(isValid, false, 'core form is valid');
       }
 
-      test('autoValidate test', function () {
+      test('autoValidate test', function(done) {
         // assert that autoValidate is true for all elements on the form
         var coreForm = fixture('propertyTest');
         var properties = getSchema().properties;
@@ -227,55 +227,60 @@
         var i, elementId, element;
         var isValid;
 
+        coreForm.addEventListener('rendered', handleRenderedEvent);
         // set the schema
         coreForm.schema = getSchema();
-        assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
 
-        // remove "section" from elementIds since validation doesn't make sense for at-form-section
-        var indexOfSection = elementIds.indexOf('section');
-        elementIds.splice(indexOfSection, 1);
+        function handleRenderedEvent() {
+          assert.equal(areEqual(coreForm.schema, getSchema()), true, 'schema is not set correctly');
 
-        // each element on the form has autoValidate set to true
-        for (i = 0; i < elementIds.length; i++) {
-          elementId = elementIds[i];
-          element = coreForm.getElement(elementId);
-          assert.equal(element.autoValidate, true, "element's autoValidate value is not correct");
+          // remove "section" from elementIds since validation doesn't make sense for at-form-section
+          var indexOfSection = elementIds.indexOf('section');
+          elementIds.splice(indexOfSection, 1);
 
-          // and is valid
-          assertElementIsValid(element);
+          // each element on the form has autoValidate set to true
+          for (i = 0; i < elementIds.length; i++) {
+            elementId = elementIds[i];
+            element = coreForm.getElement(elementId);
+            assert.equal(element.autoValidate, true, "element's autoValidate value is not correct");
 
-          assertFormIsValid(coreForm);
-        }
+            // and is valid
+            assertElementIsValid(element);
 
-        /*
-          make each element invalid
-          form will become invalid
-          since autoValidate is true, error messages will be displayed for each element
-        */
-        for (i = 0; i < elementIds.length; i++) {
-          elementId = elementIds[i];
-          element = coreForm.getElement(elementId);
-
-          // make element invalid
-          element.value = null;
-          element.required = true;
-
-          if (elementId !== "image") {
-            assert.equal(element.value, null, "element value not set correctly");
+            assertFormIsValid(coreForm);
           }
-          assert.equal(element.required, true, "element required not set correctly");
 
-          // assert that error message is set
-          var hint = element.$.hint;
-          var hintContent = Polymer.dom(hint).textContent;
-          assert.equal(hintContent, element.T("This field is required."), "element " + element.is + " error message not set correctly");
+          /*
+            make each element invalid
+            form will become invalid
+            since autoValidate is true, error messages will be displayed for each element
+          */
+          for (i = 0; i < elementIds.length; i++) {
+            elementId = elementIds[i];
+            element = coreForm.getElement(elementId);
 
-          // element should be invalid
-          assertElementIsInvalid(element);
+            // make element invalid
+            element.value = null;
+            element.required = true;
 
-          // form should be invalid
-          assertFormIsInvalid(coreForm);
+            if (elementId !== "image") {
+              assert.equal(element.value, null, "element value not set correctly");
+            }
+            assert.equal(element.required, true, "element required not set correctly");
 
+            // assert that error message is set
+            var hint = element.$.hint;
+            var hintContent = Polymer.dom(hint).textContent;
+            assert.equal(hintContent, element.T("This field is required."), "element " + element.is + " error message not set correctly");
+
+            // element should be invalid
+            assertElementIsInvalid(element);
+
+            // form should be invalid
+            assertFormIsInvalid(coreForm);
+
+          }
+          done();
         }
       });
 
@@ -283,4 +288,5 @@
   </script>
 
 </body>
+
 </html>
