@@ -57,6 +57,10 @@
         min-height: 32px;
       }
 
+      .col-12.at-form-section {
+        min-height: unset;
+      }
+
       /* workaround for IE11 flexbox min-height bug */
 
       _:-ms-fullscreen,
@@ -680,6 +684,12 @@
         // special container for at-form-toggle to allow smaller height in vertical mode
         if (formElement.tagName.toLowerCase() == "at-form-checkbox") {
           Polymer.dom(fieldContainer).classList.add("at-form-checkbox");
+        }
+
+        // special handling for at-form-section; at-form-section should have .mt class from at-core-style-classes and min-height value of unset
+        if (formElement.tagName.toLowerCase() == "at-form-section") {
+          Polymer.dom(fieldContainer).classList.add("at-form-section");
+          Polymer.dom(fieldContainer).classList.add("mt");
         }
 
         if (!self._internalData.hasOwnProperty(propertyName)) {
