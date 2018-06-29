@@ -57,10 +57,6 @@
         min-height: 32px;
       }
 
-      .col-12.at-form-section {
-        min-height: unset;
-      }
-
       /* workaround for IE11 flexbox min-height bug */
 
       _:-ms-fullscreen,
@@ -688,8 +684,7 @@
 
         // special handling for at-form-section; at-form-section should have .mt class from at-core-style-classes and min-height value of unset
         if (formElement.tagName.toLowerCase() == "at-form-section") {
-          Polymer.dom(fieldContainer).classList.add("at-form-section");
-          Polymer.dom(fieldContainer).classList.add("mt");
+          Polymer.dom(formElement).classList.add("mtlg");
         }
 
         if (!self._internalData.hasOwnProperty(propertyName)) {
