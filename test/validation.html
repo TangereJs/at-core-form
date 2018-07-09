@@ -182,14 +182,22 @@
             textarea: {
               type: "string",
               xtype: "textarea"
-            }
+            },
+            state: {
+              type: "string",
+              xtype: "state"
+            },
+            checkboxlist: {
+              type: "string",
+              xtype: "at-form-checkbox-list"
+            },
+            static: {
+              type: "string",
+              xtype: "at-form-static"
+            },
           }
         };
       }
-      // state: {
-      //   type: "string",
-      //   xtype: "state"
-      // },
 
       function assertElementIsValid(element) {
         var isValid = element.valid;
@@ -229,6 +237,8 @@
         // remove "section" from elementIds since validation doesn't make sense for at-form-section
         var indexOfSection = elementIds.indexOf('section');
         elementIds.splice(indexOfSection, 1);
+        var indexOfStatic = elementIds.indexOf('static');
+        elementIds.splice(indexOfStatic, 1);
 
         coreForm.addEventListener('rendered', handleRenderedEvent);
 
