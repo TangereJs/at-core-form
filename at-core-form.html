@@ -529,6 +529,8 @@
       });
 
       if (formGroups.length) {
+        self.activeTab = self.activeTab ? self.activeTab : formGroups[0].name;
+
         var sectionMode = self.sectionMode;
         var layout = self.layout;
         self._hideTabs = sectionMode === "sections" ||
