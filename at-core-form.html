@@ -6,6 +6,9 @@
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-rules-evaluation.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tabs.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tab.html">
+<link rel="import" href="../at-core-activity/at-core-activity.html">
+
+<script src="lib/js-yaml.js"></script>
 
 <dom-module id="at-core-form">
   <template>
@@ -71,12 +74,13 @@
         visibility: hidden;
       }
     </style>
+    <at-core-activity id="schemaActivity" handle-as="text" url="[[schemaUrl]]" headers='{ "X-Client": "Now" }' on-response="_handleSchemaActivityResponse" on-error="_handleSchemaActivityError"></at-core-activity>
+    <div id="messages" class="font-body1"></div>
     <div class="at-core-form-wrapper">
       <at-core-resize-sensor id="resizeSensor"></at-core-resize-sensor>
       <div class="clear-float"></div>
       <div id="insertPoint"></div>
     </div>
-    <content></content>
   </template>
 </dom-module>
 
@@ -89,6 +93,13 @@
     },
     behaviors: [Tangere.behaviors.RulesEvaluation],
     properties: {
+
+      schemaUrl: {
+        type: String,
+        value: '',
+        observer: "_schemaUrlChanged"
+      },
+
       /**
        * Specification of elements that should appear on the form.<br/>
        * Provide either an object or string.<br/>
@@ -105,7 +116,8 @@
             properties: {}
           };
           return result;
-        }
+        },
+        xgridcols: "12"
       },
       /**
        * Holds values of the elements on the form
@@ -119,7 +131,8 @@
         value: function() {
           return {};
         },
-        observer: '_dataChanged'
+        observer: '_dataChanged',
+        xgridcols: "12"
       },
       files: {
         type: Object,
@@ -339,7 +352,42 @@
       var currWidth = resizeSensor.queryWidth();
       coreForm.updateLayout(currWidth);
     },
+
+    _schemaUrlChanged: function(newValue, oldValue) {
+      if (!this._isString(newValue)) return;
+      if (newValue.length == 0) return;
+
+      Polymer.dom(this.$.insertPoint).placeholder = this.placeholder;
+
+      this.$.schemaActivity.generateRequest();
+    },
     
+    _handleSchemaActivityResponse: function(event) {
+      var newSchemaStr = event.detail;
+
+      try {
+        var newSchema = JSON.parse(newSchemaStr);
+      } catch (e) {
+        // try yaml
+        try {
+          newSchema = window.jsyaml.load(newSchemaStr);
+        } catch (e) {
+          Polymer.dom(this.$.insertPoint).innerHTML = "";
+          this._setError('Data returned by remote service is not a json string nor yaml string.');
+          // close modal and clear placeholder, because next time _initialize is called placeholder should be set
+          // this._clearPlaceholder();
+          return;
+        }
+      }
+
+      // this will trigger _schemaChanged but since schemaUrl is set _schemaChanged will return immediatelly
+      this.schema = newSchema;
+    },
+
+    _handleSchemaActivityError: function(event) {
+
+    },
+
     // map legacy xtypes
     // this list is also in at-form-complex and at-core-dashboard
     // DO NOT EXTEND THIS LIST; for new elements xtype should be the element name, so there is no need to new elements to be in this list
@@ -377,6 +425,8 @@
     },
 
     _schemaChanged: function(newValue, placeholder) {
+      this._setError("");
+
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
@@ -403,6 +453,8 @@
       // figure out the list of the elements that should be imported
       var _properties = newValue.properties;
       var _propertyNames = Object.getOwnPropertyNames(newValue.properties);
+
+      if (this._isString(this.schemaUrl) && this.schemaUrl.length > 0 && _propertyNames.length == 0) return;
 
       // don't render initial, empty schema
       if (!this.__ready && _propertyNames.length == 0) {
@@ -451,7 +503,7 @@
           });
         }
       });
-      
+
       if (nonImportedElements.length) {
         var pendingImportsCount = nonImportedElements.length;
 
@@ -1236,7 +1288,17 @@
       });
 
       return result;
-    }
+    },
+
+    _isString: function(obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
+    
+    _setError: function(text) {
+      Polymer.dom(this.$.messages).innerHTML = '';
+      Polymer.dom(this.$.messages).classList.remove('info');
+      Polymer.dom(this.$.messages).classList.add('error');
+      Polymer.dom(this.$.messages).textContent = text;
+      Polymer.dom(this.$.messages).removeAttribute('hidden');
+    },
 
   });
 </script>

@@ -1,0 +1,93 @@
+$type: form
+properties:
+  icon:
+    type: string
+    title: Icon
+    name: icon
+  actionType:
+    type: string
+    title: Type
+    xtype: enum
+    selectedItems: 
+    name: actionType
+    xvaluelist:
+      - title: Default
+        value: 0
+      - title: API Callback
+        value: a
+      - title: Open Url
+        value: u
+    default: a
+  Url:
+    type: string
+    title: Url
+    name: Url
+    disabled: !!bool true
+  promptType:
+    type: string
+    title: Prompt
+    xtype: enum
+    selectedItems: 
+    name: promptType
+    xvaluelist:
+      - title: No prompt
+        value: 0
+      - title: 'Comment '
+        value: a
+      - title: Custom form
+        value: 1
+    default: 0
+    disabled: !!bool true
+  promptForm:
+    type: string
+    title: Custom Form
+    name: promptForm
+    disabled: !!bool true
+$meta: {}
+rules:
+  - caption: Open Url
+    position: !!int 0
+    rule:
+      conditions:
+        kind: all
+        conditions:
+          - name: actionType
+            operator: equalTo
+            compareTo: text
+            value: u
+      actions:
+        - actionName: setFieldState
+          fieldName: Url
+          state: required
+  - caption: Enable Prompt
+    position: !!int 1
+    rule:
+      conditions:
+        kind: all
+        conditions:
+          - name: actionType
+            operator: equalTo
+            compareTo: text
+            value: a
+      actions:
+        - actionName: setFieldState
+          fieldName: promptType
+          state: optional
+  - caption: Enable Custom Form
+    position: !!int 2
+    rule:
+      conditions:
+        kind: all
+        conditions:
+          - name: actionType
+            operator: equalTo
+            compareTo: text
+            value: a
+          - name: promptType
+            operator: equalTo
+            compareTo: text
+            value: 1
+      actions:
+        - actionName: setFieldState
+          fieldName: promptForm
+          state: required

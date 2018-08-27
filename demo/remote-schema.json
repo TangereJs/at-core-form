@@ -1,0 +1,37 @@
+{
+  "$meta": {
+    "title": "This is sparta!!!"
+  },
+  "properties": {
+    "text1": {
+      "type": "string",
+      "value": "",
+      "title": "Text 1"
+    },
+    "number2": {
+      "type": "number",
+      "value": "",
+      "title": "Number 2"
+    },
+    "text3": {
+      "type": "string",
+      "value": "",
+      "title": "Text 3"
+    },
+    "number4": {
+      "type": "number",
+      "value": "",
+      "title": "Number 4"
+    },
+    "text5": {
+      "type": "string",
+      "value": "",
+      "title": "Text 5"
+    },
+    "number6": {
+      "type": "number",
+      "value": "",
+      "title": "Number 6"
+    }
+  }
+}

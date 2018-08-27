@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>At-Core-Form demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-core-form.html" />
+
+  <style>
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo" schema-url="schema-not-found.json"></at-core-form>
+  </div>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo2" schema-url="invalid-schema.json"></at-core-form>
+  </div>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo3" schema-url="remote-schema.json"></at-core-form>
+  </div>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo4" schema-url="actionSchema.form"></at-core-form>
+  </div>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo5" schema-url="test.form"></at-core-form>
+  </div>
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+    });
+  </script>
+</body>
+
+</html>

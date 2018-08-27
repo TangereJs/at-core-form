@@ -1,0 +1,12 @@
+{
+  "text1": {
+    "type": "string",
+    "value": "",
+    "title": "Text 1"
+  },
+  "number2": {
+    "type": "number",
+    "value": "",
+    "title": "Number 2"
+  }
+}

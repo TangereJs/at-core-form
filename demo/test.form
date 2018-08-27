@@ -1,0 +1,15 @@
+$type: form
+properties:
+  string1:
+    type: string
+    title: Text 1
+    required: !!bool true
+  toggle2:
+    type: boolean
+    title: Toggle 2
+    xtype: toggle
+    default: false
+$meta: {
+  title: Lorem ipsum
+}
+rules: []
