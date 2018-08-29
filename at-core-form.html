@@ -745,6 +745,11 @@
           Polymer.dom(formElement).classList.add("mtlg");
         }
 
+        if (formElement.tagName.toLowerCase() == "at-form-complex") {
+          Polymer.dom(fieldContainer).classList.add("pl0");
+          Polymer.dom(fieldContainer).classList.add("pr0");
+        }
+
         if (!self._internalData.hasOwnProperty(propertyName)) {
           // at-core-form._internalData doesn't contain an entry for the current property
           // add initial value of the formElement to the at-core-form.data
