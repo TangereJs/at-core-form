@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>Container readonly</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-core-form.html" />
+
+  <style>
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
+
+    [class*='col-'] {
+      border: 1px dashed blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-w">
+    <at-core-form id="coreFormDemo"></at-core-form>
+  </div>
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      var demo = document.getElementById('coreFormDemo');
+      var schema = {
+        "$type": "form",
+        "properties": {
+          "boolean1": {
+            "type": "boolean",
+            "title": "Disable Form Complex",
+            "default": "false",
+            "xgridcols": "12"
+          },
+          "object2": {
+            "type": "object",
+            "title": "Form Complex",
+            "schema": "{\n \t\"properties\": {\n   \t\"boolean3\": {\n   \t\t\"type\": \"boolean\",\n   \t\t\"title\": \"Disable Text 1\",\n   \t\t\"default\": \"false\"\n  \t},\n  \t\"string4\": {\n   \t\t\"type\": \"string\",\n   \t\t\"title\": \"Text 1\"\n  \t}\n\t},\n\t\"rules\": [\n  {\n   \"caption\": \"Rule #0\",\n   \"position\": 0,\n   \"rule\": {\n    \"conditions\": {\n     \"kind\": \"all\",\n     \"conditions\": [\n      {\n       \"name\": \"boolean3\",\n       \"operator\": \"equalTo\",\n       \"compareTo\": \"static\",\n       \"value\": true\n      }\n     ]\n    },\n    \"actions\": [\n     {\n      \"actionName\": \"setFieldState\",\n      \"fieldName\": \"string4\",\n      \"state\": \"disabled\"\n     }\n    ]\n   }\n  }\n ]\n}",
+            "default": "{\n \"boolean3\": \"false\",\n \"string4\": \"\"\n}",
+            "xgridcols": "12"
+          }
+        },
+        "rules": [
+          {
+            "caption": "Rule #0",
+            "position": 0,
+            "rule": {
+              "conditions": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "name": "boolean1",
+                    "operator": "equalTo",
+                    "compareTo": "text",
+                    "value": true
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "actionName": "setFieldState",
+                  "fieldName": "object2",
+                  "state": "disabled"
+                }
+              ]
+            }
+          }
+        ],
+        "$meta": {}
+      };
+
+      demo.schema = schema;
+    });
+  </script>
+</body>
+
+</html>
