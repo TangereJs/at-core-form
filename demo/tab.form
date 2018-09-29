@@ -1,0 +1,42 @@
+$type: form
+properties:
+  name:
+    type: string
+    title: Name
+    name: name
+  title:
+    type: string
+    title: Title   
+    name: title
+  textarea2:
+    type: string
+    title: Utterances
+    xtype: textarea
+    xgridcols: 12
+  section3:
+    type: section
+    title: Content
+  textarea5:
+    type: string
+    title: Text
+    xtype: textarea
+  section8:
+    type: section
+    title: Store
+  section9:
+    type: section
+    title: API/Service
+  view6:
+    type: element
+    title: Liquid View 6
+    xtype: at-core-view
+  section7:
+    type: section
+    title: Permissions
+  section10:
+    type: section
+    title: Advanced
+rules: []
+$meta:
+  title: 
+  sectionMode: tabs
