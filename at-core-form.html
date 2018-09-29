@@ -1167,6 +1167,7 @@
 
       for (var i = 0; i < this._elementsToValidate.length; i++) {
         var element = this._elementsToValidate[i];
+        if(typeof element.validate == "undefined") continue; // ignore elements without validate
         if (!(element.disabled || element.hide)) {
           var elementValid = element.validate(showError);
           isValid = isValid && elementValid;
