@@ -475,6 +475,27 @@
       var currentGroupElements = nonGroupedElements = [];
       var self = this;
 
+      // 
+      // handle sectionMode value from schema.$meta if available
+      // 
+      if (newValue.$meta != undefined && _sh.isString(newValue.$meta.sectionMode)) {
+        var smValueList = this.properties.sectionMode.xvaluelist;
+        var newSectionMode = newValue.$meta.sectionMode;
+
+        var found = Array.prototype.find.call(smValueList, function(item) {
+          return item.value = newSectionMode;
+        });
+
+        if (found) {
+          // prevent _sectionLayoutChanged function from executing because executing it 
+          // doesn't make sense at this point of at-core-form initialization (its a waste of CPU cycles)
+          var sectionLayoutChangedFn = this._sectionLayoutChanged;
+          this._sectionLayoutChanged = function() {};
+          this.sectionMode = newSectionMode;
+          this._sectionLayoutChanged = sectionLayoutChangedFn;
+        }
+      }
+
       _propertyNames.forEach(function(propName, index) {
         var propDef = _properties[propName];
         var displayType = schemaHelpers.getDisplayType(propDef, []);
