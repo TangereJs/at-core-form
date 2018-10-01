@@ -117,6 +117,11 @@
           };
           return result;
         },
+        // 
+        // notify: true is necessary for playground only, to update schema value when schema is fetched from schemaUrl
+        // 
+        notify: true,
+
         xgridcols: "12"
       },
       /**
@@ -236,6 +241,10 @@
       activeTab: {
         type: String,
         value: "",
+        // 
+        // notify: true is necessary for playground, to update activeTab value when activeTab is set internally or user clicks a tab
+        // 
+        notify: true,
         observer: '_activeTabChanged'
       },
 
@@ -1249,6 +1258,14 @@
           fieldElement.disabled = parsedValue || schemaHelpers.parseBool(properties[propertyName].disabled);
         }
       });
+
+      // find the at-carbon-tabs and disable it
+      var carbonTabs = Polymer.dom(this.root).querySelectorAll('at-carbon-tab');
+      if (carbonTabs.length > 0) {
+        carbonTabs.forEach(function(carbonTab) {
+          this.toggleAttribute('disabled', newValue, carbonTab);
+        }, this);
+      }
 
       if (this._isReady) {
         this._calculateFormValidState();
