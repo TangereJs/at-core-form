@@ -713,7 +713,7 @@
 
         xgridcols = displayType === "section" ? 12 : 6;
         // handle xgridcols
-        if (_sh.isString(propertyDefinition.xgridcols)) {
+        if (_sh.isString(propertyDefinition.xgridcols) || _sh.isNumber(propertyDefinition.xgridcols)) {
           var parseResult = parseInt(propertyDefinition.xgridcols);
           if (!window.isNaN(parseResult)) {
             xgridcols = parseResult;
