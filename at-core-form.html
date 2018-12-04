@@ -663,8 +663,18 @@
           sections.forEach(function(section, index) {
             var sectionId = section.getAttribute('at-core-form-section-id');
             self.toggleClass('hidden', sectionId !== self.activeTab, section);
-          });
 
+            // when switching tabs it was observed that code-mirror instances are not displayed correctly
+            // we need to call refresh function of code-mirror instance, for code-mirror instance to display itself correctly
+            // since tab content is rendered with at-form-complex, we select form-complex elements
+            // and call refresh on form-complex element which will call refresh function on code-mirror instance
+            if (sectionId !== self.activeTab) return;
+            var formComplexes = Polymer.dom(self.$.insertPoint).querySelectorAll('at-form-complex');
+            formComplexes.forEach(function(fc) {
+              if (fc.refresh == undefined) return;
+              fc.refresh();
+            });
+          });
         });
       }
 
