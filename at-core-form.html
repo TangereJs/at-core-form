@@ -669,8 +669,11 @@
             // since tab content is rendered with at-form-complex, we select form-complex elements
             // and call refresh on form-complex element which will call refresh function on code-mirror instance
             if (sectionId !== self.activeTab) return;
-            var formComplexes = Polymer.dom(self.$.insertPoint).querySelectorAll('at-form-complex');
-            formComplexes.forEach(function(fc) {
+            
+            var childElts = Polymer.dom(section).children;
+            childElts.forEach(function(child) {
+              var fc = child.children[0];
+              if (fc == undefined) return;
               if (fc.refresh == undefined) return;
               fc.refresh();
             });
