@@ -24,6 +24,10 @@
         box-sizing: border-box;
       }
 
+      [hidden] {
+        display: none !important;
+      }
+
       .at-core-form-wrapper {
         position: relative;
         margin-top: 16px;
@@ -671,7 +675,7 @@
             if (sectionId !== self.activeTab) return;
             
             var childElts = Polymer.dom(section).children;
-            childElts.forEach(function(child) {
+            Array.prototype.forEach.call(childElts, function(child) {
               var fc = child.children[0];
               if (fc == undefined) return;
               if (fc.refresh == undefined) return;
