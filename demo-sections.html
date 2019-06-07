@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
   <meta name="viewport" content="width=device-width" />
   <title>at-core-form demo</title>
@@ -7,37 +8,40 @@
   <link rel="import" href="at-core-form.html" />
 
   <style>
-  .container-w {
-    width: 85%; /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-w {
+      width: 85%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
-  .container-m {
-    width: 70%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-m {
+      width: 70%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
-  .container-s {
-    width: 55%;  /* when fixed width is used ie 1024px resize sensor doesn't work */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 64px;
-  }
+    .container-s {
+      width: 55%;
+      /* when fixed width is used ie 1024px resize sensor doesn't work */
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-bottom: 64px;
+    }
 
     /*[class*='col-'] {
       border: 1px dashed blue;
     }*/
-    
+
     h1 {
       background-color: aliceblue;
     }
@@ -49,7 +53,7 @@
   <div class="container-w">
     <h1>Mode default</h1>
     <at-core-form id="default" section-mode="sections"></at-core-form>
-  </div> -->
+  </div>
   <div class="container-w">
     <h1>Mode tab</h1>
     <at-core-form id="tab" section-mode="tab"></at-core-form>
@@ -62,34 +66,39 @@
     <h1>Mode mobile</h1>
     <at-core-form id="mobile" section-mode="mobile"></at-core-form>
   </div>
-  
+  <div class="container-w">
+    <h1>Mode step</h1>
+    <at-core-form id="step" section-mode="stepper"></at-core-form>
+  </div>
+
   <hr>
   <div class="container-w">
     <button onclick="validate('default')">validate default</button>&nbsp;
     <button onclick="validate('tab')">validate tab</button>&nbsp;
     <button onclick="validate('auto')">validate auto</button>&nbsp;
-    <button onclick="validate('mobile')">validate mobile</button>&nbsp;    
+    <button onclick="validate('mobile')">validate mobile</button>&nbsp;
+    <button onclick="validate('step')">validate step</button>&nbsp;
   </div>
-  
+
   <script>
     window.addEventListener('WebComponentsReady', function (e) {
 
       function getSchema() {
         return {
           properties: {
-            section1: { type: 'section', title:'the first section' },
-            text1: { type: 'string', title:'text 1' },
-            text2: { type: 'string', title:'text 2' },
-            text3: { type: 'string', title:'text 3' },
-            text4: { type: 'string', title:'text 4' },           
+            section1: { type: 'section', title: 'the first section' },
+            text1: { type: 'string', title: 'text 1' },
+            text2: { type: 'string', title: 'text 2', required: true },
+            text3: { type: 'string', title: 'text 3' },
+            text4: { type: 'string', title: 'text 4' },
             section2: { type: 'section', title: 'Section 2' },
-            text5: { type: 'string', title:'text 5' },
-            text6: { type: 'string', title:'text 6' },
-            text7: { type: 'string', title:'text 7' },
-            text8: { type: 'string', title:'text 8' },
+            text5: { type: 'string', title: 'text 5' },
+            text6: { type: 'string', title: 'text 6' },
+            text7: { type: 'string', title: 'text 7' },
+            text8: { type: 'string', title: 'text 8' },
             section3: { type: 'section', title: 'Section 3' },
-            text9: { type: 'string', title:'text 9' },
-            text10: { type: 'string', title:'text 10', required: true },
+            text9: { type: 'string', title: 'text 9' },
+            text10: { type: 'string', title: 'text 10', required: true },
           }
         };
       }
@@ -107,11 +116,14 @@
 
       coreForm = document.getElementById("mobile");
       coreForm.schema = getSchema();
+
+      coreForm = document.getElementById("step");
+      coreForm.schema = getSchema();
     });
-    
+
     function validate(name) {
       var form = document.getElementById(name);
-      form.validate(true,true);
+      form.validate(true, true);
     }
   </script>
 </body>
