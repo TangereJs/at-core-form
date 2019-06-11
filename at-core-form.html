@@ -6,6 +6,10 @@
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-rules-evaluation.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tabs.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tab.html">
+<link rel="import" href="../at-carbon-tabs/at-carbon-tabs-heading.html">
+<link rel="import" href="../at-carbon-stepper/at-carbon-stepper.html">
+<link rel="import" href="../at-carbon-stepper/at-carbon-stepper-step.html">
+<link rel="import" href="../at-carbon-stepper/at-carbon-stepper-heading.html">
 <link rel="import" href="../at-core-activity/at-core-activity.html">
 
 <link rel="import" href="../at-core-schema/jsyaml-import.html">
@@ -230,6 +234,43 @@
       },
 
       /**
+      *
+      *
+      * This is used to set the style and size on at-carbon-tabs
+      * @property tabStyle
+      * @type string
+      * @default default-compact 
+      *
+      */
+      tabStyle: {
+        type: String,
+        value: 'default-compact',
+        xtype: "enum",
+        xvaluelist: [{
+          title: "Default-Compact",
+          value: "default-compact"
+        }, {
+          title: "Default-Large",
+          value: "default-large"
+        }, {
+          title: "Pill-Compact",
+          value: "pill-compact"
+        }, {
+          title: "Pill-Large",
+          value: "pill-large"
+        }, {
+          title: "Tab-Compact",
+          value: "tab-compact"
+        }, {
+          title: "Tab-Large",
+          value: "tab-large"
+        }, {
+          title: "Stepper",
+          value: "stepper"
+        }]
+      },
+
+      /**
        * Holds the value of the currently active tab when sectionMode === tab.
        * Has value of "" when sectionMode === default.
        *
@@ -253,7 +294,7 @@
         xtype: 'code',
         xgridcols: "12",
         mode: "html"
-      }
+      },
     },
 
     observers: [
@@ -622,8 +663,16 @@
           (sectionMode === "auto" && layout === "vertical");
         var selectedSection = self.activeTab || formGroups[0].name;
 
+        // parses the tabStyle property
+        // Example: 'default-compact' -> style = 'default' & size = 'compact'
+        var tabStyleString = self.tabStyle;
+        var carbonTabsStyle = tabStyleString.split('-')[0];
+        var carbonTabsSize = tabStyleString.split('-')[1];
+
         // create tab group
         var carbonTabs = document.createElement('at-carbon-tabs');
+        carbonTabs.tabStyle = carbonTabsStyle;
+        carbonTabs.size = carbonTabsSize;
         Polymer.dom(fieldsFragment).appendChild(carbonTabs);
         carbonTabs.hidden = self._hideTabs;
 
