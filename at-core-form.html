@@ -230,6 +230,9 @@
         }, {
           title: "Tabs in mobile mode",
           value: "mobile"
+        }, {
+          title: "Step Sections",
+          value: "stepper"
         }]
       },
 
@@ -299,7 +302,8 @@
 
     observers: [
       '_schemaChanged(schema, placeholder)',
-      '_sectionLayoutChanged(sectionMode, layout)'
+      '_sectionLayoutChanged(sectionMode, layout)',
+      '_tabStyleChanged(tabStyle)'
     ],
 
     get valid() {
@@ -663,6 +667,14 @@
           (sectionMode === "auto" && layout === "vertical");
         var selectedSection = self.activeTab || formGroups[0].name;
 
+        var sectionContainer = 'at-carbon-tabs';
+        var sectionInstance = 'at-carbon-tab';
+
+        if(self.tabStyle == 'stepper') {
+          sectionContainer = 'at-carbon-stepper';
+          sectionInstance = 'at-carbon-stepper-heading';
+        }
+
         // parses the tabStyle property
         // Example: 'default-compact' -> style = 'default' & size = 'compact'
         var tabStyleString = self.tabStyle;
@@ -670,7 +682,7 @@
         var carbonTabsSize = tabStyleString.split('-')[1];
 
         // create tab group
-        var carbonTabs = document.createElement('at-carbon-tabs');
+        var carbonTabs = document.createElement(sectionContainer);
         carbonTabs.tabStyle = carbonTabsStyle;
         carbonTabs.size = carbonTabsSize;
         Polymer.dom(fieldsFragment).appendChild(carbonTabs);
@@ -679,7 +691,7 @@
         formGroups.forEach(function(group, index) {
           var name = group.name;
           var label = group.label;
-          var carbonTab = document.createElement('at-carbon-tab');
+          var carbonTab = document.createElement(sectionInstance);
           Polymer.dom(carbonTab).setAttribute('id', name);
           Polymer.dom(carbonTab).innerHTML = label;
           Polymer.dom(carbonTabs).appendChild(carbonTab);
@@ -928,6 +940,22 @@
         self.toggleClass('hidden', hideHeadings, heading.parentElement);
       });
 
+    },
+
+    _tabStyleChanged: function(newValue) {
+      var self = this;
+
+      self.tabStyle = newValue;
+      var tabStyleString = self.tabStyle;
+      var carbonTabsStyle = tabStyleString.split('-')[0];
+      var carbonTabsSize = tabStyleString.split('-')[1];
+
+      var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
+      
+      if(carbonTabs != null) {
+        carbonTabs.tabStyle = carbonTabsStyle;
+        carbonTabs.size = carbonTabsSize;
+      }
     },
 
     _activeTabChanged: function(newValue, oldValue) {
@@ -1273,7 +1301,7 @@
       }
 
       if (firstInvalid) {
-        if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.sectionMode === "tab") {
+        if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.sectionMode === "tabs") {
           var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
           if (tabs) tabs.selected = sectionId;
         }

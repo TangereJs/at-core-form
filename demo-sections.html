@@ -5,6 +5,8 @@
 
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="at-core-form.html" />
+  <link rel="import" href="../at-form-radio/at-form-radio.html">
+
 
   <style>
   .container-w {
@@ -47,28 +49,18 @@
 
 <body>
   <div class="container-w">
-    <h1>Mode default</h1>
-    <at-core-form id="default" section-mode="sections"></at-core-form>
-  </div> -->
-  <div class="container-w">
-    <h1>Mode tab</h1>
-    <at-core-form id="tab" section-mode="tab"></at-core-form>
-  </div>
-  <div class="container-w">
-    <h1>Mode auto</h1>
-    <at-core-form id="auto" section-mode="auto"></at-core-form>
-  </div>
-  <div class="container-w">
-    <h1>Mode mobile</h1>
-    <at-core-form id="mobile" section-mode="mobile"></at-core-form>
-  </div>
+    <h1 id="currentFormModeText">Mode default</h1>
+    <at-core-form id="currentForm" section-mode="sections"></at-core-form>
+  </div> 
   
   <hr>
   <div class="container-w">
-    <button onclick="validate('default')">validate default</button>&nbsp;
-    <button onclick="validate('tab')">validate tab</button>&nbsp;
-    <button onclick="validate('auto')">validate auto</button>&nbsp;
-    <button onclick="validate('mobile')">validate mobile</button>&nbsp;    
+    <button onclick="validate('currentForm')">validate form</button>&nbsp;
+  </div>
+
+  <div class="container-w layout-horizontal">
+      <at-form-radio id="switchSectionMode"></at-form-radio>
+      <at-form-radio id="switchStyle"></at-form-radio>
   </div>
   
   <script>
@@ -96,17 +88,34 @@
 
       var coreForm;
 
-      coreForm = document.getElementById("default");
+      coreForm = document.getElementById("currentForm");
       coreForm.schema = getSchema();
 
-      coreForm = document.getElementById("tab");
-      coreForm.schema = getSchema();
+      var switchSectionMode = document.getElementById('switchSectionMode');
+      switchSectionMode.label = "switch section mode"
+      switchSectionMode.xvaluelist = "sections,tabs,auto,mobile,stepper";
+      switchSectionMode.value = "sections";
+      switchSectionMode.addEventListener('value-changed', function(event) {
+        
+        var currentForm = document.getElementById('currentForm');
+        var currentFormModeText = document.getElementById('currentFormModeText');
 
-      coreForm = document.getElementById("auto");
-      coreForm.schema = getSchema();
+        currentForm.sectionMode = event.detail.value;
+        currentFormModeText.innerHTML = "Mode " + event.detail.value;
+      });
 
-      coreForm = document.getElementById("mobile");
-      coreForm.schema = getSchema();
+      var switchStyle = document.getElementById('switchStyle');
+      switchStyle.label = "Switch style"
+      switchStyle.xvaluelist = "default-compact,default-large,pill-compact,pill-large,tab-compact,tab-large";
+      switchStyle.value = "default-compact";
+      switchStyle.addEventListener('value-changed', function(event) {
+        
+        var currentForm = document.getElementById('currentForm');
+        var currentFormModeText = document.getElementById('currentFormModeText');
+
+        currentForm.tabStyle = event.detail.value;
+      });
+
     });
     
     function validate(name) {
