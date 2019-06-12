@@ -49,8 +49,8 @@
 
 <body>
   <div class="container-w">
-    <h1 id="currentFormModeText">Mode default</h1>
-    <at-core-form id="currentForm" section-mode="sections"></at-core-form>
+    <h1 id="currentFormModeText">Mode tabs</h1>
+    <at-core-form id="currentForm" section-mode="tabs" tab-style="stepper"></at-core-form>
   </div> 
   
   <hr>
@@ -93,8 +93,8 @@
 
       var switchSectionMode = document.getElementById('switchSectionMode');
       switchSectionMode.label = "switch section mode"
-      switchSectionMode.xvaluelist = "sections,tabs,auto,mobile,stepper";
-      switchSectionMode.value = "sections";
+      switchSectionMode.xvaluelist = "tabs,sections,auto,mobile";
+      switchSectionMode.value = "tabs";
       switchSectionMode.addEventListener('value-changed', function(event) {
         
         var currentForm = document.getElementById('currentForm');
@@ -106,8 +106,8 @@
 
       var switchStyle = document.getElementById('switchStyle');
       switchStyle.label = "Switch style"
-      switchStyle.xvaluelist = "default-compact,default-large,pill-compact,pill-large,tab-compact,tab-large";
-      switchStyle.value = "default-compact";
+      switchStyle.xvaluelist = "default-compact,default-large,pill-compact,pill-large,tab-compact,tab-large, stepper";
+      switchStyle.value = "stepper";
       switchStyle.addEventListener('value-changed', function(event) {
         
         var currentForm = document.getElementById('currentForm');

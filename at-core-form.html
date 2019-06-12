@@ -6,7 +6,7 @@
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-rules-evaluation.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tabs.html">
 <link rel="import" href="../at-carbon-tabs/at-carbon-tab.html">
-<link rel="import" href="../at-carbon-tabs/at-carbon-tabs-heading.html">
+<link rel="import" href="../at-carbon-tabs/at-carbon-tab-heading.html">
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper.html">
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper-step.html">
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper-heading.html">
@@ -230,9 +230,6 @@
         }, {
           title: "Tabs in mobile mode",
           value: "mobile"
-        }, {
-          title: "Step Sections",
-          value: "stepper"
         }]
       },
 
@@ -669,10 +666,12 @@
 
         var sectionContainer = 'at-carbon-tabs';
         var sectionInstance = 'at-carbon-tab';
+        var sectionHeading = 'at-carbon-tab-heading'
 
         if(self.tabStyle == 'stepper') {
           sectionContainer = 'at-carbon-stepper';
-          sectionInstance = 'at-carbon-stepper-heading';
+          sectionInstance = 'at-carbon-stepper-step';
+          sectionHeading = 'at-carbon-stepper-heading';
         }
 
         // parses the tabStyle property
@@ -681,22 +680,48 @@
         var carbonTabsStyle = tabStyleString.split('-')[0];
         var carbonTabsSize = tabStyleString.split('-')[1];
 
-        // create tab group
-        var carbonTabs = document.createElement(sectionContainer);
-        carbonTabs.tabStyle = carbonTabsStyle;
-        carbonTabs.size = carbonTabsSize;
-        Polymer.dom(fieldsFragment).appendChild(carbonTabs);
-        carbonTabs.hidden = self._hideTabs;
+        // sectionContainerElement = 'at-carbon-tabs' or 'at-carbon-stepper'
+        var sectionContainerElement = document.createElement(sectionContainer);
+
+        // set tabStyle and tabSize if the container element is 'at-carbon-tabs'
+        if(self.tabStyle != 'stepper') {
+          sectionContainerElement.tabStyle = carbonTabsStyle;
+          sectionContainerElement.size = carbonTabsSize;
+        }
+
+        // set stepper id if the container element is 'at-carbon-stepper'
+        if(self.tabStyle == 'stepper') {
+          Polymer.dom(sectionContainerElement).setAttribute('id', 'stepperElement');
+        }
+        
+        Polymer.dom(fieldsFragment).appendChild(sectionContainerElement);
+
+        // hide tabs if the container element is 'at-carbon-tabs'
+        if(self.tabStyle != 'stepper') {
+          sectionContainerElement.hidden = self._hideTabs;
+        }
 
         formGroups.forEach(function(group, index) {
           var name = group.name;
           var label = group.label;
-          var carbonTab = document.createElement(sectionInstance);
-          Polymer.dom(carbonTab).setAttribute('id', name);
-          Polymer.dom(carbonTab).innerHTML = label;
-          Polymer.dom(carbonTabs).appendChild(carbonTab);
+
+          // sectionInstanceElement = 'at-carbon-tab' or 'at-carbon-stepper-step'
+          var sectionInstanceElement = document.createElement(sectionInstance);
+          Polymer.dom(sectionInstanceElement).setAttribute('id', name);
+          Polymer.dom(sectionInstanceElement).innerHTML = label;
+          Polymer.dom(sectionContainerElement).appendChild(sectionInstanceElement);
+
+          // sectionHeadingElement = 'at-carbon-tab-heading' or 'at-carbon-stepper-heading'
+          var sectionHeadingElement = document.createElement(sectionHeading);
+          Polymer.dom(sectionHeadingElement).setAttribute('data-name', name);
+          Polymer.dom(sectionHeadingElement).setAttribute('step-number', index + 1);
+          Polymer.dom(sectionHeadingElement).setAttribute('for-stepper', 'stepperElement');
+          Polymer.dom(sectionHeadingElement).innerHTML = label;
+          sectionHeadingElement.stepper = sectionContainerElement;
+          Polymer.dom(fieldsFragment).appendChild(sectionHeadingElement);
 
           var ironPage = divPrototype.cloneNode(true);
+          Polymer.dom(ironPage).setAttribute('data-name', name);
           Polymer.dom(fieldsFragment).appendChild(ironPage);
           Polymer.dom(ironPage).setAttribute('at-core-form-section-id', name);
           self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
@@ -713,10 +738,10 @@
           });
         });
 
-        carbonTabs.attrForSelected = 'id';
-        carbonTabs.selected = selectedSection;
+        sectionContainerElement.attrForSelected = 'id';
+        sectionContainerElement.selected = selectedSection;
 
-        carbonTabs.addEventListener('selected-changed', function(event) {
+        sectionContainerElement.addEventListener('selected-changed', function(event) {
           if (self._hideTabs) { return; }
           self.activeTab = event.detail.value;
           var sections = Polymer.dom(self.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
@@ -939,22 +964,27 @@
         heading.hide = hideHeadings;
         self.toggleClass('hidden', hideHeadings, heading.parentElement);
       });
-
     },
 
     _tabStyleChanged: function(newValue) {
       var self = this;
 
-      self.tabStyle = newValue;
-      var tabStyleString = self.tabStyle;
-      var carbonTabsStyle = tabStyleString.split('-')[0];
-      var carbonTabsSize = tabStyleString.split('-')[1];
+      if (newValue != 'stepper') {
+        self.tabStyle = newValue;
+        var tabStyleString = self.tabStyle;
+        var carbonTabsStyle = tabStyleString.split('-')[0];
+        var carbonTabsSize = tabStyleString.split('-')[1];
 
-      var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
-      
-      if(carbonTabs != null) {
-        carbonTabs.tabStyle = carbonTabsStyle;
-        carbonTabs.size = carbonTabsSize;
+        var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
+
+        if (carbonTabs != null) {
+          carbonTabs.tabStyle = carbonTabsStyle;
+          carbonTabs.size = carbonTabsSize;
+        }
+      } else {
+
+        // TODO: implement re-rendering here
+        console.log("TAB STYLE SWITCHED TO STEPPER");
       }
     },
 
