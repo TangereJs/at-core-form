@@ -267,7 +267,8 @@
         }, {
           title: "Stepper",
           value: "stepper"
-        }]
+        }],
+        observer: '_tabStyleChanged'
       },
 
       /**
@@ -299,8 +300,7 @@
 
     observers: [
       '_schemaChanged(schema, placeholder)',
-      '_sectionLayoutChanged(sectionMode, layout)',
-      '_tabStyleChanged(tabStyle)'
+      '_sectionLayoutChanged(sectionMode, layout)'
     ],
 
     get valid() {
@@ -966,9 +966,15 @@
       });
     },
 
-    _tabStyleChanged: function(newValue) {
+    _tabStyleChanged: function(newValue, oldValue) {
       var self = this;
 
+      // re-render the form if the old tab style was 'stepper'
+      if(oldValue == 'stepper') {
+        this._schemaChanged(this.schema, this.placeholder);
+      }
+
+      // set tab style if the new value is anything other than 'stepper'
       if (newValue != 'stepper') {
         self.tabStyle = newValue;
         var tabStyleString = self.tabStyle;
@@ -981,10 +987,11 @@
           carbonTabs.tabStyle = carbonTabsStyle;
           carbonTabs.size = carbonTabsSize;
         }
-      } else {
+      }
 
-        // TODO: implement re-rendering here
-        console.log("TAB STYLE SWITCHED TO STEPPER");
+      // if new tab style is 'stepper' -> re-render the form
+      if(newValue == 'stepper') {
+        this._schemaChanged(this.schema, this.placeholder);
       }
     },
 
