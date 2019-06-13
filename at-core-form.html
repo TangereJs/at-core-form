@@ -692,7 +692,7 @@
 
         // set stepper id if the container element is 'at-carbon-stepper'
         if(self.tabStyle == 'stepper') {
-          Polymer.dom(sectionContainerElement).setAttribute('id', 'stepperElement');
+          sectionContainerElement.id = 'stepperElement';
         }
         
         Polymer.dom(fieldsFragment).appendChild(sectionContainerElement);
@@ -709,16 +709,15 @@
           // sectionInstanceElement = 'at-carbon-tab' or 'at-carbon-stepper-step'
           var sectionInstanceElement = document.createElement(sectionInstance);
 
-          Polymer.dom(sectionInstanceElement).setAttribute('id', name);
-          Polymer.dom(sectionInstanceElement).setAttribute('label', label);
-          Polymer.dom(sectionInstanceElement).innerHTML = label;
+          sectionInstanceElement.id = name;
+          sectionInstanceElement.label = label;
           Polymer.dom(sectionContainerElement).appendChild(sectionInstanceElement);
 
           // sectionHeadingElement = 'at-carbon-tab-heading' or 'at-carbon-stepper-heading'
           var sectionHeadingElement = document.createElement(sectionHeading);
-          Polymer.dom(sectionHeadingElement).setAttribute('data-name', name);
-          Polymer.dom(sectionHeadingElement).setAttribute('step-number', index + 1);
-          Polymer.dom(sectionHeadingElement).setAttribute('for-stepper', 'stepperElement');
+          sectionHeadingElement.dataName = name;
+          sectionHeadingElement.stepNumber = index + 1;
+          sectionHeadingElement.forStepper = 'stepperElement';
           Polymer.dom(sectionHeadingElement).innerHTML = label;
           sectionHeadingElement.stepper = sectionContainerElement;
           Polymer.dom(fieldsFragment).appendChild(sectionHeadingElement);
@@ -733,8 +732,8 @@
           // // render stepper footer if the tabStyle is equal to 'stepper'
           if(self.tabStyle == 'stepper') {
             var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
-            Polymer.dom(sectionFooterElement).setAttribute('number-of-sections', formGroups.length);
-            Polymer.dom(sectionFooterElement).setAttribute('current-section', index);
+            sectionFooterElement.numberOfSections = formGroups.length;
+            sectionFooterElement.currentSection = index;
             Polymer.dom(ironPage).appendChild(sectionFooterElement);
             
           }
@@ -747,9 +746,11 @@
               propertyDefinition.hide = self._hideHeadings;
             }
 
-            if(propertyDefinition.type == 'section' && self.tabStyle != 'stepper') {
-              var sectionIcon = propertyDefinition.icon;
-              Polymer.dom(sectionInstanceElement).setAttribute('icon', sectionIcon);
+            if (propertyDefinition.type == 'section' && self.tabStyle != 'stepper') {
+              if (propertyDefinition.icon != null) {
+                var sectionIcon = propertyDefinition.icon;
+                Polymer.dom(sectionInstanceElement).setAttribute('icon', sectionIcon);
+              }
             }
 
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
