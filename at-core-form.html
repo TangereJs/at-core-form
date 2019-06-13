@@ -10,6 +10,7 @@
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper.html">
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper-step.html">
 <link rel="import" href="../at-carbon-stepper/at-carbon-stepper-heading.html">
+<link rel="import" href="../at-carbon-stepper/at-carbon-stepper-footer.html">
 <link rel="import" href="../at-core-activity/at-core-activity.html">
 
 <link rel="import" href="../at-core-schema/jsyaml-import.html">
@@ -707,7 +708,9 @@
 
           // sectionInstanceElement = 'at-carbon-tab' or 'at-carbon-stepper-step'
           var sectionInstanceElement = document.createElement(sectionInstance);
+
           Polymer.dom(sectionInstanceElement).setAttribute('id', name);
+          Polymer.dom(sectionInstanceElement).setAttribute('label', label);
           Polymer.dom(sectionInstanceElement).innerHTML = label;
           Polymer.dom(sectionContainerElement).appendChild(sectionInstanceElement);
 
@@ -720,11 +723,21 @@
           sectionHeadingElement.stepper = sectionContainerElement;
           Polymer.dom(fieldsFragment).appendChild(sectionHeadingElement);
 
+          // ironPage renders the form
           var ironPage = divPrototype.cloneNode(true);
           Polymer.dom(ironPage).setAttribute('data-name', name);
           Polymer.dom(fieldsFragment).appendChild(ironPage);
           Polymer.dom(ironPage).setAttribute('at-core-form-section-id', name);
           self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
+
+          // // render stepper footer if the tabStyle is equal to 'stepper'
+          if(self.tabStyle == 'stepper') {
+            var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
+            Polymer.dom(sectionFooterElement).setAttribute('number-of-sections', formGroups.length);
+            Polymer.dom(sectionFooterElement).setAttribute('current-section', index);
+            Polymer.dom(ironPage).appendChild(sectionFooterElement);
+            
+          }
 
           var elements = group.elements;
           elements.forEach(function(element, index) {
@@ -732,6 +745,11 @@
             var propertyDefinition = JSON.parse(JSON.stringify(element.definition));
             if (!index) {
               propertyDefinition.hide = self._hideHeadings;
+            }
+
+            if(propertyDefinition.type == 'section' && self.tabStyle != 'stepper') {
+              var sectionIcon = propertyDefinition.icon;
+              Polymer.dom(sectionInstanceElement).setAttribute('icon', sectionIcon);
             }
 
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
