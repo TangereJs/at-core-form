@@ -652,6 +652,7 @@
         self._renderSingleElement(propertyName, propertyDefinition, divPrototype, fieldsFragment);
       });
 
+
       if (formGroups.length) {
         self.activeTab = self.activeTab ? self.activeTab : formGroups[0].name;
 
@@ -702,10 +703,19 @@
           sectionContainerElement.hidden = self._hideTabs;
         }
 
+        // create sectionsArray so it could be passed to 'at-carbon-stepper-footer'
+        var sectionsArray = [];
+        formGroups.forEach(function(group, index) {
+          var sectionElement = {
+            sectionName: group.name
+          }
+          sectionsArray.push(sectionElement);
+        });
+
         formGroups.forEach(function(group, index) {
           var name = group.name;
           var label = group.label;
-
+          
           // sectionInstanceElement = 'at-carbon-tab' or 'at-carbon-stepper-step'
           var sectionInstanceElement = document.createElement(sectionInstance);
 
@@ -729,15 +739,6 @@
           Polymer.dom(ironPage).setAttribute('at-core-form-section-id', name);
           self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
 
-          // // render stepper footer if the tabStyle is equal to 'stepper'
-          if(self.tabStyle == 'stepper') {
-            var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
-            sectionFooterElement.numberOfSections = formGroups.length;
-            sectionFooterElement.currentSection = index;
-            Polymer.dom(ironPage).appendChild(sectionFooterElement);
-            
-          }
-
           var elements = group.elements;
           elements.forEach(function(element, index) {
             var propertyName = element.name;
@@ -755,6 +756,19 @@
 
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
           });
+
+           // // render stepper footer if the tabStyle is equal to 'stepper'
+          if (self.tabStyle == 'stepper') {
+            var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
+            sectionFooterElement.numberOfSections = formGroups.length;
+            sectionFooterElement.currentSectionNumber = index;
+            sectionFooterElement.currentSectionName = name;
+            sectionFooterElement.sectionsArray = sectionsArray;
+            sectionFooterElement.currentSection = ironPage;
+            sectionFooterElement.stepper = sectionContainerElement;
+            Polymer.dom(ironPage).appendChild(sectionFooterElement);
+          }
+
         });
 
         sectionContainerElement.attrForSelected = 'id';
