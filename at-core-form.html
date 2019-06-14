@@ -674,6 +674,7 @@
           sectionContainer = 'at-carbon-stepper';
           sectionInstance = 'at-carbon-stepper-step';
           sectionHeading = 'at-carbon-stepper-heading';
+
         }
 
         // parses the tabStyle property
@@ -762,13 +763,12 @@
             var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
             sectionFooterElement.numberOfSections = formGroups.length;
             sectionFooterElement.currentSectionNumber = index;
-            sectionFooterElement.currentSectionName = name;
             sectionFooterElement.sectionsArray = sectionsArray;
-            sectionFooterElement.currentSection = ironPage;
+            // set _validateSection from at-core-form as a property in at-carbon-stepper-footer
+            sectionFooterElement.validationFunction = self._validateSection.bind(self);
             sectionFooterElement.stepper = sectionContainerElement;
             Polymer.dom(ironPage).appendChild(sectionFooterElement);
           }
-
         });
 
         sectionContainerElement.attrForSelected = 'id';
@@ -1338,6 +1338,46 @@
       return isValid;
     },
 
+    _validateSection: function(sectionName) {
+      var self = this;
+
+      // find section by sectionName
+      var sectionToValidate = Polymer.dom(self.$.insertPoint).querySelector('div[at-core-form-section-id="' + sectionName + '"]');
+
+      var sectionElementsToValidate = [];
+
+      // from all elements -> find elements that belong only to this section
+      self._elementsToValidate.forEach(function(element) {
+
+        var foundElement = null;
+
+        // try to find an element with this id value inside the section
+        foundElement = Polymer.dom(sectionToValidate).querySelector('[id="' + element.id + '"]')
+
+        // if element is found -> put it inside the array
+        if(foundElement != null) {
+          sectionElementsToValidate.push(foundElement);
+        }
+      });
+
+      // save previous _elementsToValidate
+      var allElementsTmp = self._elementsToValidate;
+
+      // _elementsToValidate now contains only elements for current section
+      self._elementsToValidate = sectionElementsToValidate;
+
+      // check if current section is valid
+      if (self.validate(true, true)) {
+      // if the section is valid, restore old values to _elementsToValidate -> return true
+        self._elementsToValidate = allElementsTmp;
+        return true;
+      } else {
+      // if the section is not valid, restore old values to _elementsToValidate -> return false
+        self._elementsToValidate = allElementsTmp;
+        return false;
+      }
+    },
+
     /*
      * Validates the form and shows errors for invalid elements
      * It calls validate method of each element in _elementsToValidate array
@@ -1376,7 +1416,7 @@
           if (tabs) tabs.selected = sectionId;
         }
         if (setFocusOnError) {
-          element.focus();
+          firstInvalid.focus();
         }
       }
 
