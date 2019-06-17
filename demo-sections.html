@@ -71,7 +71,7 @@
           properties: {
             section1: { type: 'section', title:'the first section', icon: 'now:home' },
             text1: { type: 'string', title:'text 1' },
-            text2: { type: 'string', title:'text 2', required: true },
+            text2: { type: 'string', title:'text 2' },
             text3: { type: 'string', title:'text 3' },
             text4: { type: 'string', title:'text 4' },           
             section2: { type: 'section', title: 'Section 2' },
@@ -107,13 +107,13 @@
       var switchStyle = document.getElementById('switchStyle');
       switchStyle.label = "Switch style"
       switchStyle.xvaluelist = "default-compact,default-large,pill-compact,pill-large,tab-compact,tab-large, stepper";
-      switchStyle.value = "stepper";
+      switchStyle.value = "default-compact";
       switchStyle.addEventListener('value-changed', function(event) {
         
         var currentForm = document.getElementById('currentForm');
         var currentFormModeText = document.getElementById('currentFormModeText');
 
-        currentForm.tabStyle = event.detail.value;
+        currentForm.sectionStyle = event.detail.value;
       });
 
     });

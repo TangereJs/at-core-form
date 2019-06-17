@@ -238,12 +238,12 @@
       *
       *
       * This is used to set the style and size on at-carbon-tabs
-      * @property tabStyle
+      * @property sectionStyle
       * @type string
       * @default default-compact 
       *
       */
-      tabStyle: {
+      sectionStyle: {
         type: String,
         value: 'default-compact',
         xtype: "enum",
@@ -269,7 +269,7 @@
           title: "Stepper",
           value: "stepper"
         }],
-        observer: '_tabStyleChanged'
+        observer: '_sectionStyleChanged'
       },
 
       /**
@@ -666,44 +666,31 @@
           (sectionMode === "auto" && layout === "vertical");
         var selectedSection = self.activeTab || formGroups[0].name;
 
-        var sectionContainer = 'at-carbon-tabs';
-        var sectionInstance = 'at-carbon-tab';
-        var sectionHeading = 'at-carbon-tab-heading'
+        this._sectionContainer = 'at-carbon-tabs';
+        this._sectionInstance = 'at-carbon-tab';
+        this._sectionHeading = 'at-carbon-tab-heading'
 
-        if(self.tabStyle == 'stepper') {
-          sectionContainer = 'at-carbon-stepper';
-          sectionInstance = 'at-carbon-stepper-step';
-          sectionHeading = 'at-carbon-stepper-heading';
+        if(self.sectionStyle == 'stepper') {
+          this._sectionContainer = 'at-carbon-stepper';
+          this._sectionInstance = 'at-carbon-stepper-step';
+          this._sectionHeading = 'at-carbon-stepper-heading';
 
         }
 
-        // parses the tabStyle property
+        // parses the sectionStyle property
         // Example: 'default-compact' -> style = 'default' & size = 'compact'
-        var tabStyleString = self.tabStyle;
-        var carbonTabsStyle = tabStyleString.split('-')[0];
-        var carbonTabsSize = tabStyleString.split('-')[1];
+        var sectionStyleString = self.sectionStyle;
+        var carbonTabsStyle = sectionStyleString.split('-')[0];
+        var carbonTabsSize = sectionStyleString.split('-')[1];
 
         // sectionContainerElement = 'at-carbon-tabs' or 'at-carbon-stepper'
-        var sectionContainerElement = document.createElement(sectionContainer);
-
-        // set tabStyle and tabSize if the container element is 'at-carbon-tabs'
-        if(self.tabStyle != 'stepper') {
-          sectionContainerElement.tabStyle = carbonTabsStyle;
-          sectionContainerElement.size = carbonTabsSize;
-        }
-
-        // set stepper id if the container element is 'at-carbon-stepper'
-        if(self.tabStyle == 'stepper') {
-          sectionContainerElement.id = 'stepperElement';
-        }
-        
+        var sectionContainerElement = document.createElement(self._sectionContainer);
+        sectionContainerElement.tabStyle = carbonTabsStyle;
+        sectionContainerElement.size = carbonTabsSize;
+        sectionContainerElement.id = 'stepperElement';
         Polymer.dom(fieldsFragment).appendChild(sectionContainerElement);
-
-        // hide tabs if the container element is 'at-carbon-tabs'
-        if(self.tabStyle != 'stepper') {
-          sectionContainerElement.hidden = self._hideTabs;
-        }
-
+        sectionContainerElement.hidden = self._hideTabs;
+        
         // create sectionsArray so it could be passed to 'at-carbon-stepper-footer'
         var sectionsArray = [];
         formGroups.forEach(function(group, index) {
@@ -718,14 +705,14 @@
           var label = group.label;
           
           // sectionInstanceElement = 'at-carbon-tab' or 'at-carbon-stepper-step'
-          var sectionInstanceElement = document.createElement(sectionInstance);
+          var sectionInstanceElement = document.createElement(self._sectionInstance);
 
           sectionInstanceElement.id = name;
           sectionInstanceElement.label = label;
           Polymer.dom(sectionContainerElement).appendChild(sectionInstanceElement);
 
           // sectionHeadingElement = 'at-carbon-tab-heading' or 'at-carbon-stepper-heading'
-          var sectionHeadingElement = document.createElement(sectionHeading);
+          var sectionHeadingElement = document.createElement(self._sectionHeading);
           sectionHeadingElement.dataName = name;
           sectionHeadingElement.stepNumber = index + 1;
           sectionHeadingElement.forStepper = 'stepperElement';
@@ -748,7 +735,7 @@
               propertyDefinition.hide = self._hideHeadings;
             }
 
-            if (propertyDefinition.type == 'section' && self.tabStyle != 'stepper') {
+            if (propertyDefinition.type == 'section' && self.sectionStyle != 'stepper') {
               if (propertyDefinition.icon != null) {
                 var sectionIcon = propertyDefinition.icon;
                 Polymer.dom(sectionInstanceElement).setAttribute('icon', sectionIcon);
@@ -758,8 +745,8 @@
             self._renderSingleElement(propertyName, propertyDefinition, divPrototype, ironPage);
           });
 
-           // // render stepper footer if the tabStyle is equal to 'stepper'
-          if (self.tabStyle == 'stepper') {
+           // // render stepper footer if the secetionStyle is equal to 'stepper'
+          if (self.sectionStyle == 'stepper') {
             var sectionFooterElement = document.createElement('at-carbon-stepper-footer');
             sectionFooterElement.numberOfSections = formGroups.length;
             sectionFooterElement.currentSectionNumber = index;
@@ -974,7 +961,7 @@
     },
 
     _sectionLayoutChanged: function(sectionMode, layout) {
-      var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
+      var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector(this._sectionContainer);
       var sections = Polymer.dom(this.$.insertPoint).querySelectorAll('div[at-core-form-section-id]');
       var headings = Polymer.dom(this.$.insertPoint).querySelectorAll('at-form-section');
       var self = this;
@@ -999,7 +986,7 @@
       });
     },
 
-    _tabStyleChanged: function(newValue, oldValue) {
+    _sectionStyleChanged: function(newValue, oldValue) {
       var self = this;
 
       // re-render the form if the old tab style was 'stepper'
@@ -1009,12 +996,12 @@
 
       // set tab style if the new value is anything other than 'stepper'
       if (newValue != 'stepper') {
-        self.tabStyle = newValue;
-        var tabStyleString = self.tabStyle;
-        var carbonTabsStyle = tabStyleString.split('-')[0];
-        var carbonTabsSize = tabStyleString.split('-')[1];
+        self.sectionStyle = newValue;
+        var sectionStyleString = self.sectionStyle;
+        var carbonTabsStyle = sectionStyleString.split('-')[0];
+        var carbonTabsSize = sectionStyleString.split('-')[1];
 
-        var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector('at-carbon-tabs');
+        var carbonTabs = Polymer.dom(this.$.insertPoint).querySelector(this._sectionContainer);
 
         if (carbonTabs != null) {
           carbonTabs.tabStyle = carbonTabsStyle;
@@ -1031,7 +1018,7 @@
     _activeTabChanged: function(newValue, oldValue) {
       // this is here to prevent rerendering of at-core-form when activeTab
       // is updated by clicking an at-carbon-tab on at-carbon-tabs
-      var carbonTabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
+      var carbonTabs = Polymer.dom(this.root).querySelector(this._sectionContainer);
       if (carbonTabs && carbonTabs.selected !== newValue) {
         carbonTabs.selected = newValue;
       }
@@ -1412,7 +1399,7 @@
 
       if (firstInvalid) {
         if (!this._isBusinessRulesEvaluationInProgress && !isValid && this.sectionMode === "tabs") {
-          var tabs = Polymer.dom(this.root).querySelector('at-carbon-tabs');
+          var tabs = Polymer.dom(this.root).querySelector(this._sectionContainer);
           if (tabs) tabs.selected = sectionId;
         }
         if (setFocusOnError) {
@@ -1459,7 +1446,7 @@
       });
 
       // find the at-carbon-tabs and disable it
-      var carbonTabs = Polymer.dom(this.root).querySelectorAll('at-carbon-tab');
+      var carbonTabs = Polymer.dom(this.root).querySelectorAll(this._sectionInstance);
       if (carbonTabs.length > 0) {
         carbonTabs.forEach(function(carbonTab) {
           this.toggleAttribute('disabled', newValue, carbonTab);
