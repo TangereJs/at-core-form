@@ -73,6 +73,11 @@
         min-height: 32px;
       }
 
+      .verticalBar {
+        border-left: 1px solid lightgrey;
+        margin-left:22px;
+      }
+
       /* workaround for IE11 flexbox min-height bug */
 
       _:-ms-fullscreen,
@@ -723,6 +728,11 @@
           // ironPage renders the form
           var ironPage = divPrototype.cloneNode(true);
           Polymer.dom(ironPage).setAttribute('data-name', name);
+
+          if (self.sectionStyle == 'stepper') {
+            Polymer.dom(ironPage).classList.add('verticalBar');
+          }
+
           Polymer.dom(fieldsFragment).appendChild(ironPage);
           Polymer.dom(ironPage).setAttribute('at-core-form-section-id', name);
           self.toggleClass('hidden', !self._hideTabs && name !== selectedSection, ironPage);
