@@ -114,6 +114,16 @@
         observer: "_schemaUrlChanged"
       },
 
+      schemaUrlPrefix: {
+        type: String,
+        value: ''
+      },
+
+      schemaUrlPrefixContainer: {
+        type: String,
+        value: ''
+      },
+
       /**
        * Specification of elements that should appear on the form.<br/>
        * Provide either an object or string.<br/>
@@ -506,6 +516,11 @@
         return;
       }
 
+      this.schemaUrlPrefix = this.schemaUrlPrefixContainer;
+      if (!this.schemaUrlPrefixContainer && newValue.$meta && newValue.$meta.schemaUrlPrefix) {
+        this.schemaUrlPrefix = newValue.$meta.schemaUrlPrefix;
+      }
+
       // figure out the list of the elements that should be imported
       var _properties = newValue.properties;
       var _propertyNames = Object.getOwnPropertyNames(newValue.properties);
@@ -679,7 +694,6 @@
           this._sectionContainer = 'at-carbon-stepper';
           this._sectionInstance = 'at-carbon-stepper-step';
           this._sectionHeading = 'at-carbon-stepper-heading';
-
         }
 
         // parses the sectionStyle property
@@ -906,6 +920,7 @@
         if (formElement.tagName.toLowerCase() == "at-form-complex") {
           Polymer.dom(fieldContainer).classList.add("pl0");
           Polymer.dom(fieldContainer).classList.add("pr0");
+          formElement.schemaUrlPrefix = this.schemaUrlPrefix;
         }
 
         if (!self._internalData.hasOwnProperty(propertyName)) {
