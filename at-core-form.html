@@ -903,8 +903,17 @@
         formElement.autoValidate = true;
 
         // create the field container
-        var fieldContainer = divPrototype.cloneNode(true);
+        fieldContainer = document.createElement('div');
         gridColsCssName = "col-" + xgridcols;
+
+        // handle xclass setting
+        if (schemaHelpers.notNullOrEmpty(propertyDefinition.xclass)) {
+          var xclasses = propertyDefinition.xclass.split(" ");
+          for (var ic = 0; ic < xclasses.length; ic++) {
+            Polymer.dom(fieldContainer).classList.add(xclasses[ic]);
+          }
+        }
+
         Polymer.dom(fieldContainer).classList.add(gridColsCssName);
 
         // special container for at-form-toggle to allow smaller height in vertical mode
