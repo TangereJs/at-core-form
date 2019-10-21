@@ -859,7 +859,7 @@
         delete this._setFocusElementId;
       }
 
-      self.fire('rendered', this, { bubbles: false });
+      self.fire('rendered', this, { bubbles: false, composed: false });
     },
 
     _renderSingleElement: function(propertyName, propertyDefinition, divPrototype, fieldsFragment) {
