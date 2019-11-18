@@ -1159,6 +1159,7 @@
     },
 
     _dataChanged: function(newValue, oldValue) {
+      var self = this;
       var _sh = window.schemaHelpers;
 
       if (_sh.isString(newValue)) {
@@ -1188,10 +1189,22 @@
       }
       var _internalData = this._internalData;
 
-      // update _internalData with keys from newValue
+      // fallback to default value in schema when new value objects doesn't contain property
+      if (this.schema && this.schema.properties) {
+        var schemaPropertyKeys = Object.getOwnPropertyNames(self.schema.properties);
+
+        schemaPropertyKeys.forEach(function (schemaPropertyKey, schemaPropertyIndex) {
+          if (newValue.hasOwnProperty(schemaPropertyKey) == false) {
+            self._updateDataObject(schemaPropertyKey, self.schema.properties[schemaPropertyKey].default);
+            _internalData[schemaPropertyKey] = self.schema.properties[schemaPropertyKey].default;
+          }
+        });
+      }      
+
       var newValueKeys = Object.getOwnPropertyNames(newValue);
       newValueKeys.forEach(function(key, index) {
         _internalData[key] = newValue[key];
+        
         if (_sh.isObject(newValue[key]) || _sh.isArray(newValue[key])) {
           _internalData[key] = JSON.parse(JSON.stringify(newValue[key]));
         }
@@ -1214,7 +1227,6 @@
 
       var fieldsContainer = Polymer.dom(this.$.insertPoint);
       var fieldElement;
-      var self = this;
       // use newValueKeys here because only keys from newValue are the ones changing
       newValueKeys.forEach(function(propertyName) {
         fieldElement = self.getElement(propertyName);

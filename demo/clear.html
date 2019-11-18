@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>at-core-form demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-core-form.html">
+  <link rel="import" href="../../at-core-style-classes/at-core-style-classes.html" />
+
+</head>
+
+<at-core-form id="coreForm"></at-core-form>
+<button id="setButton" type="button" class="block">set</button>
+<button id="clearButton" type="button" class="block">clear</button>
+
+<script>
+  window.addEventListener('WebComponentsReady', function (e) {
+    var setButton = document.getElementById('setButton');
+    var clearButton = document.getElementById('clearButton');
+    var coreForm = document.getElementById("coreForm");
+
+    coreForm.schema = {
+      'properties': {
+        'title': {
+          'type': 'string',
+          'title': 'Title',
+          'name': 'title',
+          'default': ''
+        },
+        'text1': {
+          'type': 'string',
+          'title': 'Text1',
+          'name': 'text1',
+          'default': 'Hello World 1!'
+        },
+        'text2': {
+          'type': 'string',
+          'title': 'Text2',
+          'name': 'text2',
+          'default': 'Hello World 2!'
+        },
+      },
+      'rules': [],
+      '$meta': {},
+      '$type': "form"
+    };
+
+    setButton.addEventListener('click', function (event) {
+      coreForm.data = { title: "random value" };
+    });
+
+    clearButton.addEventListener('click', function (event) {
+        coreForm.data = {};
+    });
+
+  });
+</script>
+</body>
+
+</html>
