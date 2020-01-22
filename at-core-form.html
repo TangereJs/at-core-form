@@ -1195,7 +1195,9 @@
 
         schemaPropertyKeys.forEach(function (schemaPropertyKey, schemaPropertyIndex) {
           if (newValue.hasOwnProperty(schemaPropertyKey) == false) {
-            self._updateDataObject(schemaPropertyKey, self.schema.properties[schemaPropertyKey].default);
+            if(self.schema.properties[schemaPropertyKey].default != undefined) {
+              self._updateDataObject(schemaPropertyKey, self.schema.properties[schemaPropertyKey].default);
+            }
           }
         });
       }      
