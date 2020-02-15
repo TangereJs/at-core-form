@@ -73,6 +73,12 @@
     coreForm.addEventListener('data-changed', function(e) {
       coreForm.validate(true,true);
     });
+    
+     var coreForm3 = document.getElementById("coreFormDemo3");
+    coreForm3.data = { text3: "<b>abc</b", testfield: "def" };
+     coreForm.addEventListener('data-changed', function(e) {
+      debugger;
+    });
   </script>
 </body>
 

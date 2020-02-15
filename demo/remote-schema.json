@@ -15,6 +15,7 @@
     },
     "text3": {
       "type": "string",
+      "xtype": "html",
       "value": "",
       "title": "Text 3"
     },

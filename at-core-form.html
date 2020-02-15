@@ -929,7 +929,10 @@
 
         if (formElement.tagName.toLowerCase() == "at-form-complex") {
           Polymer.dom(fieldContainer).classList.add("pl0");
-          Polymer.dom(fieldContainer).classList.add("pr0");
+          Polymer.dom(fieldContainer).classList.add("pr0"); 
+        }
+
+        if (formElement.schemaUrlPrefix != undefined) {
           formElement.schemaUrlPrefix = this.schemaUrlPrefix;
         }
 
